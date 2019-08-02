@@ -12,15 +12,15 @@
  * Author: 当燃
  * Date: 2016-06-09
  */
- 
+
 
 namespace Seller\Logic;
 
 use Think\Model;
 
 class StoreLogic extends Model
-{    
-    
+{
+
     /**
      * 获取指定店铺信息
      * @param $uid int 用户UID
@@ -33,5 +33,5 @@ class StoreLogic extends Model
         $user = D('Store')->where(array('store_id' => $store_id))->relation($relation)->find();
         return $user;
     }
-  
+
 }

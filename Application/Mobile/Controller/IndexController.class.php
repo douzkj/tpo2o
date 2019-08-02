@@ -9,22 +9,22 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ============================================================================
  * $Author: 当燃 2016-01-09
- */ 
+ */
 namespace Mobile\Controller;
 
 use Mobile\Model\StoreModel;
 
 class IndexController extends MobileBaseController {
 
-    public function index(){                
+    public function index(){
         /*
             //获取微信配置
             $wechat_list = M('wx_user')->select();
             $wechat_config = $wechat_list[0];
-            $this->weixin_config = $wechat_config;        
-            // 微信Jssdk 操作类 用分享朋友圈 JS            
+            $this->weixin_config = $wechat_config;
+            // 微信Jssdk 操作类 用分享朋友圈 JS
             $jssdk = new \Mobile\Logic\Jssdk($this->weixin_config['appid'], $this->weixin_config['appsecret']);
-            $signPackage = $jssdk->GetSignPackage();              
+            $signPackage = $jssdk->GetSignPackage();
             print_r($signPackage);
         */
         $hot_goods = M('goods')->where("is_hot=1 and is_on_sale=1")->order('goods_id DESC')->limit(20)->cache(true,TPSHOP_CACHE_TIME)->select();//首页热卖商品
@@ -33,7 +33,43 @@ class IndexController extends MobileBaseController {
         $this->assign('hot_goods',$hot_goods);
         $favourite_goods = M('goods')->where("is_recommend=1 and is_on_sale=1")->order('goods_id DESC')->limit(20)->cache(true,TPSHOP_CACHE_TIME)->select();//首页推荐商品
         $this->assign('favourite_goods',$favourite_goods);
+        $websites_provinces = $this->tp_config['websites_provinces'];
+        if ($websites_provinces) {
+            $provinces = M('region')->where(['id' => ['in', $websites_provinces]])->select();
+        } else {
+            $provinces = [];
+        }
+        //获取区县
+        $now_region = M('region')->where(['id' => PROVINCE_ID])->find();
+        $areas = [];
+        if ($now_region) {
+            if (preg_match("/[天津|北京|重庆|上海]/", $now_region['name'])) {
+                $subs = M('region')->where(['parent_id' => $now_region['id']])->getField('id', true);
+                if ($subs) {
+                    $areas = M('region')->where(['parent_id' => ['in', $subs]])->select();
+                }
+            } else {
+                $areas = M('region')->where(['parent_id' => $now_region['id']])->select();
+            }
+        }
+        $this->assign('areas', $areas);
+        $this->assign('websites_provinces', $provinces);
         $this->display();
+    }
+
+
+    public function selectProvince()
+    {
+        $province_id = I('province_id');
+        $this->setSelectProvinceCookie($province_id);
+        redirect(U('Index/index'));
+    }
+
+    public function selectArea()
+    {
+        $province_id = I('area_id');
+        $this->setSelectAreaCookie($province_id);
+        redirect(U('Index/index'));
     }
 
     /**
@@ -51,10 +87,10 @@ class IndexController extends MobileBaseController {
         foreach($arr as $key => $val)
         {
             $html = end(explode('/', $val));
-            echo "<a href='http://www.php.com/svn_tpshop/mobile--html/{$html}' target='_blank'>{$html}</a> <br/>";            
-        }        
+            echo "<a href='http://www.php.com/svn_tpshop/mobile--html/{$html}' target='_blank'>{$html}</a> <br/>";
+        }
     }
-    
+
     /**
      * 商品列表页
      */
@@ -65,7 +101,7 @@ class IndexController extends MobileBaseController {
         $this->assign('lists',$lists);
         $this->display();
     }
-    
+
     public function ajaxGetMore(){
     	$p = I('p',1);
     	$favourite_goods = M('goods')->where("is_recommend=1 and is_on_sale=1  and goods_state = 1 ")->order('sort DESC')->page($p,10)->cache(true,TPSHOP_CACHE_TIME)->select();//首页推荐商品

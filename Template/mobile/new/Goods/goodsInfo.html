@@ -11,6 +11,7 @@
 <link rel="stylesheet" type="text/css" href="__STATIC__/css/public.css"/>
 <link rel="stylesheet" type="text/css" href="__STATIC__/css/goods.css"/>
 <link rel="stylesheet" type="text/css" href="__STATIC__/css/layer.css"/>
+<link rel="stylesheet" type="text/css" href="__STATIC__/font/iconfont.css"/>
 <script type="text/javascript" src="__STATIC__/js/jquery.js"></script>
 <script type="text/javascript" src="__STATIC__/js/jquery.json.js"></script>
 <script type="text/javascript" src="__STATIC__/js/touchslider.dev.js"></script>
@@ -22,7 +23,7 @@
 <body>
 <script type="text/javascript">
 var process_request = "正在处理您的请求...";
-</script> 
+</script>
 <div class="main">
   <div class="tab_nav">
     <div class="header">
@@ -37,12 +38,11 @@ var process_request = "正在处理您的请求...";
       <div class="h-right">
         <aside class="top_bar">
           <div onClick="show_menu();$('#close_btn').addClass('hid');" id="show_more"><a href="javascript:;"></a> </div>
-          <a href="{:U('Mobile/Cart/cart')}" class="show_cart"><em class="global-nav__nav-shop-cart-num" id="tp_cart_info">{$cart_total_price[anum]}</em></a> 
          </aside>
       </div>
     </div>
   </div>
-<include file="Public/menu"/> 
+<include file="Public/menu"/>
   <div class="main" id="user_goods_ka_1" style="display:block;">
 <div class="banner">
   <div id="slider" class="slider" style="overflow: hidden; visibility: visible; list-style: none; position: relative;">
@@ -57,6 +57,14 @@ var process_request = "正在处理您的请求...";
     	<a href="javascript:void(0);" <if condition="$k eq 0">class="active"</if>></a>
      </foreach>
 	</div>
+      <div class="timerBox">
+          <div class="clearfix">
+              <dfn class="f14">¥</dfn>
+              <span class="f24" style="margin-right:8px;">{$goods.shop_price}</span><del class="op8">¥</del><del class="op8">{$goods.market_price}</del>
+              <i class="i_tjms i_icon" ></i>
+
+          </div>
+      </div>
   </div>
 </div>
 <div class="s_bottom"></div>
@@ -65,7 +73,7 @@ var process_request = "正在处理您的请求...";
 });
 var active=0,
 	as=document.getElementById('pagenavi').getElementsByTagName('a');
-	
+
 for(var i=0;i<as.length;i++){
 	(function(){
 		var j=i;
@@ -85,42 +93,51 @@ var t2=new TouchSlider({id:'sliderlist', speed:600, timeout:6000, before:functio
       <div class="product_info">
         <div class="info_dottm">
           <h3 class="name">{$goods.goods_name}</h3>
-          <div class="right">
-
-<!-- JiaThis Button BEGIN -->          
-          <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt" target="_blank">
-            <div id="pro_share" class="share"></div>
-          </a>         
-<script>
- var jiathis_config = {
-						url:"http://{$_SERVER[HTTP_HOST]}/index.php?m=Mobile&c=Goods&a=goodsInfo&id={$_GET[id]}",
-						pic:"http://{$_SERVER[HTTP_HOST]}{$goods[goods_id]|goods_thum_images=400,400}", 
-					}
-var is_distribut = getCookie('is_distribut');
-var user_id = getCookie('user_id');
-// 如果已经登录了, 并且是分销商
-if(parseInt(is_distribut) == 1 && parseInt(user_id) > 0)
-{									
-	jiathis_config.url = jiathis_config.url + "&first_leader="+user_id;									
-}										
-//alert(jiathis_config.url);
-</script>           
-<script type="text/javascript" src="http://v3.jiathis.com/code_mini/jia.js" charset="utf-8"></script>
-<!-- JiaThis Button END -->          
-          
-          </div>
         </div>
-        <dl class="goods_price">
-          <script type="text/javascript" src="__STATIC__/js/lefttime.js"></script>
-          <dt> <span id="goods_price">￥{$goods.shop_price}元</span><font>价格：￥{$goods.market_price}元</font> </dt>
-        </dl>
-        <ul class="price_dottm">
-          <li style=" text-align:left">折扣：{$goods.discount}折</li>
-          <li>{$commentStatistics.c0}人评价</li>
-          <li style=" text-align:right">{$goods.sale_num}人已付款</li>
-        </ul>
+
+
+          <div class="timer-wrapper">
+              <span class="des">距离限时购结束</span>
+              <div class="timer" id="jstimerBox{$v[goods_id]}">
+
+                  <!--<span class="day">11</span>天-->
+                  <!--<span class="hour">11</span>小时-->
+                  <!--<span class="min">11</span>分-->
+                  <!--<span class="sec">11</span>秒-->
+              </div>
+          </div>
+
+
+          <div>
+              <div class="mbody progress-bar">
+                  <php>
+                      $buy_num = $goods['sale_num'];
+                      $remain = $goods['store_count'];
+                      $percent = floor(($goods['sale_num'] / ($goods['store_count'] + $goods['sale_num'])) * 100)?:($goods['sale_num']==0?0:1) ;
+                  </php>
+                  <div class="hd"><span class="text-middle">已抢购</span><span
+                          class="text-middle text-red">{$goods.sale_num}</span><span class="text-right"><span
+                          class="text-middle">仅剩</span><span
+                          class="text-middle text-red">{$remain}</span><span
+                          class="text-middle">人</span></span></div>
+                  <div class="bar-bg">
+                      <div class="bar" style="width:{$percent}%"></div>
+                  </div>
+              </div>
+          </div>
+        <!--<dl class="goods_price">-->
+          <!--<script type="text/javascript" src="__STATIC__/js/lefttime.js"></script>-->
+          <!--<dt> <span id="goods_price">￥{$goods.shop_price}元</span><font>价格：￥{$goods.market_price}元</font> </dt>-->
+        <!--</dl>-->
+
+
+          <ul class="price_dottm">
+              <li style=" text-align:left">折扣：{$goods.discount}折</li>
+              <li>{$commentStatistics.c0}人评价</li>
+              <li style=" text-align:right">{$goods.sale_num}人已付款</li>
+          </ul>
       </div>
-<if condition="($prom_goods neq null) OR ($prom_order neq null)">      
+<if condition="($prom_goods neq null) OR ($prom_order neq null)">
       <section id="search_ka" class="huodong">
 	      <div class="subNav">
 	        <div class="att_title"> <span>惠</span>
@@ -131,81 +148,175 @@ if(parseInt(is_distribut) == 1 && parseInt(user_id) > 0)
           <if condition="$prom_goods neq null">
               <ul class="youhui_list1">
                 <li>
-                <a href="javascript:void(0);" title="{$prom_goods[name]}"><img src="__STATIC__/images/hui.png"></a> 
+                <a href="javascript:void(0);" title="{$prom_goods[name]}"><img src="__STATIC__/images/hui.png"></a>
                 <a href="javascript:void(0);" >{$prom_goods[name]}&nbsp;&nbsp;(活动时间：{$prom_goods[start_time]|date="m月d日",###} - {$prom_goods[end_time]|date="m月d日",###})</a>
                 </li>
               </ul>
           </if>
-		<tpshop sql="select * from `__PREFIX__prom_order` order by  id desc limit 5" item="v" key="k" >              
+		<tpshop sql="select * from `__PREFIX__prom_order` order by  id desc limit 5" item="v" key="k" >
 	      <ul class="youhui_list1" style="margin-top:0px;">
 	      	<li><img src="__STATIC__/images/hui.png">{$v['name']}&nbsp;&nbsp;(活动时间：{$v[start_time]|date="m月d日",###} - {$v[end_time]|date="m月d日",###})</li>
 	      </ul>
-		</tpshop>          
+		</tpshop>
 	      <div class="blank10"></div>
 	      </div>
       </section>
-</if>      
-<!-------商品属性-------->
-<if condition="$filter_spec neq ''">  
-<section id="search_ka">
-<!---属性---->
-<div class="ui-sx bian1"> 
-<div class="subNavBox"> 
-	<div class="subNav"><strong>选择商品属性</strong></div>
-    <ul class="navContent"> 
-    <foreach item="spec" key="key" name="filter_spec">
-    <li>   
-          <div class="title">{$key}</div>
-          <div class="item">
-          <foreach name="spec" item="v2" key="k2">
-	          <a href="javascript:;" onclick="switch_spec(this);" title="{$v2[item]}" <if condition="$k2 eq 0">class="hover"</if>>
-	          	<input type="radio" style="display:none;" name="goods_spec[{$key}]" value="{$v2[item_id]}" <if condition="$k2 eq 0 ">checked="checked"</if>/>
-          		{$v2[item]}            
-          	  </a>
-           </foreach>
-          </div>                    
-    </li>
-    </foreach>
-       </ul>  
-    </div>
-    </div>    
-</section> 
 </if>
-      <section id="search_ka">
-        <div class="ui-sx bian1">
+
+          <div style="height: 8px;background: #eeeeee;"></div>
           <div class="subNavBox">
-            <div class="subNav on"><strong>购买数量</strong></div>
-            <ul class="navContent" style="display: block;">
-              <li style=" border-bottom:1px solid #eeeeee">
-                <div class="item1"> 
-                  <span class="ui-number">
-                  <button type="button" class="decrease" onClick="goods_cut();">-</button>
-                    <input type="text" class="num" id="number" name="goods_num" value="1" min="1" max="1000"/>
-                    <input type="hidden" name="goods_id" value="{$goods.goods_id}"/>
-                  <button type="button" class="increase" onClick="goods_add();">+</button>
-                  </span> </div>
-              </li>
-            </ul>
+              <div class="subNav on"><strong>适用门店</strong></div>
+              <ul class="navContent" style="display: block;">
+                  <div class="shop-list">
+                      <foreach name="shops" item="shop">
+                          <div class="shop-item">
+                              <span class="shop-location-img"><i class=" icon icon-dingwei1"></i></span>
+                              <div class="shop-des">
+                                  <span class="shop-name">{$shop.title}</span>
+                                  <p class="shop-address">{:getShopPosition($shop)}</p>
+                              </div>
+                              <span class="shop-phone"><i class=" icon icon-tel_phone"></i></span>
+                          </div>
+                      </foreach>
+
+
+                  </div>
+              </ul>
           </div>
-        </div>
-      </section>
-      <section id="search_ka">
-        <div class="ui-sx bian1">
-          <div class="subNavBox" >
-            <div class="subNav"><strong>会员专享价</strong></a></div>
-            <ul class="navContent" >
-              <li  class="user_price">
-                <p> <span class="key">铜牌会员：</span> <b class="p-price-v">9.8折</b> </p>
-                <p> <span class="key">金牌会员：</span> <b class="p-price-v">9.5折</b> </p>
-                <p> <span class="key">钻石会员：</span> <b class="p-price-v">9折</b> </p>
-              </li>
-            </ul>
+          <div style="height: 8px;background: #eeeeee;"></div>
+          <div class="recommend-shops">
+              <div class="recommend-tips">
+                  <span class="text">附近在售爆品</span>
+              </div>
+              <div class="recommend-list">
+                  <div class="recommend-item">
+                      <img src="http://oss.cjhmai.com/8222433e11a386a17dce85393aea0168.jpg" alt="">
+                      <div class="desc">巴南区【新维度蹦床卡丁车主题公园】这两个项目一搭配，怎么玩都过瘾 29.9元一大一小玩转蹦床；19.9元玩嗨卡丁车！节假日通用免预约</div>
+                      <span class="price">¥23.90</span>
+                  </div>
+                  <div class="recommend-item">
+                      <img src="http://oss.cjhmai.com/8222433e11a386a17dce85393aea0168.jpg" alt="">
+                      <div class="desc">巴南区【新维度蹦床卡丁车主题公园】这两个项目一搭配，怎么玩都过瘾 29.9元一大一小玩转蹦床；19.9元玩嗨卡丁车！节假日通用免预约</div>
+                      <span class="price">¥23.90</span>
+                  </div>
+                  <div class="recommend-item">
+                      <img src="http://oss.cjhmai.com/8222433e11a386a17dce85393aea0168.jpg" alt="">
+                      <div class="desc">巴南区【新维度蹦床卡丁车主题公园】这两个项目一搭配，怎么玩都过瘾 29.9元一大一小玩转蹦床；19.9元玩嗨卡丁车！节假日通用免预约</div>
+                      <span class="price">¥23.90</span>
+                  </div>
+              </div>
           </div>
-        </div>
-      </section>
+
+          <script >
+              var Tday = new Array();
+              var daysms = 24 * 60 * 60 * 1000
+              var hoursms = 60 * 60 * 1000
+              var Secondms = 60 * 1000
+              var microsecond = 1000
+              var DifferHour = -1
+              var DifferMinute = -1
+              var DifferSecond = -1
+
+              function clock11(key)
+              {
+                  var time = new Date()
+                  var hour = time.getHours()
+                  var minute = time.getMinutes()
+                  var second = time.getSeconds()
+                  var timevalue = ""+((hour > 12) ? hour-12:hour)
+                  timevalue +=((minute < 10) ? ":0":":")+minute
+                  timevalue +=((second < 10) ? ":0":":")+second
+                  timevalue +=((hour >12 ) ? " PM":" AM")
+                  var convertHour = DifferHour
+                  var convertMinute = DifferMinute
+                  var convertSecond = DifferSecond
+                  var Diffms = Tday[key].getTime() - time.getTime()
+                  DifferHour = Math.floor(Diffms / daysms)
+                  Diffms -= DifferHour * daysms
+                  DifferMinute = Math.floor(Diffms / hoursms)
+                  Diffms -= DifferMinute * hoursms
+                  DifferSecond = Math.floor(Diffms / Secondms)
+                  Diffms -= DifferSecond * Secondms
+                  var dSecs = Math.floor(Diffms / microsecond)
+
+                  if(convertHour != DifferHour) e="<span class=hour>"+DifferHour+"</span>天";
+                  if(convertMinute != DifferMinute) f="<span class=min>"+DifferMinute+"</span>时";
+                  if(convertSecond != DifferSecond) g="<span class=sec>"+DifferSecond+"</span>分";
+                  h="<span class=msec>"+dSecs+"</span>秒";
+                  if (DifferHour>0) {e=e}
+                  else {e=''}
+                  document.getElementById("jstimerBox"+key).innerHTML = e + f + g + h;
+              }
+
+          </script>
+          <script>
+              Tday['{$v[goods]}'] = new Date('{$v.end_time|date="Y/m/d H:i:s",###}');
+              window.setInterval(function()
+              {clock11('{$v[goods_id]}');}, 1000);
+          </script>
+
+
+
+<!--<if condition="$filter_spec neq ''">-->
+<!--<section id="search_ka">-->
+<!--&lt;!&ndash;-属性&#45;&#45;&ndash;&gt;-->
+<!--<div class="ui-sx bian1">-->
+<!--<div class="subNavBox">-->
+	<!--<div class="subNav"><strong>选择商品属性</strong></div>-->
+    <!--<ul class="navContent">-->
+    <!--<foreach item="spec" key="key" name="filter_spec">-->
+    <!--<li>-->
+          <!--<div class="title">{$key}</div>-->
+          <!--<div class="item">-->
+          <!--<foreach name="spec" item="v2" key="k2">-->
+	          <!--<a href="javascript:;" onclick="switch_spec(this);" title="{$v2[item]}" <if condition="$k2 eq 0">class="hover"</if>>-->
+	          	<!--<input type="radio" style="display:none;" name="goods_spec[{$key}]" value="{$v2[item_id]}" <if condition="$k2 eq 0 ">checked="checked"</if>/>-->
+          		<!--{$v2[item]}-->
+          	  <!--</a>-->
+           <!--</foreach>-->
+          <!--</div>-->
+    <!--</li>-->
+    <!--</foreach>-->
+       <!--</ul>-->
+    <!--</div>-->
+    <!--</div>-->
+<!--</section>-->
+<!--</if>-->
+      <!--<section id="search_ka">-->
+        <!--<div class="ui-sx bian1">-->
+          <!--<div class="subNavBox">-->
+            <!--<div class="subNav on"><strong>购买数量</strong></div>-->
+            <!--<ul class="navContent" style="display: block;">-->
+              <!--<li style=" border-bottom:1px solid #eeeeee">-->
+                <!--<div class="item1">-->
+                  <!--<span class="ui-number">-->
+                  <!--<button type="button" class="decrease" onClick="goods_cut();">-</button>-->
+                    <!--<input type="text" class="num" id="number" name="goods_num" value="1" min="1" max="1000"/>-->
+                    <!--<input type="hidden" name="goods_id" value="{$goods.goods_id}"/>-->
+                  <!--<button type="button" class="increase" onClick="goods_add();">+</button>-->
+                  <!--</span> </div>-->
+              <!--</li>-->
+            <!--</ul>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</section>-->
+      <!--<section id="search_ka">-->
+        <!--<div class="ui-sx bian1">-->
+          <!--<div class="subNavBox" >-->
+            <!--<div class="subNav"><strong>会员专享价</strong></a></div>-->
+            <!--<ul class="navContent" >-->
+              <!--<li  class="user_price">-->
+                <!--<p> <span class="key">铜牌会员：</span> <b class="p-price-v">9.8折</b> </p>-->
+                <!--<p> <span class="key">金牌会员：</span> <b class="p-price-v">9.5折</b> </p>-->
+                <!--<p> <span class="key">钻石会员：</span> <b class="p-price-v">9折</b> </p>-->
+              <!--</li>-->
+            <!--</ul>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</section>-->
 <script type="text/javascript">
 $(function(){
-	$(".subNav").click(function(){		
+	$(".subNav").click(function(){
 		$(this).next(".navContent").slideToggle(300).siblings(".navContent").slideUp(500);
 		$(this).toggleClass("on").siblings(".subNav").removeClass("on");
 		if($(".is_scroll").length <= 0)
@@ -216,7 +327,7 @@ $(function(){
 	commentType = 1; // 评论类型
     ajaxComment(1,1);// ajax 加载评价列表
 })
-</script> 
+</script>
 <script type="text/jscript">
 function click_search (){
   var search_ka = document.getElementById("search_ka");
@@ -226,7 +337,7 @@ function click_search (){
 		search_ka.className = "s-buy open ui-section-box";
 	}
 }
- 
+
 function changeAtt(t) {
 	t.lastChild.checked='checked';
 	for (var i = 0; i<t.parentNode.childNodes.length;i++) {
@@ -255,20 +366,19 @@ function changeAtt1(t) {
 }
 
 	function goods_cut(){
-  		var num_val=document.getElementById('number');  
-  		var new_num=num_val.value;  
-  		var Num = parseInt(new_num);  
-  		if(Num>1)Num=Num-1;  
+  		var num_val=document.getElementById('number');
+  		var new_num=num_val.value;
+  		var Num = parseInt(new_num);
+  		if(Num>1)Num=Num-1;
   		num_val.value=Num;
-  	}  
+  	}
   	function goods_add(){
-  		var num_val=document.getElementById('number'); 
-  		var new_num=num_val.value;  
-  		var Num = parseInt(new_num);  
+  		var num_val=document.getElementById('number');
+  		var new_num=num_val.value;
+  		var Num = parseInt(new_num);
   		Num=Num+1;  num_val.value=Num;
-  	} 
+  	}
 </script>
-      <div style=" height:8px; background:#eeeeee; margin-top:-1px;"></div>
       <!--
       <div class="is_scroll">
         <section id="search_ka">
@@ -280,28 +390,6 @@ function changeAtt1(t) {
         </section>
       </div>
       -->
-      <if condition="$goods[store_id] gt 0">
-      <div class="is_scroll">
-        <input type="hidden" id="chat_supp_id" value="1" />
-        <div style=" height:8px; background:#eeeeee; margin-top:-1px;"></div>
-        <section class="rzs_info">
-          <div class="top_info">
-            <dl>
-              <dt><a href="{:U('Store/index',array('store_id'=>$store[store_id]))}">
-                <div style="background-image:url('{$store.store_logo}')"></div>
-                </a></dt>
-              <dd><strong>卖家: <a href="{:U('Store/index',array('store_id'=>$store[store_id]))}" style="color:#333; font-size:18px;">{$store.store_name}</a></strong><em>初级店铺</em></dd>
-            </dl>
-            <ul>
-              <li><span>宝贝描述</span><strong>:{$store.store_desccredit}</strong><em>高</em></li>
-              <li><span>卖家服务</span><strong>:{$store.store_servicecredit}</strong><em>高</em></li>
-              <li><span>物流服务</span><strong>:{$store.store_deliverycredit}</strong><em>高</em></li>
-            </ul>
-          </div>
-          <div class="s_dianpu"> <span><a href="tel:{$store.store_phone}" style=" margin-left:7%;"><em class="bg1"></em>联系客服</a></span> 
-          <span><a href="{:U('Store/index',array('store_id'=>$store[store_id]))}" style=" margin-left:3%;"><em class="bg2"></em>进入店铺</a></span> </div>
-        </section>
-      </div></if>
     </form>
   </div>
   <div class="main" id="user_goods_ka_2" style="display:none">
@@ -319,11 +407,11 @@ function changeAtt1(t) {
         </ul>
     </section>
   </div>
-  <div class="tab_attrs tab_item hide" id="user_goods_ka_3" style="display:none;"> 
+  <div class="tab_attrs tab_item hide" id="user_goods_ka_3" style="display:none;">
 
 <div id="ECS_COMMENT">
 <link href="__STATIC__/css/photoswipe.css" rel="stylesheet" type="text/css">
-<script src="__STATIC__/js/klass.min.js"></script> 
+<script src="__STATIC__/js/klass.min.js"></script>
 <script src="__STATIC__/js/photoswipe.js"></script>
     <div class="comment_littlenav">
         <ul id="fy-comment-list">
@@ -343,22 +431,47 @@ function changeAtt1(t) {
 function goTop(){
 	$('html,body').animate({'scrollTop':0},600);
 }
-</script> 
+</script>
 <a href="javascript:goTop();" class="gotop"><img src="__STATIC__/images/topup.png"></a>
 <div style=" height:60px;"></div>
 <div class="footer_nav">
   <ul>
-    <li class="bian"><a href="{:U('Index/index')}"><em class="goods_nav1"></em><span>首页</span></a> </li>
-    <li class="bian"><a href="tel:{$tpshop_config['shop_info_phone']}"><em class="goods_nav2"></em><span>客服</span></a> </li>
-    <li><a href="javascript:collect_goods({$goods.goods_id})" id="favorite_add"><em class="goods_nav3"></em><span>收藏</span></a></li>
+      <li class="bian"><a href="{:U('Index/index')}"><em class="goods_nav1"></em><span>首页</span></a> </li>
+      <li class="bian"><a href="tel:{$tpshop_config['shop_info_phone']}"><em class="goods_nav2"></em><span>客服</span></a> </li>
+      <li class="bian">
+          <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt" target="_blank">
+              <em id="pro_share" class="goods_share"></em>
+              <span>分享</span>
+          </a>
+          <script>
+              var jiathis_config = {
+                  url: "http://{$_SERVER[HTTP_HOST]}/index.php?m=Home&c=Goods&a=goodsInfo&id={$_GET[id]}",
+                  pic: "http://{$_SERVER[HTTP_HOST]}{$goods[goods_id]|goods_thum_images=400,400}",
+              }
+              var is_distribut = getCookie('is_distribut');
+              var user_id = getCookie('user_id');
+              // 如果已经登录了, 并且是分销商
+              if (parseInt(is_distribut) == 1 && parseInt(user_id) > 0) {
+                  jiathis_config.url = jiathis_config.url + "&first_leader=" + user_id;
+              }
+              //alert(jiathis_config.url);
+          </script>
+          <script type="text/javascript" src="http://v3.jiathis.com/code_mini/jia.js" charset="utf-8"></script>
+          <!--<a href=""><em class="goods_share"></em><span>分享</span></a> -->
+      </li>
   </ul>
   <dl>
-    <dd class="flow"><a class="button active_button" href="javascript:void(0);" onClick="AjaxAddCart({$goods.goods_id},1,0);">加入购物车</a> </dd>
-    <dd class="goumai"><a style="display:block;" href="javascript:void(0);"  onclick="AjaxAddCart({$goods.goods_id},1,1);">立即购买</a> </dd>
+    <!--<dd class="flow"><a class="button active_button" href="javascript:void(0);" onClick="AjaxAddCart({$goods.goods_id},1,0);">加入购物车</a> </dd>-->
+    <!--<dd class="goumai"><a style="display:block;" href="javascript:void(0);"  onclick="AjaxAddCart({$goods.goods_id},1,1);">立即购买</a> </dd>-->
+      <if condition="$goods['store_count'] eq 0">
+          <dd class="css-nobuy" style="width: 100%;">商品已售罄</dd>
+          <else />
+          <dd class="goumai " style="width: 100%;"><a style="display:block;" href="{:U('Cart/confirmOrder', ['goods_id' => $goods[goods_id]])}" >立即购买</a> </dd>
+      </if>
   </dl>
 </div>
 <script type="text/javascript">
-$(document).ready(function(){	
+$(document).ready(function(){
 	// 更新商品价格
 	get_goods_price();
 });
@@ -369,7 +482,7 @@ function switch_spec(spec)
     $(spec).siblings().removeClass('hover');
     $(spec).addClass('hover');
 	$(spec).siblings().children('input').prop('checked',false);
-	$(spec).children('input').prop('checked',true);	
+	$(spec).children('input').prop('checked',true);
     //更新商品价格
     get_goods_price();
 }
@@ -377,20 +490,20 @@ function switch_spec(spec)
 function get_goods_price()
 {
 	var goods_price = {$goods.shop_price}; // 商品起始价
-	var store_count = {$goods.store_count}; // 商品起始库存	
-	var spec_goods_price = {$spec_goods_price};  // 规格 对应 价格 库存表   //alert(spec_goods_price['28_100']['price']);	
+	var store_count = {$goods.store_count}; // 商品起始库存
+	var spec_goods_price = {$spec_goods_price};  // 规格 对应 价格 库存表   //alert(spec_goods_price['28_100']['price']);
 	// 如果有属性选择项
 	if(spec_goods_price != null)
 	{
 		goods_spec_arr = new Array();
 		$("input[name^='goods_spec']:checked").each(function(){
 			 goods_spec_arr.push($(this).val());
-		});    
-		var spec_key = goods_spec_arr.sort(sortNumber).join('_');  //排序后组合成 key	
-		goods_price = spec_goods_price[spec_key]['price']; // 找到对应规格的价格		
+		});
+		var spec_key = goods_spec_arr.sort(sortNumber).join('_');  //排序后组合成 key
+		goods_price = spec_goods_price[spec_key]['price']; // 找到对应规格的价格
 		store_count = spec_goods_price[spec_key]['store_count']; // 找到对应规格的库存
 	}
-	var goods_num = parseInt($("#goods_num").val()); 
+	var goods_num = parseInt($("#goods_num").val());
 	// 库存不足的情况
 	if(goods_num > store_count)
 	{
@@ -404,9 +517,9 @@ function get_goods_price()
 
 }
 
-function sortNumber(a,b) 
-{ 
-	return a - b; 
+function sortNumber(a,b)
+{
+	return a - b;
 }
 
 // 好评差评 切换
@@ -425,10 +538,10 @@ function ajaxComment(commentType,page){
         url:"/index.php?m=Mobile&c=goods&a=ajaxComment&goods_id={$goods['goods_id']}&commentType="+commentType+"&p="+page,//+tab,
         success: function(data){
             $(".my_comment_list").empty().append(data);
-            var myPhotoSwipe = $("#gallery a").photoSwipe({ 
-        		enableMouseWheel: false, 
-        		enableKeyboard: false, 
-        		allowUserZoom: false, 
+            var myPhotoSwipe = $("#gallery a").photoSwipe({
+        		enableMouseWheel: false,
+        		enableKeyboard: false,
+        		allowUserZoom: false,
         		loop:false
         	});
         }
@@ -441,10 +554,10 @@ $(document).ready(function(){
 		$.ajax({
 			type : "GET",
 			url:"/index.php?m=Home&c=Cart&a=header_cart_list",//+tab,
-			success: function(data){								 
-				cart_cn = getCookie('cn');						
+			success: function(data){
+				cart_cn = getCookie('cn');
 			}
-		});	
+		});
 	  }
 	  $('#tp_cart_info').html(cart_cn);
 });

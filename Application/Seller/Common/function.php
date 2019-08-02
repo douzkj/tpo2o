@@ -35,36 +35,36 @@ function getAdminInfo($admin_id){
 }
 
 function tpversion()
-{     
+{
     if(!empty($_SESSION['isset_push']))
-        return false;    
-    $_SESSION['isset_push'] = 1;    
+        return false;
+    $_SESSION['isset_push'] = 1;
     error_reporting(0);//关闭所有错误报告
     $app_path = dirname($_SERVER['SCRIPT_FILENAME']).'/';
     $version_txt_path = $app_path.'/Application/Admin/Conf/version.txt';
     $curent_version = file_get_contents($version_txt_path);
-    
-    $vaules = array(            
-            'domain'=>$_SERVER['HTTP_HOST'], 
-            'last_domain'=>$_SERVER['HTTP_HOST'], 
-            'key_num'=>$curent_version, 
-            'install_time'=>INSTALL_DATE, 
+
+    $vaules = array(
+            'domain'=>$_SERVER['HTTP_HOST'],
+            'last_domain'=>$_SERVER['HTTP_HOST'],
+            'key_num'=>$curent_version,
+            'install_time'=>INSTALL_DATE,
             'cpu'=>'0001',
             'mac'=>'0002',
             'serial_number'=>SERIALNUMBER,
-            );     
+            );
      $url = "http://service.tp-shop.cn/index.php?m=Home&c=Index&a=user_push&".http_build_query($vaules); // 检测版本升级
      stream_context_set_default(array('http' => array('timeout' => 3)));
-     file_get_contents($url);       
+     file_get_contents($url);
 }
- 
+
 /**
  * 面包屑导航  用于后台管理
  * 根据当前的控制器名称 和 action 方法
  */
 function navigate_admin()
-{        
-    $navigate = include APP_PATH.'Common/Conf/navigate.php';    
+{
+    $navigate = include APP_PATH.'Common/Conf/navigate.php';
     $location = strtolower('Seller/'.CONTROLLER_NAME);
     $arr = array(
         '后台首页'=>'javascript:void();',
@@ -124,12 +124,12 @@ function getMenuList() {
 					array('name' => '仓库中的商品', 'act'=>'goodsList?goods_state=0,2,3', 'op'=>'Goods'),
 					//array('name' => '关联版式', 'act'=>'store_plate', 'op'=>'index'),
 					array('name' => '商品规格', 'act' => 'specList', 'op' => 'Goods'),
-                    array('name' => '品牌申请', 'act'=>'brandList', 'op'=>'Goods'),                            
+                    array('name' => '品牌申请', 'act'=>'brandList', 'op'=>'Goods'),
 					//array('name' => '图片空间', 'act'=>'store_album', 'op'=>'album_cate'),
 			)),
 			'order' => array('name' => '订单物流', 'icon'=>'fa-money', 'child' => array(
 					array('name' => '订单列表', 'act'=>'index', 'op'=>'Order'),
-					array('name' => '发货', 'act'=>'delivery_list', 'op'=>'Order'),                            
+					array('name' => '发货', 'act'=>'delivery_list', 'op'=>'Order'),
 					array('name' => '发货设置', 'act'=>'index', 'op'=>'Plugin'),
 					//array('name' => '运单模板', 'act'=>'store_waybill', 'op'=>'waybill_manage'),
 					array('name' => '商品评论','act'=>'index','op'=>'Comment'),
@@ -151,12 +151,13 @@ function getMenuList() {
 					array('name' => '店铺信息', 'act'=>'store_info', 'op'=>'Store'),
 					array('name' => '店铺分类', 'act'=>'goods_class', 'op'=>'Store'),
 					array('name' => '店铺关注', 'act'=>'store_collect', 'op'=>'Store'),
+					array('name' => '门店列表', 'act'=>'shop_list', 'op'=>'Store'),
 			)),
 			'consult' => array('name' => '售后服务', 'icon'=>'fa-flag', 'child' => array(
 					array('name' => '咨询管理', 'act'=>'ask_list', 'op'=>'Comment'),
 					//array('name' => '退款记录', 'act'=>'store_refund', 'op'=>'Order'),
 					array('name' => '退款换货', 'act'=>'return_list', 'op'=>'Order'),
-					array('name' => '投诉管理', 'act'=>'complain_list', 'op'=>'Comment'),                            
+					array('name' => '投诉管理', 'act'=>'complain_list', 'op'=>'Comment'),
 			)),
 			'statistics' => array('name' => '统计报表', 'icon'=>'fa-signal', 'child' => array(
 					array('name' => '店铺概况', 'act'=>'index', 'op'=>'Report'),
@@ -190,7 +191,7 @@ function getMenuList() {
 					array('name' => '分销设置', 'act'=>'distribut', 'op'=>'Store'),
                     array('name' => '分成记录', 'act'=>'rebate_log', 'op'=>'Distribut'),
 			)),
-                
+
 	);
 	return $menu_list;
 }

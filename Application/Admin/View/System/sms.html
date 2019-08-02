@@ -27,14 +27,14 @@
                                 <table class="table table-bordered">
                                     <tbody>
                                     <tr>
-                                        <td class="col-sm-2">阿里大鱼[appkey]：</td>
+                                        <td class="col-sm-2">建网用户名(Uid)：</td>
                                         <td class="col-sm-8">
                                             <input type="text" class="form-control" name="sms_appkey" value="{$config.sms_appkey}" >
                                             <span id="err_attr_name" style="color:#F00; display:none;"></span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>阿里大鱼[secretKey]：</td>
+                                        <td>建网密钥[Key]：</td>
                                         <td >
                                             <input type="text" class="form-control" name="sms_secretKey" value="{$config.sms_secretKey}" >
                                         </td>
@@ -46,11 +46,11 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>短信模板编号：</td>
+                                        <td>短信模版：<br />其中验证码用 ${code} 表示</td>
                                         <td >
                                             <input type="text" class="form-control" name="sms_templateCode" value="{$config.sms_templateCode}" placeholder="例如SMS_23642634" >
                                         </td>
-                                    </tr>                                    
+                                    </tr>
                                     <tr>
                                         <td>注册启用短信：</td>
                                         <td>

@@ -9,19 +9,19 @@
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ============================================================================
  * $Author: IT宇宙人 2015-08-10 $
- */ 
+ */
 namespace Mobile\Controller;
 class CartController extends MobileBaseController {
-    
-    public $cartLogic; // 购物车逻辑操作类    
+
+    public $cartLogic; // 购物车逻辑操作类
     public $user_id = 0;
-    public $user = array();        
+    public $user = array();
     /**
      * 析构流函数
      */
-    public function  __construct() {   
-        parent::__construct();                
-        $this->cartLogic = new \Home\Logic\CartLogic();                 
+    public function  __construct() {
+        parent::__construct();
+        $this->cartLogic = new \Home\Logic\CartLogic();
         if(session('?user'))
         {
         	$user = session('user');
@@ -38,7 +38,16 @@ class CartController extends MobileBaseController {
 
         }
     }
-    
+
+    public function confirmOrder()
+    {
+        $goods_id = I('goods_id');
+        $goods = M('goods')->where(['goods_id' => $goods_id])->find();
+        $this->assign('goods', $goods);
+        $this->display();
+    }
+
+
     public function cart(){
         $this->display('cart');
     }
@@ -49,12 +58,12 @@ class CartController extends MobileBaseController {
     {
         $goods_id = I("goods_id"); // 商品id
         $goods_num = I("goods_num");// 商品数量
-        $goods_spec = I("goods_spec"); // 商品规格                
+        $goods_spec = I("goods_spec"); // 商品规格
         $goods_spec = json_decode($goods_spec,true); //app 端 json 形式传输过来
         $unique_id = I("unique_id"); // 唯一id  类似于 pc 端的session id
-        $user_id = I("user_id",0); // 用户id        
+        $user_id = I("user_id",0); // 用户id
         $result = $this->cartLogic->addCart($goods_id, $goods_num, $goods_spec,$unique_id,$user_id); // 将商品加入购物车
-        exit(json_encode($result)); 
+        exit(json_encode($result));
     }
     /**
      * ajax 将商品加入购物车
@@ -113,7 +122,7 @@ class CartController extends MobileBaseController {
             $address = M('user_address')->where("address_id = $address_id")->find();
         else
             $address = M('user_address')->where("user_id = $this->user_id and is_default=1")->find();
-        
+
         if(empty($address)){
         	header("Location: ".U('Mobile/User/add_address',array('source'=>'cart2')));
         }else{
@@ -124,16 +133,16 @@ class CartController extends MobileBaseController {
             $this->error ('你的购物车没有选中商品','Cart/cart');
 
         $result = $this->cartLogic->cartList($this->user, $this->session_id,1,1); // 获取购物车商品
-        
-        $store_id_arr = M('cart')->where("user_id = {$this->user_id} and selected = 1")->getField('store_id',true); // 获取所有店铺id        
+
+        $store_id_arr = M('cart')->where("user_id = {$this->user_id} and selected = 1")->getField('store_id',true); // 获取所有店铺id
         $storeList = M('store')->where("store_id in (".implode(',', $store_id_arr).")")->select(); // 找出所有商品对应的店铺id
-        
-        $shippingList = M('shipping_area')->where(" store_id in (".implode(',', $store_id_arr).")")->group("store_id,shipping_code")->getField('shipping_area_id,shipping_code,store_id');// 物流公司        
+
+        $shippingList = M('shipping_area')->where(" store_id in (".implode(',', $store_id_arr).")")->group("store_id,shipping_code")->getField('shipping_area_id,shipping_code,store_id');// 物流公司
         $shippingList2 = M('plugin')->where("type = 'shipping'")->getField('code,name'); // 查找物流插件
         foreach($shippingList as $k => $v)
-            $shippingList[$k]['name']  = $shippingList2[$v['shipping_code']];                
-        
-        $Model = new \Think\Model(); // 找出这个用户的优惠券 没过期的  并且 订单金额达到 condition 优惠券指定标准的               
+            $shippingList[$k]['name']  = $shippingList2[$v['shipping_code']];
+
+        $Model = new \Think\Model(); // 找出这个用户的优惠券 没过期的  并且 订单金额达到 condition 优惠券指定标准的
         $sql = "select c1.name,c1.money,c1.condition, c2.* from __PREFIX__coupon as c1 inner join __PREFIX__coupon_list as c2  on c2.cid = c1.id and c1.type in(0,1,2,3) and order_id = 0
             where c2.uid = {$this->user_id}  and ".time()." < c1.use_end_time and c1.condition <= {$result['total_price']['total_fee']} and c2.store_id in (".implode(',', $store_id_arr).")";
         $couponList = $Model->query($sql);
@@ -151,36 +160,36 @@ class CartController extends MobileBaseController {
      * ajax 获取订单商品价格 或者提交 订单
      */
     public function cart3(){
-                                
+
         if($this->user_id == 0)
             exit(json_encode(array('status'=>-100,'msg'=>"登录超时请重新登录!",'result'=>null))); // 返回结果状态
-        
+
         $address_id = I("address_id"); //  收货地址id
-        $shipping_code =  I("shipping_code"); //  物流编号        
-        $user_note = I('user_note'); // 给卖家留言        
+        $shipping_code =  I("shipping_code"); //  物流编号
+        $user_note = I('user_note'); // 给卖家留言
         $couponTypeSelect =  I("couponTypeSelect"); //  优惠券类型  1 下拉框选择优惠券 2 输入框输入优惠券代码
         $coupon_id =  I("coupon_id"); //  优惠券id
         $couponCode =  I("couponCode"); //  优惠券代码
         $invoice_title = I('invoice_title'); // 发票
         $pay_points =  I("pay_points",0); //  使用积分
-        $user_money =  I("user_money",0); //  使用余额        
+        $user_money =  I("user_money",0); //  使用余额
         $user_money = $user_money ? $user_money : 0;
 
         if($this->cartLogic->cart_count($this->user_id,1) == 0 ) exit(json_encode(array('status'=>-2,'msg'=>'你的购物车没有选中商品','result'=>null))); // 返回结果状态
         if(!$address_id) exit(json_encode(array('status'=>-3,'msg'=>'请先填写收货人信息','result'=>null))); // 返回结果状态
         if(!$shipping_code) exit(json_encode(array('status'=>-4,'msg'=>'请选择物流信息','result'=>null))); // 返回结果状态
-		
+
 		$address = M('UserAddress')->where("address_id = $address_id")->find();
 		$order_goods = M('cart')->where("user_id = {$this->user_id} and selected = 1")->select();
-                $result = calculate_price($this->user_id,$order_goods,$shipping_code,0,$address[province],$address[city],$address[district],$pay_points,$user_money,$coupon_id,$couponCode);                
-		if($result['status'] < 0)	
-			exit(json_encode($result));      	
+                $result = calculate_price($this->user_id,$order_goods,$shipping_code,0,$address[province],$address[city],$address[district],$pay_points,$user_money,$coupon_id,$couponCode);
+		if($result['status'] < 0)
+			exit(json_encode($result));
 
                 $car_price = array(
                     'postFee'      => $result['result']['shipping_price'], // 物流费
-                    'couponFee'    => $result['result']['coupon_price'], // 优惠券            
+                    'couponFee'    => $result['result']['coupon_price'], // 优惠券
                     'balance'      => $result['result']['user_money'], // 使用用户余额
-                    'pointsFee'    => $result['result']['integral_money'], // 积分支付            
+                    'pointsFee'    => $result['result']['integral_money'], // 积分支付
                     'payables'     => array_sum($result['result']['store_order_amount']), // 订单总额 减去 积分 减去余额
                     'goodsFee'     => $result['result']['goods_price'],// 总商品价格
                     'order_prom_amount' => array_sum($result['result']['store_order_prom_amount']), // 总订单优惠活动优惠了多少钱
@@ -190,39 +199,39 @@ class CartController extends MobileBaseController {
                     'store_order_amount' => $result['result']['store_order_amount'], // 每个商家订单优惠后多少钱, -- 应付金额
                     'store_shipping_price'=>$result['result']['store_shipping_price'],  //每个商家的物流费
                     'store_coupon_price'=>$result['result']['store_coupon_price'],  //每个商家的优惠券抵消金额
-                    'store_point_count' => $result['result']['store_point_count'], // 每个商家平摊使用了多少积分            
+                    'store_point_count' => $result['result']['store_point_count'], // 每个商家平摊使用了多少积分
                     'store_balance'=>$result['result']['store_balance'], // 每个商家平摊用了多少余额
                     'store_goods_price'=>$result['result']['store_goods_price'], // 每个商家的商品总价
-                );   
-                // 提交订单        
+                );
+                // 提交订单
                 if($_REQUEST['act'] == 'submit_order')
-                {  
+                {
                     if(empty($coupon_id) && !empty($couponCode))
                     {
                         foreach($couponCode as $k => $v)
                         $coupon_id[$k] = M('CouponList')->where("`code`='$v' and store_id = $k")->getField('id');
-                    }                
-                    $result = $this->cartLogic->addOrder($this->user_id,$address_id,$shipping_code,$invoice_title,$coupon_id,$car_price,$user_note); // 添加订单                        
-                    exit(json_encode($result));            
+                    }
+                    $result = $this->cartLogic->addOrder($this->user_id,$address_id,$shipping_code,$invoice_title,$coupon_id,$car_price,$user_note); // 添加订单
+                    exit(json_encode($result));
                 }
                     $return_arr = array('status'=>1,'msg'=>'计算成功','result'=>$car_price); // 返回结果状态
-                    exit(json_encode($return_arr));                   
-    }	
+                    exit(json_encode($return_arr));
+    }
     /*
      * 订单支付页面
      */
     public function cart4(){
-        $order_id = I('order_id',0); 
-        
+        $order_id = I('order_id',0);
+
         // 如果是主订单号过来的, 说明可能是合并付款的
-        $master_order_sn = I('master_order_sn','');        
+        $master_order_sn = I('master_order_sn','');
         if($master_order_sn)
-        {                       
+        {
             $sum_order_amount = M('order')->where("master_order_sn = '$master_order_sn'")->sum('order_amount');
-            if($sum_order_amount == 0){                
+            if($sum_order_amount == 0){
                 $order_order_list = U("Home/User/order_list");
                 header("Location: $order_order_list");
-            }           
+            }
         }
         else
         {
@@ -232,33 +241,33 @@ class CartController extends MobileBaseController {
                 $order_detail_url = U("Mobile/User/order_detail",array('id'=>$order_id));
                 header("Location: $order_detail_url");
             }
-        }                 
+        }
         //微信浏览器
         if(strstr($_SERVER['HTTP_USER_AGENT'],'MicroMessenger'))
-            $paymentList = M('Plugin')->where("`type`='payment' and status = 1 and code in('weixin','cod')")->select();            
-        else 
-            $paymentList = M('Plugin')->where("`type`='payment' and status = 1 and  scene in(1)")->select();        
-        
-        $paymentList = convert_arr_key($paymentList, 'code');                
+            $paymentList = M('Plugin')->where("`type`='payment' and status = 1 and code in('weixin','cod')")->select();
+        else
+            $paymentList = M('Plugin')->where("`type`='payment' and status = 1 and  scene in(1)")->select();
+
+        $paymentList = convert_arr_key($paymentList, 'code');
         foreach($paymentList as $key => $val)
         {
-            $val['config_value'] = unserialize($val['config_value']);            
+            $val['config_value'] = unserialize($val['config_value']);
             if($val['config_value']['is_bank'] == 2)
             {
-                $bankCodeList[$val['code']] = unserialize($val['bank_code']);        
-            }                
-        }                
-        
-        $bank_img = include 'Application/Home/Conf/bank.php'; // 银行对应图片        
-        $payment = M('Plugin')->where("`type`='payment' and status = 1")->select();        
-        $this->assign('paymentList',$paymentList);        
+                $bankCodeList[$val['code']] = unserialize($val['bank_code']);
+            }
+        }
+
+        $bank_img = include 'Application/Home/Conf/bank.php'; // 银行对应图片
+        $payment = M('Plugin')->where("`type`='payment' and status = 1")->select();
+        $this->assign('paymentList',$paymentList);
         $this->assign('bank_img',$bank_img);
         $this->assign('master_order_sn', $master_order_sn); // 主订单号
-        $this->assign('sum_order_amount', $sum_order_amount); // 所有订单应付金额        
+        $this->assign('sum_order_amount', $sum_order_amount); // 所有订单应付金额
         $this->assign('order',$order);
-        $this->assign('bankCodeList',$bankCodeList);        
+        $this->assign('bankCodeList',$bankCodeList);
         $this->assign('pay_date',date('Y-m-d', strtotime("+1 day")));
-        $this->display();                   
+        $this->display();
     }
 
     /*
@@ -271,20 +280,20 @@ class CartController extends MobileBaseController {
         $where = " session_id = '$this->session_id' "; // 默认按照 session_id 查询
         $this->user_id && $where = " user_id = ".$this->user_id; // 如果这个用户已经等了则按照用户id查询
 
-        $cartList = M('Cart')->where($where)->getField("id,goods_num,selected,prom_type,prom_id"); 
+        $cartList = M('Cart')->where($where)->getField("id,goods_num,selected,prom_type,prom_id");
 
         if($post_goods_num)
         {
             // 修改购物车数量 和勾选状态
             foreach($post_goods_num as $key => $val)
-            {                
+            {
                 $data['goods_num'] = $val < 1 ? 1 : $val;
                 if($cartList[$key]['prom_type'] == 1) //限时抢购 不能超过购买数量
                 {
                     $flash_sale = M('flash_sale')->where("id = {$cartList[$key]['prom_id']}")->find();
                     $data['goods_num'] = $data['goods_num'] > $flash_sale['buy_limit'] ? $flash_sale['buy_limit'] : $data['goods_num'];
                 }
-                
+
                 $data['selected'] = $post_cart_select[$key] ? 1 : 0 ;
                 if(($cartList[$key]['goods_num'] != $data['goods_num']) || ($cartList[$key]['selected'] != $data['selected']))
                     M('Cart')->where("id = $key")->save($data);
@@ -292,16 +301,16 @@ class CartController extends MobileBaseController {
             $this->assign('select_all', $_POST['select_all']); // 全选框
         }
 
-        $result = $this->cartLogic->cartList($this->user, $this->session_id,1,1);        
+        $result = $this->cartLogic->cartList($this->user, $this->session_id,1,1);
         if(empty($result['total_price']))
             $result['total_price'] = Array( 'total_fee' =>0, 'cut_fee' =>0, 'num' => 0, 'atotal_fee' =>0, 'acut_fee' =>0, 'anum' => 0);
-        
+
         $storeList = M('store')->getField("store_id,store_name"); // 找出商家
-        $this->assign('storeList', $storeList); // 商家列表       
-        $this->assign('cartList', $result['cartList']); // 购物车的商品                
-        $this->assign('total_price', $result['total_price']); // 总计       
+        $this->assign('storeList', $storeList); // 商家列表
+        $this->assign('cartList', $result['cartList']); // 购物车的商品
+        $this->assign('total_price', $result['total_price']); // 总计
         $this->display('ajax_cart_list');
-    }   
+    }
 
 /*
  * ajax 获取用户收货地址 用于购物车确认订单页面

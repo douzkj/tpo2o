@@ -10,6 +10,7 @@
 <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
 <link rel="stylesheet" type="text/css" href="__STATIC__/css/public.css"/>
 <link rel="stylesheet" type="text/css" href="__STATIC__/css/index.css"/>
+<link rel="stylesheet" type="text/css" href="__STATIC__/font/iconfont.css">
 <script type="text/javascript" src="__STATIC__/js/jquery.js"></script>
 <script type="text/javascript" src="__STATIC__/js/TouchSlide.1.1.js"></script>
 <script type="text/javascript" src="__STATIC__/js/jquery.json.js"></script>
@@ -17,28 +18,100 @@
 <script type="text/javascript" src="__STATIC__/js/layer.js" ></script>
 <script src="__PUBLIC__/js/global.js"></script>
 <script src="__PUBLIC__/js/mobile_common.js"></script>
-
 </head>
+<style>
+    .search {
+        padding: 6px 0;
+        display: flex;
+        background: #fff;
+    }
+    .search-left {
+        width: 80px;
+        text-align: center;
+        height: 100%;
+    }
+    .search-left-img {
+        width: 12px;
+        height: 7px;
+        display: inline-block;
+        margin-left: 6px;
+    }
+    .search-left-body {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        line-height: 32px;
+    }
+    .search-left-text {
+        font-size: 16px;
+        display: inline-block;
+    }
+
+    .search-right {
+        -webkit-box-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        background: #f2f2f2;
+        margin: 0 15px 0 0;
+        border-radius: 17px;
+        font-size: 14px;
+        line-height: 33px;
+        color: #bbb; height: 100%;
+    }
+
+    .rotation-chart-footer {
+        width: 100%;
+        height: 15px;
+        position: absolute;
+        top: 221px;
+    }
+</style>
 <body>
 <div id="page" class="showpage">
 <div>
 <header id="header">
-<a href="{:U('Goods/categoryList')}" class="top_bt"></a><a href="{:U('Cart/cart')}" class='user_btn'></a>
-<span href="javascript:void(0)" class="logo">{$tpshop_config['shop_info_store_name']}</span>
+    <div class="search">
+        <div class="search-left">
+            <div class="search-left-body">
+                <div class="search-left-text" id="select_region">重庆</div>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAOCAYAAAA1+Nx+AAAACXBIWXMAAAsTAAALEwEAmpwYAAAKTWlDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVN3WJP3Fj7f92UPVkLY8LGXbIEAIiOsCMgQWaIQkgBhhBASQMWFiApWFBURnEhVxILVCkidiOKgKLhnQYqIWotVXDjuH9yntX167+3t+9f7vOec5/zOec8PgBESJpHmomoAOVKFPDrYH49PSMTJvYACFUjgBCAQ5svCZwXFAADwA3l4fnSwP/wBr28AAgBw1S4kEsfh/4O6UCZXACCRAOAiEucLAZBSAMguVMgUAMgYALBTs2QKAJQAAGx5fEIiAKoNAOz0ST4FANipk9wXANiiHKkIAI0BAJkoRyQCQLsAYFWBUiwCwMIAoKxAIi4EwK4BgFm2MkcCgL0FAHaOWJAPQGAAgJlCLMwAIDgCAEMeE80DIEwDoDDSv+CpX3CFuEgBAMDLlc2XS9IzFLiV0Bp38vDg4iHiwmyxQmEXKRBmCeQinJebIxNI5wNMzgwAABr50cH+OD+Q5+bk4eZm52zv9MWi/mvwbyI+IfHf/ryMAgQAEE7P79pf5eXWA3DHAbB1v2upWwDaVgBo3/ldM9sJoFoK0Hr5i3k4/EAenqFQyDwdHAoLC+0lYqG9MOOLPv8z4W/gi372/EAe/tt68ABxmkCZrcCjg/1xYW52rlKO58sEQjFu9+cj/seFf/2OKdHiNLFcLBWK8ViJuFAiTcd5uVKRRCHJleIS6X8y8R+W/QmTdw0ArIZPwE62B7XLbMB+7gECiw5Y0nYAQH7zLYwaC5EAEGc0Mnn3AACTv/mPQCsBAM2XpOMAALzoGFyolBdMxggAAESggSqwQQcMwRSswA6cwR28wBcCYQZEQAwkwDwQQgbkgBwKoRiWQRlUwDrYBLWwAxqgEZrhELTBMTgN5+ASXIHrcBcGYBiewhi8hgkEQcgIE2EhOogRYo7YIs4IF5mOBCJhSDSSgKQg6YgUUSLFyHKkAqlCapFdSCPyLXIUOY1cQPqQ28ggMor8irxHMZSBslED1AJ1QLmoHxqKxqBz0XQ0D12AlqJr0Rq0Hj2AtqKn0UvodXQAfYqOY4DRMQ5mjNlhXIyHRWCJWBomxxZj5Vg1Vo81Yx1YN3YVG8CeYe8IJAKLgBPsCF6EEMJsgpCQR1hMWEOoJewjtBK6CFcJg4Qxwicik6hPtCV6EvnEeGI6sZBYRqwm7iEeIZ4lXicOE1+TSCQOyZLkTgohJZAySQtJa0jbSC2kU6Q+0hBpnEwm65Btyd7kCLKArCCXkbeQD5BPkvvJw+S3FDrFiOJMCaIkUqSUEko1ZT/lBKWfMkKZoKpRzame1AiqiDqfWkltoHZQL1OHqRM0dZolzZsWQ8ukLaPV0JppZ2n3aC/pdLoJ3YMeRZfQl9Jr6Afp5+mD9HcMDYYNg8dIYigZaxl7GacYtxkvmUymBdOXmchUMNcyG5lnmA+Yb1VYKvYqfBWRyhKVOpVWlX6V56pUVXNVP9V5qgtUq1UPq15WfaZGVbNQ46kJ1Bar1akdVbupNq7OUndSj1DPUV+jvl/9gvpjDbKGhUaghkijVGO3xhmNIRbGMmXxWELWclYD6yxrmE1iW7L57Ex2Bfsbdi97TFNDc6pmrGaRZp3mcc0BDsax4PA52ZxKziHODc57LQMtPy2x1mqtZq1+rTfaetq+2mLtcu0W7eva73VwnUCdLJ31Om0693UJuja6UbqFutt1z+o+02PreekJ9cr1Dund0Uf1bfSj9Rfq79bv0R83MDQINpAZbDE4Y/DMkGPoa5hpuNHwhOGoEctoupHEaKPRSaMnuCbuh2fjNXgXPmasbxxirDTeZdxrPGFiaTLbpMSkxeS+Kc2Ua5pmutG003TMzMgs3KzYrMnsjjnVnGueYb7ZvNv8jYWlRZzFSos2i8eW2pZ8ywWWTZb3rJhWPlZ5VvVW16xJ1lzrLOtt1ldsUBtXmwybOpvLtqitm63Edptt3xTiFI8p0in1U27aMez87ArsmuwG7Tn2YfYl9m32zx3MHBId1jt0O3xydHXMdmxwvOuk4TTDqcSpw+lXZxtnoXOd8zUXpkuQyxKXdpcXU22niqdun3rLleUa7rrStdP1o5u7m9yt2W3U3cw9xX2r+00umxvJXcM970H08PdY4nHM452nm6fC85DnL152Xlle+70eT7OcJp7WMG3I28Rb4L3Le2A6Pj1l+s7pAz7GPgKfep+Hvqa+It89viN+1n6Zfgf8nvs7+sv9j/i/4XnyFvFOBWABwQHlAb2BGoGzA2sDHwSZBKUHNQWNBbsGLww+FUIMCQ1ZH3KTb8AX8hv5YzPcZyya0RXKCJ0VWhv6MMwmTB7WEY6GzwjfEH5vpvlM6cy2CIjgR2yIuB9pGZkX+X0UKSoyqi7qUbRTdHF09yzWrORZ+2e9jvGPqYy5O9tqtnJ2Z6xqbFJsY+ybuIC4qriBeIf4RfGXEnQTJAntieTE2MQ9ieNzAudsmjOc5JpUlnRjruXcorkX5unOy553PFk1WZB8OIWYEpeyP+WDIEJQLxhP5aduTR0T8oSbhU9FvqKNolGxt7hKPJLmnVaV9jjdO31D+miGT0Z1xjMJT1IreZEZkrkj801WRNberM/ZcdktOZSclJyjUg1plrQr1zC3KLdPZisrkw3keeZtyhuTh8r35CP5c/PbFWyFTNGjtFKuUA4WTC+oK3hbGFt4uEi9SFrUM99m/ur5IwuCFny9kLBQuLCz2Lh4WfHgIr9FuxYji1MXdy4xXVK6ZHhp8NJ9y2jLspb9UOJYUlXyannc8o5Sg9KlpUMrglc0lamUycturvRauWMVYZVkVe9ql9VbVn8qF5VfrHCsqK74sEa45uJXTl/VfPV5bdra3kq3yu3rSOuk626s91m/r0q9akHV0IbwDa0b8Y3lG19tSt50oXpq9Y7NtM3KzQM1YTXtW8y2rNvyoTaj9nqdf13LVv2tq7e+2Sba1r/dd3vzDoMdFTve75TsvLUreFdrvUV99W7S7oLdjxpiG7q/5n7duEd3T8Wej3ulewf2Re/ranRvbNyvv7+yCW1SNo0eSDpw5ZuAb9qb7Zp3tXBaKg7CQeXBJ9+mfHvjUOihzsPcw83fmX+39QjrSHkr0jq/dawto22gPaG97+iMo50dXh1Hvrf/fu8x42N1xzWPV56gnSg98fnkgpPjp2Snnp1OPz3Umdx590z8mWtdUV29Z0PPnj8XdO5Mt1/3yfPe549d8Lxw9CL3Ytslt0utPa49R35w/eFIr1tv62X3y+1XPK509E3rO9Hv03/6asDVc9f41y5dn3m978bsG7duJt0cuCW69fh29u0XdwruTNxdeo94r/y+2v3qB/oP6n+0/rFlwG3g+GDAYM/DWQ/vDgmHnv6U/9OH4dJHzEfVI0YjjY+dHx8bDRq98mTOk+GnsqcTz8p+Vv9563Or59/94vtLz1j82PAL+YvPv655qfNy76uprzrHI8cfvM55PfGm/K3O233vuO+638e9H5ko/ED+UPPR+mPHp9BP9z7nfP78L/eE8/sl0p8zAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAIZSURBVHjarJMxaBRBFIb/mZwHlzs5b7ld9m5vZ2YLrQI2FiLIYWVrkVbstVOwEhQsr9BCexEbSZU2hVwhiIUQBEvJ7Ew22eRuj9XNLjFc9qxO2CWXaPCV/7z/e7x575HhcAgpZYUQ8hzAJuf8Pc4ZUspLhJAneZ5veJ630e/3UZFSNizL+rm8vEwAIAzDl7Ztd84BX+12u2vVahUAHm1vb38CcIMSQgZzOADYtm2PRqP4H+H3XdedwwEAhmFcBwCa5/mb2WxWMJim2ZxMJpmUsnIW3Pf9p4yx10tLSwU9TdMEAKjneZ+11m/LRQzDqLVarUxK2TgF/oox9oxSWtCTJJlmWXYFACgAMMbuKaUG5SLNZvOCaZo/fN93ynCl1Bpj7AEhpKDHcfwriqIW53zvTwEA4Jw/Vko9PD4+Lhjq9Tq1LEtvbW2tzDWt9ZAxtlqGj8fjgziOG0KIg7lW6I1z/kJrfXc6nRaMtVqNOI7z1ff9W0EQbLqu2y93tL+/H7Xb7YtCiIKZlhOFEO+01rePjo4KerVaJb1e74PjOFfLnt3dXWVZVvukOdGTRM/zNnZ2dq4dHh4WhlLeFAAIguBbp9PhixaBLnoQQnwJw/Bymqb5ohyt9UfHcVZOW2N62qMQ4vt4PO4mSVL419lsBqXUuuu6N8+6E3pWAud8L4qiVhiGYZZleZIkU6XUgDF252+unJR3/3/H7wEAuIDgjzE59mUAAAAASUVORK5CYII=" class="search-left-img">
+
+            </div>
+        </div>
+        <div class="search-right"><a href="{:U('')}"></a>请输入目的地/活动名称</div>
+    </div>
+
 </header>
 
-<div id="scrollimg" class="scrollimg">
-  <div class="bd">
-	 <ul>
-	 	<adv pid ="2" limit="5" item="v">
-	    	<li><a href="{$v.ad_link}" <if condition="$v['target'] eq 1">target="_blank"</if> ><img src="{$v[ad_code]}" title="{$v[title]}"width="100%" style="{$v[style]}"/></a></li>
-     	</adv>
-     </ul>
-  </div>
-  <div class="hd">
-	<ul></ul>
-  </div>
-</div>
+    <div>
+        <div id="scrollimg" class="scrollimg">
+            <div class="bd">
+                <ul>
+                    <adv pid ="2" limit="5" item="v">
+                        <li><a href="{$v.ad_link}" <if condition="$v['target'] eq 1">target="_blank"</if> ><img src="{$v[ad_code]}" title="{$v[title]}"width="100%" style="{$v[style]}"/></a></li>
+                    </adv>
+                </ul>
+            </div>
+            <div class="hd">
+                <ul></ul>
+            </div>
+        </div>
+        <!--<img  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAu4AAAAeCAYAAABzEJv6AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTcgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkIxNkYyQ0U5Rjg1RjExRTg4QkJFOTRFODZBMDM0REVCIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkIxNkYyQ0VBRjg1RjExRTg4QkJFOTRFODZBMDM0REVCIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QjE2RjJDRTdGODVGMTFFODhCQkU5NEU4NkEwMzRERUIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QjE2RjJDRThGODVGMTFFODhCQkU5NEU4NkEwMzRERUIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4CL6omAAAFH0lEQVR42uzcC1NTRxjG8Y0QsSAGMCBEwNoLtt//w7S1F1vuNKlCU9FwMd138uzk9fQEEiakycn/N/PObvbkxHHNyHOWPafUbrfrIYSfXL2O9UOs32JdBgAAAACjUo71VazvY+3EepWqFIN7u8dJV7HexPox1s+xfnG1G+uaeQUAAAAGNhNrO9Y3rr6N9V2sl7Fm8066Kbjf5EKh/jWhHgAAAOgrnFu9Ujh/OOgH3jW4E+oBAABAOM9fOd+5azgfdXAfNNT/Gjr76f8I7KkHAADAeLE95y9CZ9/51wrnOwroQw/n4xTcb2Ir8bsK8Xn1lu8NAAAA7sGKgnm2LKhvhc7K+v9unIL7bU5zwnxarbfAf8V3DgAAADnsZs9tF8azAX1pEv4SkxTcb2KhfT/W767euP5BYG89AABAUdmK+PNYX6peur7VZujxpJZJUpTgfhvbO7+bCfM+4B/FavOdBwAAGM/MGmsjJ5CnkG6r6eXCT8KUBPfbtELn5lgf6Hc1ZnUYWLEHAAC4L7ZiXgudm0CttjIh3cbmpv7qheDeF9uKc6Awn0K9Lxs7Z5oAAAByzSuAb2cqjdk2l1mmieA+Ko1Ye+HzlXof7o+ZIgAAUFDrmUCeVs6tb6vnVaaI4D5JPirAW7hPq/f7mT6PvAQAAOPGHpW4Gbor476/pf4jpongPm0+KMQfKMjn9f9imgAAwJA8VQDfViDP63/BNBHcMbxwbzfP7rl+g2kCAGDq2faUWuhuV6kRygnuGM9wb8H+SOH+UO2Rxg801mKqAACYOHMK4c9VGwrjNbUbGieUE9xRIPXQuWl2T0H+UK8PXPtn6DwHHwAA3C97qsozhe5119ZUW3q9ylQR3IE89v04Ue2r9cH+xAV8VvABAPgvWyFfUxB/5trNTGtVYrpAcMcoNBTkLdQfKcynUH+k8ZPAHnwAQDFUFbZtFXzDhfM1vV7XcR6FCII7JtaFwvyh2tSvu5CfxnmKDgBglJ4qeK+5MG5bU2puPPUfMl0guAOfh/y0F//Y9S3UN0J3lb+u/gemDADg2A2aVYXvtPpdVfBO+8XXXZ8wDoI7MCLvFeCPXbBvKOincF8P3dX9JlMGABNlMXRXwVddKF9zobyqIG7tAlOGophlClAwC6oXfb6/5cJ9NuzXM4E/FQBgeHzYXnWhPC+EW80xZZhWrLgDg7kOnX33b9X6fmobOWNs4QFQdLYlxfaHr7i2mjPmW6sZpg7oDyvuwGDsB0y6OWkQ55kw/65H5R37xLQDGJEHsZYztZIz5o+lID7P9AEEd6AI5lWbdzj3rEfIt/HTHvW3jp8x9cDUqaiexFrKqYrrZ0N5hekDxhdbZYDiSyHfh3nrN13Ib6r+yRlrcgEAjCxwL7p60mNsKXO84vrLTCNQXKy4A8W3PKQf5meZMJ/CvW0Deq/Af64600XAudozd+xU77/gnwYTzB4ZuKAQnX6jZsH5sfqP9TodW9L7513o9oGclW4ABHcAQ1MZcri4UvC3G3c/6kLgUiG/5UK/jb1Tmy4GWroAuNRnXOv8tsaD2rY+j/sEpsMDfUdLCspBbUlBeUYhuazxOReyy7rALbvwPafPK+v8R6FzA+YiPz8BENwBTNv/P8P6bUA/mrpYSKv96YIhXSQEXSCEzFg6z18MZMfTxUSS9xsFf25wFyJe9nNu8incfQtTRSG3HynceinoJj4oJ2lFOu9zZhV+s+f68RScg/uOpLEUoNOf4c8DgML6V4ABACWK2saYtejjAAAAAElFTkSuQmCC" alt="" class="rotation-chart-footer">-->
+        <div class="entry-list clearfix">
+            <div class="area-list">
+                <foreach name="areas" item="area">
+                    <div class="area-item <if condition='$area[id] eq $select_area'>high-light-area</if>" onclick="selectArea('{$area.id}')">{$area.name}</div>
+                </foreach>
+                <div class="more-area-btn" onclick="getMoreArea()">展开</div>
+                <div class="hidden-area-btn" onclick="hiddenMoreArea()">收起</div>
+            </div>
+        </div>
 <script type="text/javascript">
 	TouchSlide({
 		slideCell:"#scrollimg",
@@ -49,110 +122,61 @@
 		autoPlay:true //自动播放
 	});
 </script>
-<div id="fake-search" class="index_search">
-  <div class="index_search_mid">
-  <span><img src="__STATIC__/images/xin/icosousuo.png"></span>
-    <input  type="text" id="search_text" class="search_text" value="请输入您所搜索的商品"/>
-  </div>
-</div>
-<div class="entry-list clearfix">
-	<nav>
-		<ul>
-			<li>
-				<a href="{:U('Goods/categoryList')}">
-					<img alt="全部分类" src="__STATIC__/images/1440437165699930301.png" />
-					<span>全部分类</span>
-				</a>
-			</li>
-			<li>
-				<a href="{:U('Index/street')}">
-					<img alt="店铺街" src="__STATIC__/images/1440439257667525408.png">
-					<span>店铺街</span>
-				</a>
-			</li>
-			<li>
-				<a href="{:U('Index/brand')}">
-					<img alt="品牌街" src="__STATIC__/images/1440439281976779943.png">
-					<span>品牌街</span>
-				</a>
-			</li>
-			<li>
-				<a href="{:U('Activity/discount_list')}">
-					<img alt="优惠活动" src="__STATIC__/images/1440439952487090605.png">
-					<span>优惠活动</span>
-				</a>
-			</li>
-			<li>
-				<a href="{:U('Activity/group_list')}">
-					<img alt="我的订单" src="__STATIC__/images/1440439318451279676.png" />
-					<span>团购</span>
-				</a>
-			</li>
-			<li>
-				<a href="{:U('User/order_list')}">
-					<img alt="积分商城" src="__STATIC__/images/1440439335793850371.png">
-					<span>我的订单</span>
-				</a>
-			</li>
-			<li>
-				<a href="{:U('Cart/cart')}">
-					<img alt="购物车" src="__STATIC__/images/1440439353048484531.png" />
-					<span>购物车</span>
-				</a>
-			</li>
-			<li>
-				<a href="{:U('User/index')}">
-					<img alt="个人中心" src="__STATIC__/images/1440439367001464442.png" />
-					<span>个人中心</span>
-				</a>
-			</li>
-		</ul>
-	</nav>
-</div>
+<!--<div class="entry-list clearfix">-->
+	<!--<nav>-->
+		<!--<ul>-->
+			<!--<li>-->
+				<!--<a href="{:U('Goods/categoryList')}">-->
+					<!--<img alt="全部分类" src="__STATIC__/images/1440437165699930301.png" />-->
+					<!--<span>全部商品</span>-->
+				<!--</a>-->
+			<!--</li>-->
+			<!--&lt;!&ndash;<li>&ndash;&gt;-->
+				<!--&lt;!&ndash;<a href="{:U('Index/street')}">&ndash;&gt;-->
+					<!--&lt;!&ndash;<img alt="店铺街" src="__STATIC__/images/1440439257667525408.png">&ndash;&gt;-->
+					<!--&lt;!&ndash;<span>店铺街</span>&ndash;&gt;-->
+				<!--&lt;!&ndash;</a>&ndash;&gt;-->
+			<!--&lt;!&ndash;</li>&ndash;&gt;-->
+			<!--&lt;!&ndash;<li>&ndash;&gt;-->
+				<!--&lt;!&ndash;<a href="{:U('Index/brand')}">&ndash;&gt;-->
+					<!--&lt;!&ndash;<img alt="品牌街" src="__STATIC__/images/1440439281976779943.png">&ndash;&gt;-->
+					<!--&lt;!&ndash;<span>品牌街</span>&ndash;&gt;-->
+				<!--&lt;!&ndash;</a>&ndash;&gt;-->
+			<!--&lt;!&ndash;</li>&ndash;&gt;-->
+			<!--&lt;!&ndash;<li>&ndash;&gt;-->
+				<!--&lt;!&ndash;<a href="{:U('Activity/discount_list')}">&ndash;&gt;-->
+					<!--&lt;!&ndash;<img alt="优惠活动" src="__STATIC__/images/1440439952487090605.png">&ndash;&gt;-->
+					<!--&lt;!&ndash;<span>优惠活动</span>&ndash;&gt;-->
+				<!--&lt;!&ndash;</a>&ndash;&gt;-->
+			<!--&lt;!&ndash;</li>&ndash;&gt;-->
+			<!--<li>-->
+				<!--<a href="{:U('Activity/group_list')}">-->
+					<!--<img alt="我的订单" src="__STATIC__/images/1440439318451279676.png" />-->
+					<!--<span>促销</span>-->
+				<!--</a>-->
+			<!--</li>-->
+			<!--<li>-->
+				<!--<a href="{:U('User/order_list')}">-->
+					<!--<img alt="积分商城" src="__STATIC__/images/1440439335793850371.png">-->
+					<!--<span>我的订单</span>-->
+				<!--</a>-->
+			<!--</li>-->
+			<!--<li>-->
+				<!--<a href="{:U('Cart/cart')}">-->
+					<!--<img alt="购物车" src="__STATIC__/images/1440439353048484531.png" />-->
+					<!--<span>购物车</span>-->
+				<!--</a>-->
+			<!--</li>-->
+			<!--<li>-->
+				<!--<a href="{:U('User/index')}">-->
+					<!--<img alt="个人中心" src="__STATIC__/images/1440439367001464442.png" />-->
+					<!--<span>个人中心</span>-->
+				<!--</a>-->
+			<!--</li>-->
+		<!--</ul>-->
+	<!--</nav>-->
+<!--</div>-->
 
-<div class="floor_images">
-	  <dl>
-	    <dt>
-	      <adv  limit="1" item="v" pid="300">
-            <a href="{$v.ad_link}" <if condition="$v['target'] eq 1">target="_blank"</if> >
-                <img src="{$v[ad_code]}" title="{$v[title]}" style="{$v[style]}" border="0">
-            </a>
-		  </adv>
-        </dt>
-        <dd>
-            <span class="Edge">
-		      <adv  limit="1" item="v" pid="301">
-                <a href="{$v.ad_link}" <if condition="$v['target'] eq 1">target="_blank"</if> >
-                    <img src="{$v[ad_code]}" title="{$v[title]}" style="{$v[style]}" border="0">
-                </a>
-               </adv>
-            </span>
-            <span>
-		      <adv  limit="1" item="v" pid="302">
-                <a href="{$v.ad_link}" <if condition="$v['target'] eq 1">target="_blank"</if> >
-                    <img src="{$v[ad_code]}" title="{$v[title]}" style="{$v[style]}" border="0">
-                </a>
-               </adv>
-            </span>
-        </dd>
-	  </dl>
-	  <ul>
-	    <li class="brom">
-		      <adv  limit="1" item="v" pid="303">
-                <a href="{$v.ad_link}" <if condition="$v['target'] eq 1">target="_blank"</if> >
-                    <img src="{$v[ad_code]}" title="{$v[title]}" style="{$v[style]}" border="0">
-                </a>
-               </adv>
-        </li>
-	    <li>
-		      <adv  limit="1" item="v" pid="304">
-                <a href="{$v.ad_link}" <if condition="$v['target'] eq 1">target="_blank"</if> >
-                    <img src="{$v[ad_code]}" title="{$v[title]}" style="{$v[style]}" border="0">
-                </a>
-               </adv>
-        </li>
-	  </ul>
-</div>
 <script>
 /*
 var Tday = new Array();
@@ -211,198 +235,37 @@ function clock(key)
 	}
 	setInterval(GetRTime2,1000);
 </script>
-<section class="index_floor_lou">
-	  <div class="floor_body">
-	    <h2>
-	      <em></em>促销商品
-            <!--<div class="geng"><a href="{:U('Goods/search',array('q'=>'促销'))}">更多</a><span></span></div>-->
-	    </h2>
-	    <div id="scroll_promotion">
-	        <ul>
-	         <tpshop sql="select * from __PREFIX__goods as g inner join __PREFIX__flash_sale as f on g.goods_id = f.goods_id and g.is_on_sale = 1 and g.goods_state =1 limit 3" key="key" item='val'>
-	          <li>
-	            <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" title="{$val.goods_name}"></a>
-	            <div class="index_pro">
-		            <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$val[goods_id]))}" title="{$val.goods_name}">
-		              <div class="products_kuang">
-		              	<div class="timerBox" id="surplus_text{$val[goods_id]}">0时 00分 00秒</div>
-		                <img src="{$val.goods_id|goods_thum_images=400,400}" onerror="this.src='__STATIC__/images/icon_product_null.png'">
-		              </div>
-		              <div class="goods_name">{$val.goods_name}</div>
-		            </a>
-		              <div class="price">
-                      <!--<a href="javascript:AjaxAddCart({$val[goods_id]},1,0);" class="btns">-->
-		                  <!--<img src="__STATIC__/images/index_flow.png">-->
+
+  <div class="floor_body2" >
+    <h2>————&nbsp;热销商品&nbsp;————</h2>
+
+     <ul class="product single_item info">
+        <assign name="fl" value="1"/>
+         <tpshop sql="select * from __PREFIX__goods where is_hot=1 and is_on_sale = 1 and goods_state = 1 order by sort desc limit 20" item="v" key="k">
+          <li>
+            <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" title="{$v.goods_name}">
+             <div class="index_pro">
+                  <div class="dic-num"><span class="text">{:getDiscount($v[shop_price], $v[market_price])}折</span></div>
+                  <div class="products_kuang">
+	                <img src="{$v.goods_id|goods_thum_images=400,400}"></div>
+	              <div class="goods_name">{$v.goods_name}</div>
+	              <div class="price">
+	                 <!--<a href="javascript:AjaxAddCart({$v[goods_id]},1,0);" class="btns">-->
+                      <!--<img src="__STATIC__/images/index_flow.png">-->
                       <!--</a>-->
-		                <span class="price_pro">￥{$val.price}元</span>
-		              </div>
-				</div>
-	          </li>
-	          </tpshop>
-	        </ul>
-	    </div>
-	</div>
-</section>
-
-<div class="floor_images">
-	  <dl>
-        <dt>
-          <adv  limit="1" item="v" pid="305">
-            <a href="{$v.ad_link}" <if condition="$v['target'] eq 1">target="_blank"</if> >
-                <img src="{$v[ad_code]}" title="{$v[title]}" style="{$v[style]}" border="0">
-            </a>
-           </adv>
-        </dt>
-        <dd>
-        <span class="Edge">
-          <adv  limit="1" item="v" pid="306">
-            <a href="{$v.ad_link}" <if condition="$v['target'] eq 1">target="_blank"</if> >
-                <img src="{$v[ad_code]}" title="{$v[title]}" style="{$v[style]}" border="0">
-            </a>
-           </adv>
-        </span>
-        <span>
-          <adv  limit="1" item="v" pid="307">
-            <a href="{$v.ad_link}" <if condition="$v['target'] eq 1">target="_blank"</if> >
-                <img src="{$v[ad_code]}" title="{$v[title]}" style="{$v[style]}" border="0">
-            </a>
-           </adv>
-        </span>
-        </dd>
-      </dl>
-	<strong>
-            <adv  limit="1" item="v" pid="308">
-            <a href="{$v.ad_link}" <if condition="$v['target'] eq 1">target="_blank"</if> >
-                <img src="{$v[ad_code]}" title="{$v[title]}" style="{$v[style]}" border="0">
-            </a>
-           </adv>
-    </strong>
-</div>
-
-<section class="index_floor">
-  <div class="floor_body1">
-    <h2><em></em>精品推荐
-        <!--<div class="geng"> <a href="{:U('Goods/search',array('q'=>'精品'))}">更多</a> <span></span></div>-->
-    </h2>
-    <div id="scroll_best" class="scroll_hot">
-      <div class="bd">
-        <ul>
-        <assign name="fl" value="1"/>
-         <tpshop sql="select * from __PREFIX__goods where is_recommend=1 and is_on_sale = 1 and goods_state = 1 order by sort desc limit 9" item="v" key="k">
-          <li>
-            <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" title="{$v.goods_name}">
-             <div class="index_pro">
-	              <div class="products_kuang">
-	                <img src="{$v.goods_id|goods_thum_images=400,400}"></div>
-	              <div class="goods_name">{$v.goods_name}</div>
-	              <div class="price">
-	                 <!--<a href="javascript:AjaxAddCart({$v[goods_id]},1,0);" class="btns">-->
-	                    <!--<img src="__STATIC__/images/index_flow.png">-->
-	                 <!--</a>-->
-	                 <span href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" class="price_pro">￥{$v.shop_price}元</span>
+                      <div class="price-wrapper">
+                          <span href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" class="price_pro">￥{$v.shop_price}</span>
+                          <span class="dic-price">￥{$v.market_price}</span>
+                      </div>
+                     <span class="buy-num">已销999</span>
 	              </div>
               </div>
             </a>
            </li>
-           <if condition="($fl++%3 eq 0) && ($fl lt 9)"></ul><ul></if>
            </tpshop>
-           </ul>
-       </div>
-       <div class="hd">
-          <ul></ul>
-       </div>
-      </div>
+          </ul>
     </div>
-  </section>
-  <script type="text/javascript">
-    TouchSlide({
-      slideCell:"#scroll_best",
-      titCell:".hd ul", //开启自动分页 autoPage:true ，此时设置 titCell 为导航元素包裹层
-      effect:"leftLoop",
-      autoPage:true, //自动分页
-      //switchLoad:"_src" //切换加载，真实图片路径为"_src"
-    });
-  </script>
-<section class="index_floor">
-  <div class="floor_body1" >
-    <h2>
-      <em></em>
-      新品上市
-        <!--<div class="geng"><a href="{:U('Goods/search',array('q'=>'新品'))}" >更多</a> <span></span></div>-->
-    </h2>
-    <div id="scroll_new" class="scroll_hot">
-      <div class="bd">
-        <ul>
-        <assign name="fl" value="1"/>
-         <tpshop sql="select * from __PREFIX__goods where is_new=1 and is_on_sale = 1 and goods_state = 1 order by sort desc limit 9" item="v" key="k">
-          <li>
-            <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" title="{$v.goods_name}">
-             <div class="index_pro">
-	              <div class="products_kuang">
-	                <img src="{$v.goods_id|goods_thum_images=400,400}"></div>
-	              <div class="goods_name">{$v.goods_name}</div>
-	              <div class="price">
-	                 <!--<a href="javascript:AjaxAddCart({$v[goods_id]},1,0);" class="btns">-->
-	                    <!--<img src="__STATIC__/images/index_flow.png">-->
-	                 <!--</a>-->
-	                 <span href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" class="price_pro">￥{$v.shop_price}元</span>
-	              </div>
-              </div>
-            </a>
-           </li>
-           <if condition="($fl++%3 eq 0) && ($fl lt 9)"></ul><ul></if>
-           </tpshop></ul>
-        </div>
-        <div class="hd">
-          <ul></ul>
-        </div>
-      </div>
-    </div>
-  </section>
-  <script type="text/javascript">
-    TouchSlide({
-      slideCell:"#scroll_new",
-      titCell:".hd ul", //开启自动分页 autoPage:true ，此时设置 titCell 为导航元素包裹层
-      effect:"leftLoop",
-      autoPage:true, //自动分页
-      //switchLoad:"_src" //切换加载，真实图片路径为"_src"
-    });
-  </script>
-<section class="index_floor">
-  <div class="floor_body1" >
-    <h2><em></em>热销商品
-        <!--<div class="geng"><a href="{:U('Goods/search',array('q'=>'热销'))}" >更多</a> <span></span></div>-->
-    </h2>
-    <div id="scroll_hot" class="scroll_hot">
-      <div class="bd">
-        <ul>
-        <assign name="fl" value="1"/>
-         <tpshop sql="select * from __PREFIX__goods where is_hot=1 and is_on_sale = 1 and goods_state = 1 order by sort desc limit 9" item="v" key="k">
-          <li>
-            <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" title="{$v.goods_name}">
-             <div class="index_pro">
-	              <div class="products_kuang">
-	                <img src="{$v.goods_id|goods_thum_images=400,400}"></div>
-	              <div class="goods_name">{$v.goods_name}</div>
-	              <div class="price">
-	                 <!--<a href="javascript:AjaxAddCart({$v[goods_id]},1,0);" class="btns">-->
-	                    <!--<img src="__STATIC__/images/index_flow.png">-->
-	                 <!--</a>-->
-	                 <span href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" class="price_pro">￥{$v.shop_price}元</span>
-	              </div>
-              </div>
-            </a>
-           </li>
-           <if condition="($fl++%3 eq 0) && ($fl lt 9)"></ul><ul></if>
-           </tpshop></ul>
-          </div>
-        <div class="hd">
-          <ul></ul>
-        </div>
-      </div>
-    </div>
-  </section>
-  <script type="text/javascript">
+<script type="text/javascript">
     TouchSlide({
       slideCell:"#scroll_hot",
       titCell:".hd ul", //开启自动分页 autoPage:true ，此时设置 titCell 为导航元素包裹层
@@ -413,15 +276,6 @@ function clock(key)
   </script>
 
 
-<section class="index_floor_lou">
-    <div class="floor_body ">
-        <h2>
-            <em></em><div class="geng"><a href="javascript:void(0);" >更多</a> <span></span></div>
-         </h2>
-        <ul>
-         </ul>
-    </div>
-</section>
 
 <div id="index_banner" class="index_banner">
 	<div class="bd">
@@ -479,18 +333,32 @@ function getGoodsList(){
 	});
 }
 </script>
-<div class="floor_body2" >
-  <h2>————&nbsp;猜你喜欢&nbsp;————</h2>
-  <div id="J_ItemList">
-    <ul class="product single_item info">
-    </ul>
-    <a href="javascript:;" class="get_more" style="text-align:center; display:block;">
-    <img src='__STATIC__/images/category/loader.gif' width="12" height="12"> </a>
-  </div>
-  <div id="getmore" style="font-size:.24rem;text-align: center;color:#888;padding:.25rem .24rem .4rem;">
-  	<a href="javascript:void(0)" onClick="getGoodsList()">点击加载更多</a>
-  </div>
-</div>
+        <div class="floor_body2" >
+            <h2>————&nbsp;爆款推荐&nbsp;————</h2>
+
+            <ul class="product single_item info">
+                <assign name="fl" value="1"/>
+                <tpshop sql="select * from __PREFIX__goods where is_recommend=1 and is_on_sale = 1 and goods_state = 1 order by sort desc limit 20" item="v" key="k">
+                    <li>
+                        <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" title="{$v.goods_name}">
+                            <div class="index_pro">
+                                <div class="dic-num"><span class="text">{:getDiscount($v[shop_price], $v[market_price])}折</span></div>
+                                <div class="products_kuang">
+                                    <img src="{$v.goods_id|goods_thum_images=300,300}"></div>
+                                <div class="goods_name">{$v.goods_name}</div>
+                                <div class="price">
+                                    <!--<a href="javascript:AjaxAddCart({$v[goods_id]},1,0);" class="btns">-->
+                                    <!--<img src="__STATIC__/images/index_flow.png">-->
+                                    <!--</a>-->
+                                    <span href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" class="price_pro">￥{$v.shop_price}</span>
+                                    <span class="dic-price">￥{$v.market_price}</span>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </tpshop>
+            </ul>
+        </div>
 <include file="Public/footer"/>
 <script>
 function goTop(){
@@ -500,50 +368,6 @@ function goTop(){
 <a href="javascript:goTop();" class="gotop"><img src="__STATIC__/images/topup.png"></a>
 </div>
 
-
- <div id="search_hide" class="search_hide">
- <h2> <span class="close"><img src="__STATIC__/images/close.png"></span>关键搜索</h2>
- <div id="mallSearch" class="search_mid">
-        <div id="search_tips" style="display:none;"></div>
-          <ul class="search-type">
-          	<li  class="cur"  num="0">宝贝</li>
-          	<li  num="1">店铺</li>
-          </ul>
-          <div class="searchdotm">
-          <form class="set_ip"name="sourch_form" id="sourch_form" method="post" action="{:U('Goods/search')}">
-              <div class="mallSearch-input">
-                <div id="s-combobox-135">
-                    <input class="s-combobox-input" name="q" id="q"  placeholder="请输入关键词"  type="text" value="<?php echo I('q'); ?>" />
-                </div>
-                <input type="button" value="" class="button"  onclick="if($.trim($('#q').val()) != '') $('#sourch_form').submit();" />
-              </div>
-          </form>
-         </div>
-        </div>
- 		<!--
-		<div class="search_body">
-		<div class="search_box">
-		<form action="search.php" method="post" id="searchForm" name="searchForm">
-		<div>
-		<select id='search_type' name="search_type" style="width:15%;">
-			<option value='search'>宝贝</option>
-			<option value='stores'>店铺</option>
-		</select>
-		     <input class="text" type="search" name="keywords" id="keywordBox" autofocus>
-		     <button type="submit" value="搜 索" ></button>
-		</div>
-		</form>
-	    </div>
-		</div>
-       -->
-    	<section class="mix_recently_search"><h3>热门搜索</h3>
-	     <ul>
-            <foreach name="tpshop_config.hot_keywords" item="wd" key="k">
-               <li><a href="{:U('Goods/search',array('q'=>$wd))}" <if condition="$k eq 0">class="ht"</if>>{$wd}</a></li>
-            </foreach>
-	      </ul>
-        </section>
-    </div>
 
 </div>
 <include file="Public/footer_nav"/>
@@ -562,6 +386,15 @@ $(function() {
         $(".showpage").children('div').show();
         $("#search_hide").hide();
     })
+    var areaItem = document.querySelectorAll('.area-item');
+    areaItem.forEach(function(area,index){
+        area.addEventListener('click',function (e) {
+            areaItem.forEach(function(item){
+                item.classList.remove('high-light-area');
+            });
+            e.target.classList.add('high-light-area');
+        },false);
+    });
 });
 </script>
 <script>
@@ -573,5 +406,72 @@ $('#searchtype').val($(this).attr('0'));
 </script>
 <script src="__PUBLIC__/js/jqueryUrlGet.js"></script><!--获取get参数插件-->
 <script> set_first_leader(); //设置推荐人 </script>
+
+ <div class="pop-wrapper" id="pop-wrapper" style="display: none;">
+     <div class="pop">
+         <div class="pop-inner">
+             <volist name="websites_provinces" id="province" empty="暂无运营站点">
+                 <div class="area-item <if condition='$province[id] eq $select_region'>selected</if>" onclick="selectRegion('{$province.id}')">{$province.name}</div>
+             </volist>
+         </div>
+     </div>
+ </div>
+    <script>
+        document.querySelector('.search-left').addEventListener('click',function (e) {
+             var pop = document.querySelector('.pop-wrapper');
+                 pop.style.display = 'block';
+                 pop.addEventListener('click',function(e){
+                     if(e.target.id === 'pop-wrapper'){
+                       pop.style.display = 'none';
+                     }
+                 },false)
+        },false);
+
+        function selectRegion(region_id) {
+            window.location.href = '/index.php/Mobile/Index/selectProvince/province_id/'+region_id+'.html'
+        }
+
+        function selectArea(area_id) {
+            window.location.href = '/index.php/Mobile/Index/selectArea/area_id/'+area_id+'.html'
+        }
+
+        (function  () {
+            document.querySelector('.hidden-area-btn').style.display = 'none';
+            var area = document.querySelectorAll('.area-item');
+            area.forEach(function (item,index) {
+                if(index > 9){
+                    item.style.display = "none";
+                }
+            })
+        })();
+        function getMoreArea () {
+            var area = document.querySelectorAll('.area-item');
+            area.forEach(function (item,index) {
+                if(index > 9){
+                    item.style.display = "block";
+                }
+            });
+            document.querySelector('.hidden-area-btn').style.display = 'block';
+            document.querySelector('.more-area-btn').style.display = 'none';
+        }
+
+        function hiddenMoreArea() {
+            var area = document.querySelectorAll('.area-item');
+            area.forEach(function (item,index) {
+                if(index > 9){
+                    item.style.display = "none";
+                }
+            });
+            document.querySelector('.more-area-btn').style.display = 'block';
+            document.querySelector('.hidden-area-btn').style.display = 'none';
+        }
+        $(function () {
+            $("#select_region").text($(".pop-inner div.area-item.selected").text());
+        })
+
+    </script>
+
+
+
 </body>
 </html>

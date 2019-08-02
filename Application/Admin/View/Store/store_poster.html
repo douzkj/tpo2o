@@ -1,0 +1,88 @@
+<include file="Public/min-header"/>
+<div class="wrapper">
+    <include file="Public/breadcrumb"/>
+    <section class="content">
+        <!-- Main content -->
+        <div class="container-fluid">
+            <div class="pull-right">
+                <a href="javascript:history.go(-1)" data-toggle="tooltip" title="" class="btn btn-default" data-original-title="返回"><i class="fa fa-reply"></i></a>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-list"></i> 店铺海报</h3>
+                </div>
+                <div class="panel-body">
+                    <!--表单数据-->
+                    <form method="post" id="store_info">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_store">
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td class="col-md-2">店铺海报：</td>
+                                    <td>
+                                        <div class="text-center">
+                                            <a href="{$store.poster}" target="_blank">
+                                                <if condition="$store[poster] eq ''">
+                                                    <img id="poster" src="__PUBLIC__/images/not_adv.jpg" height="120">
+                                                    <else/>
+                                                    <img id="poster" src="{$store[poster]}" height="720">
+
+                                                </if>
+                                            </a>
+                                        </div>
+                                        <div class="text-center">
+                                            <input type="hidden" name="poster" value="{$store.poster}" height="720">
+                                            <input type="button" class="btn btn-default" onClick="upload_img('poster')"  value="上传图片"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                             </tbody>
+                           </table>
+                        </div>
+
+                    </div>
+                    <div class="pull-right">
+                        <input type="hidden" name="store_id" value="{$store.store_id}">
+                        <button class="btn btn-primary" onclick="actsubmit()" title="" type="button">保存</button>
+                    </div>
+			    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+$(document).ready(function(){
+	$('.btn-flat').click(function(){
+		if(!$(this).hasClass('btn-info')){
+			$(this).removeClass('btn-default');
+			$(this).addClass('btn-info');
+			$(this).siblings().addClass('btn-default');
+			$(this).siblings().removeClass('btn-info');
+			$('#'+$(this).attr('data-id')).val($(this).attr('rel'));
+		}
+	})
+})
+
+
+var flag = true;
+function actsubmit(){
+    $('#store_info').submit();
+
+}
+
+var tmp_type = '';
+function upload_img(cert_type){
+	tmp_type = cert_type;
+	GetUploadify(1,'store','poster','callback');
+}
+
+function callback(img_str){
+	$('#'+tmp_type).attr('src',img_str);
+	$('input[name='+tmp_type+']').val(img_str);
+}
+</script>
+</body>
+</html>

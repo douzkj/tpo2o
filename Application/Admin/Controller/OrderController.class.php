@@ -39,7 +39,7 @@ class OrderController extends BaseController {
      */
     public function index(){
     	$begin = date('Y/m/d',(time()-30*60*60*24));//30天前
-    	$end = date('Y/m/d',strtotime('+1 days')); 	
+    	$end = date('Y/m/d',strtotime('+1 days'));
     	$this->assign('timegap',$begin.'-'.$end);
         $this->display();
     }
@@ -48,7 +48,7 @@ class OrderController extends BaseController {
      *Ajax首页
      */
     public function ajaxindex(){
-        $orderLogic = new OrderLogic();       
+        $orderLogic = new OrderLogic();
         $timegap = I('timegap');
         if($timegap){
         	$gap = explode('-', $timegap);
@@ -69,13 +69,13 @@ class OrderController extends BaseController {
             {
                 $condition['store_id'] = array('in',$store_id_arr);
             }
-        }                
+        }
         I('order_sn') ? $condition['order_sn'] = trim(I('order_sn')) : false;
         I('order_status') != '' ? $condition['order_status'] = I('order_status') : false;
         I('pay_status') != '' ? $condition['pay_status'] = I('pay_status') : false;
         I('pay_code') != '' ? $condition['pay_code'] = I('pay_code') : false;
         I('shipping_status') != '' ? $condition['shipping_status'] = I('shipping_status') : false;
-        I('user_id') ? $condition['user_id'] = trim(I('user_id')) : false;
+        I(') ? $condition['user_id'] = trim(I('user_id')) : false;
         
         $sort_order = I('order_by','DESC').' '.I('sort');
         $count = M('order')->where($condition)->count();

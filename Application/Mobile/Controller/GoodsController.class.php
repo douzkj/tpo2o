@@ -27,6 +27,11 @@ class GoodsController extends MobileBaseController {
         $this->display();
     }
 
+    public function areaList()
+    {
+        $this->display();
+    }
+
     /**
      * 商品列表页
      */
@@ -150,6 +155,10 @@ class GoodsController extends MobileBaseController {
         C('TOKEN_ON',true);
         $goodsLogic = new \Home\Logic\GoodsLogic();
         $goods_id = I("get.id");
+        $ref_id = I('get.ref_id');
+        if ($ref_id) {
+            session('');
+        }
         $goods = M('Goods')->where("goods_id = $goods_id")->find();
         if(empty($goods)){
         	$this->tp404('此商品不存在或者已下架');
@@ -186,6 +195,11 @@ class GoodsController extends MobileBaseController {
         $this->assign('goods_images_list',$goods_images_list);//商品缩略图
 		$goods['discount'] = round($goods['shop_price']/$goods['market_price'],2)*10;
         $this->assign('goods',$goods);
+        $shop_ids = M('goods_shop')->where(['goods_id' => $goods_id])->getField('shop_id', true);
+        if ($shop_ids) {
+            $shops = M('store_shops')->where(['id' => ['in', $shop_ids], 'store_id' => $goods['store_id']])->select();
+        }
+        $this->assign('shops', $shops);
         if($goods['store_id']>0){
         	$store = M('store')->where(array('store_id'=>$goods['store_id']))->find();
         	$this->assign('store',$store);

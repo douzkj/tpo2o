@@ -14,6 +14,7 @@
 
 namespace Home\Logic;
 
+use Think\Log;
 use Think\Model\RelationModel;
 use Think\Page;
 
@@ -43,12 +44,12 @@ class UsersLogic extends RelationModel
         }
         return $result;
     }
-    
+
     /*
      * app端登陆
      */
     public function app_login($username,$password){
-       
+
     	$result = array();
         if(!$username || !$password)
            $result= array('status'=>0,'msg'=>'请填写账号或密码');
@@ -62,15 +63,15 @@ class UsersLogic extends RelationModel
         }else{
             //查询用户信息之后, 查询用户的登记昵称
             $levelId = $user['level'];
-            $levelName = M("user_level")->where("level_id = {$levelId}")->getField("level_name"); 
-            $user['level_name'] = $levelName;            
+            $levelName = M("user_level")->where("level_id = {$levelId}")->getField("level_name");
+            $user['level_name'] = $levelName;
             $user['token'] = md5(time().mt_rand(1,999999999));
             M('users')->where("user_id = {$user['user_id']}")->save(array('token'=>$user['token'],'last_login'=>time()));
             $result = array('status'=>1,'msg'=>'登陆成功','result'=>$user);
         }
         return $result;
-    }       
-    
+    }
+
     //绑定账号
     public function oauth_bind($data = array()){
     	$user = session('user');
@@ -85,7 +86,7 @@ class UsersLogic extends RelationModel
     		return array('status'=>-1,'msg'=>'您的账号已绑定过，请不要重复绑定');
     	}
     }
-    
+
     /*
      * 第三方登录
      */
@@ -114,7 +115,7 @@ class UsersLogic extends RelationModel
             $map['first_leader'] = cookie('first_leader'); // 推荐人id
             if($_GET['first_leader'])
                 $map['first_leader'] = $_GET['first_leader']; // 微信授权登录返回时 get 带着参数的
-            
+
             // 如果找到他老爸还要找他爷爷他祖父等
             if($map['first_leader'])
             {
@@ -125,27 +126,27 @@ class UsersLogic extends RelationModel
 			{
 				$map['first_leader'] = 0;
 			}
-            // 成为分销商条件  
-            //$distribut_condition = tpCache('distribut.condition'); 
-            //if($distribut_condition == 0)  // 直接成为分销商, 每个人都可以做分销        
-            $map['is_distribut']  = 1;        
-            
+            // 成为分销商条件
+            //$distribut_condition = tpCache('distribut.condition');
+            //if($distribut_condition == 0)  // 直接成为分销商, 每个人都可以做分销
+            $map['is_distribut']  = 1;
+
             $row_id = M('users')->add($map);
 			// 会员注册送优惠券
 			$coupon = M('coupon')->where("send_end_time > ".time()." and ((createnum - send_num) > 0 or createnum = 0) and type = 2")->select();
 			foreach ($coupon as $key => $val)
 			{
-				// 送券            
+				// 送券
 				M('coupon_list')->add(array('cid'=>$val['id'],'type'=>$val['type'],'uid'=>$row_id,'send_time'=>time()));
-				M('Coupon')->where("id = {$val['id']}")->setInc('send_num'); // 优惠券领取数量加一            
+				M('Coupon')->where("id = {$val['id']}")->setInc('send_num'); // 优惠券领取数量加一
 			}
-						
+
         }else
         {
             $user['token'] = md5(time().mt_rand(1,999999999));
             M('users')->where("user_id = '{$user['user_id']}'")->save(array('token'=>$user['token'],'last_login'=>time()));
         }
-		 
+
         return array('status'=>1,'msg'=>'登陆成功','result'=>$user);
     }
 
@@ -195,20 +196,20 @@ class UsersLogic extends RelationModel
         }else
 		{
 			$map['first_leader'] = 0;
-		}              
-        
-        // 成为分销商条件  
-        //$distribut_condition = tpCache('distribut.condition'); 
-        //if($distribut_condition == 0)  // 直接成为分销商, 每个人都可以做分销        
+		}
+
+        // 成为分销商条件
+        //$distribut_condition = tpCache('distribut.condition');
+        //if($distribut_condition == 0)  // 直接成为分销商, 每个人都可以做分销
         $map['is_distribut']  = 1; // 默认每个人都可以成为分销商
-        
+
         $user_id = M('users')->add($map);
-        if(!$user_id)        
-            return array('status'=>-1,'msg'=>'注册失败','result'=>'');        
-            
+        if(!$user_id)
+            return array('status'=>-1,'msg'=>'注册失败','result'=>'');
+
         $pay_points = tpCache('basic.reg_integral'); // 会员注册赠送积分
         if($pay_points > 0)
-            accountLog($user_id, 0,$pay_points, '会员注册赠送积分'); // 记录日志流水                  
+            accountLog($user_id, 0,$pay_points, '会员注册赠送积分'); // 记录日志流水
         $user = M('users')->where("user_id = {$user_id}")->find();
         // 会员注册送优惠券
         $coupon = M('coupon')->where("send_end_time > ".time()." and ((createnum - send_num) > 0 or createnum = 0) and type = 2")->select();
@@ -218,7 +219,7 @@ class UsersLogic extends RelationModel
         		M('coupon_list')->add(array('cid'=>$val['id'],'type'=>$val['type'],'uid'=>$user_id,'send_time'=>time()));
         		M('Coupon')->where("id = {$val['id']}")->setInc('send_num'); // 优惠券领取数量加一
         	}
-        }       
+        }
         return array('status'=>1,'msg'=>'注册成功','result'=>$user);
     }
 
@@ -231,17 +232,17 @@ class UsersLogic extends RelationModel
         $user_info = M('users')->where("user_id = {$user_id}")->find();
         if(!$user_info)
             return false;
-         
-         $user_info['coupon_count'] = M('coupon_list')->where("uid = $user_id and use_time = 0")->count(); //获取优惠券列表         
-         $user_info['collect_count'] = M('goods_collect')->where(array('user_id'=>$user_id))->count(); //获取收藏数量         
-                                    
+
+         $user_info['coupon_count'] = M('coupon_list')->where("uid = $user_id and use_time = 0")->count(); //获取优惠券列表
+         $user_info['collect_count'] = M('goods_collect')->where(array('user_id'=>$user_id))->count(); //获取收藏数量
+
          $user_info['waitPay']     = M('order')->where("user_id = $user_id ".C('WAITPAY'))->count(); //待付款数量
-         $user_info['waitSend']    = M('order')->where("user_id = $user_id ".C('WAITSEND'))->count(); //待发货数量         
-         $user_info['waitReceive'] = M('order')->where("user_id = $user_id ".C('WAITRECEIVE'))->count(); //待收货数量                  
+         $user_info['waitSend']    = M('order')->where("user_id = $user_id ".C('WAITSEND'))->count(); //待发货数量
+         $user_info['waitReceive'] = M('order')->where("user_id = $user_id ".C('WAITRECEIVE'))->count(); //待收货数量
          $user_info['order_count'] = $user_info['waitPay'] + $user_info['waitSend'] + $user_info['waitReceive'];
          return array('status'=>1,'msg'=>'获取成功','result'=>$user_info);
      }
-     
+
     /*
      * 获取最近一笔订单
      */
@@ -294,10 +295,10 @@ class UsersLogic extends RelationModel
      * 获取优惠券
      */
     public function get_coupon($user_id,$type =0 ){
-       
+
         //查询条件
-        //    $type = I('get.type',0);           
-     
+        //    $type = I('get.type',0);
+
 
         $where = ' AND l.order_id = 0 AND c.use_end_time > '.time(); // 未使用
         if($type == 1){
@@ -307,7 +308,7 @@ class UsersLogic extends RelationModel
         if($type == 2){
             //已过期
             $where = ' AND '.time().' > c.use_end_time ';
-        }        
+        }
         //获取数量
         $sql = "SELECT count(l.id) as total_num FROM __PREFIX__coupon_list".
             " l LEFT JOIN __PREFIX__coupon".
@@ -347,7 +348,7 @@ class UsersLogic extends RelationModel
         $return['status'] = 3;
         $return['msg'] = '获取成功';
         $return['result'] = $result;
-        $return['show'] = $show;        
+        $return['show'] = $show;
         return $return;
     }
 
@@ -362,7 +363,7 @@ class UsersLogic extends RelationModel
             //已评论
             $count2 = M('')->query("select count(*) as count from `__PREFIX__comment`  as c inner join __PREFIX__order_goods as g on c.goods_id = g.goods_id and c.order_id = g.order_id where c.user_id = $user_id");
             $count2 = $count2[0]['count'];
-            
+
             $page = new Page($count2,10);
             $sql = "select c.*,g.*,(select order_sn from  __PREFIX__order where order_id = c.order_id ) as order_sn  from  __PREFIX__comment as c inner join __PREFIX__order_goods as g on c.goods_id = g.goods_id and c.order_id = g.order_id where c.user_id = $user_id order by c.add_time desc LIMIT {$page->firstRow},{$page->listRows}";
         }else{
@@ -390,7 +391,7 @@ class UsersLogic extends RelationModel
         	return array();
         }
     }
-    
+
     /**
      * 添加评论
      * @param $order_id  订单id
@@ -402,7 +403,7 @@ class UsersLogic extends RelationModel
     public function add_comment($add){
         if(!$add[order_id] || !$add[goods_id])
             return array('status'=>-1,'msg'=>'非法操作','result'=>'');
-        
+
         //检查订单是否已完成
         $order = M('order')->where("order_id = {$add[order_id]} AND user_id = {$add[user_id]}")->find();
         if($order['order_status'] != 2)
@@ -410,16 +411,16 @@ class UsersLogic extends RelationModel
 
         //检查是否已评论过
         $goods = M('comment')->where("order_id = {$add[order_id]} AND goods_id = {$add[goods_id]}")->find();
-        if($goods)            
-            return array('status'=>-1,'msg'=>'您已经评论过该商品','result'=>'');        
-        
+        if($goods)
+            return array('status'=>-1,'msg'=>'您已经评论过该商品','result'=>'');
+
         $row = M('comment')->add($add);
         if($row)
         {
             //更新订单商品表状态
             M('order_goods')->where(array('goods_id'=>$add[goods_id],'order_id'=>$add[order_id]))->save(array('is_comment'=>1));
-            M('goods')->where(array('goods_id'=>$add[goods_id]))->setInc('comment_count',1); // 评论数加一  
-            // 查看这个订单是否全部已经评论,如果全部评论了 修改整个订单评论状态            
+            M('goods')->where(array('goods_id'=>$add[goods_id]))->setInc('comment_count',1); // 评论数加一
+            // 查看这个订单是否全部已经评论,如果全部评论了 修改整个订单评论状态
             $comment_count   = M('order_goods')->where("order_id ='{$add[order_id]}' and is_comment = 0")->count();
             if($comment_count == 0) // 如果所有的商品都已经评价了 订单状态改成已评价
             {
@@ -483,8 +484,8 @@ class UsersLogic extends RelationModel
             $c = M('UserAddress')->where("user_id = $user_id")->count();
             if($c >= 20)
                 return array('status'=>-1,'msg'=>'最多只能添加20个收货地址','result'=>'');
-        }        
-        
+        }
+
         //检查手机格式
         if($post['consignee'] == '')
             return array('status'=>-1,'msg'=>'收货人不能为空','result'=>'');
@@ -508,23 +509,23 @@ class UsersLogic extends RelationModel
         }
         //添加模式
         $post['user_id'] = $user_id;
-        
+
         // 如果目前只有一个收货地址则改为默认收货地址
-        $c = M('user_address')->where("user_id = {$post['user_id']}")->count();        
+        $c = M('user_address')->where("user_id = {$post['user_id']}")->count();
         if($c == 0)  $post['is_default'] = 1;
-        
+
         $address_id = M('user_address')->add($post);
         //如果设为默认地址
         $insert_id = M()->getLastInsID();
         $map['user_id'] = $user_id;
         $map['address_id'] = array('neq',$insert_id);
-               
+
         if($post['is_default'] == 1)
             M('user_address')->where($map)->save(array('is_default'=>0));
         if(!$address_id)
             return array('status'=>-1,'msg'=>'添加失败','result'=>'');
-        
-        
+
+
         return array('status'=>1,'msg'=>'添加成功','result'=>$address_id);
     }
 
@@ -583,7 +584,7 @@ class UsersLogic extends RelationModel
         }
 
         $row = M('order')->where(array('order_id'=>$order_id,'user_id'=>$user_id))->save(array('order_status'=>3));
-				
+
         $data['order_id'] = $order_id;
         $data['action_user'] = $user_id;
         $data['action_note'] = '您取消了订单';
@@ -591,9 +592,9 @@ class UsersLogic extends RelationModel
         $data['pay_status'] = $order['pay_status'];
         $data['shipping_status'] = $order['shipping_status'];
         $data['log_time'] = time();
-        $data['status_desc'] = '用户取消订单';        
-        M('order_action')->add($data);//订单操作记录		
-		
+        $data['status_desc'] = '用户取消订单';
+        M('order_action')->add($data);//订单操作记录
+
         if(!$row)
             return array('status'=>-1,'msg'=>'操作失败','result'=>'');
         return array('status'=>1,'msg'=>'操作成功','result'=>'');
@@ -648,7 +649,7 @@ class UsersLogic extends RelationModel
         M('sms_log')->where(array('mobile'=>$mobile,'session_id'=>$session_id,'code'=>$code))->delete();
         return array('status'=>1,'msg'=>'验证成功');
     }
-    
+
     /**
      * 发送验证码
      * @param $sender 接收人
@@ -676,7 +677,7 @@ class UsersLogic extends RelationModel
     		//$send = sendSMS($sender,'您好，你的验证码是：'.$code);
                 $send = sendSMS($sender,$code);
     	}
-    	if($send){
+    	if($send > 0){
     		$info['code'] = $code;
     		$info['sender'] = $sender;
     		$check['is_check'] = 0;
@@ -684,12 +685,27 @@ class UsersLogic extends RelationModel
     		session('validate_code',$info);
     		$res = array('status'=>1,'msg'=>'验证码已发送，请注意查收');
     	}else{
+    	    $msg = [
+                '-1' => '没有该用户账户',
+                '-2' => '接口密钥不正确 [查看密钥]不是账户登陆密码',
+                '-21' => 'MD5接口密钥加密不正确',
+                '-3' => '短信数量不足',
+                '-11' => '该用户被禁用',
+                '-14' => '短信内容出现非法字符',
+                '-4' => '手机号格式不正确',
+                '-41' => '手机号码为空',
+                '-42' => '短信内容为空',
+                '-51' => '短信签名格式不正确 接口签名格式为：【签名内容】',
+                '-52' => '短信签名太长 建议签名10个字符以内',
+                '-6' => 'IP限制',
+            ];
+    	    Log::write("短信服务发送失败:[$sender]" . isset($msg[$send]) ? $msg[$send]: $send);
     		$res = array('status'=>-1,'msg'=>'验证码发送失败,请联系管理员');
     	}
     	return $res;
     }
-    
-    public function check_validate_code($code,$sender){   	
+
+    public function check_validate_code($code,$sender){
     	$check = session('validate_code');
     	if(empty($check))
     	{

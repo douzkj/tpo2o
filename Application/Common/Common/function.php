@@ -17,20 +17,20 @@ function strip_sql($string) {
             "/\bchar\b/i",
             "/\bconcat\b/i",
             "/\btruncate\b/i",
-            "/\bdrop\b/i",            
-            "/\binsert\b/i", 
-            "/\brevoke\b/i", 
-            "/\bgrant\b/i",      
-            "/\breplace\b/i", 
-            "/\balert\b/i", 
-            "/\brename\b/i",            
+            "/\bdrop\b/i",
+            "/\binsert\b/i",
+            "/\brevoke\b/i",
+            "/\bgrant\b/i",
+            "/\breplace\b/i",
+            "/\balert\b/i",
+            "/\brename\b/i",
             "/\bcreate\b/i",
             "/\bmaster\b/i",
             "/\bdeclare\b/i",
             "/\bsource\b/i",
             "/\bload\b/i",
-            "/\bcall\b/i", 
-            "/\bexec\b/i",            
+            "/\bcall\b/i",
+            "/\bexec\b/i",
 	);
 	$replace_arr = array(
             'ｕｎｉｏｎ',
@@ -42,7 +42,7 @@ function strip_sql($string) {
             'ｃｈａｒ',
             'ｃｏｎｃａｔ',
             'ｔｒｕｎｃａｔｅ',
-            'ｄｒｏｐ',            
+            'ｄｒｏｐ',
             'ｉｎｓｅｒｔ',
             'ｒｅｖｏｋｅ',
             'ｇｒａｎｔ',
@@ -54,8 +54,8 @@ function strip_sql($string) {
             'ｄｅｃｌａｒｅ',
             'ｓｏｕｒｃｅ',
             'ｌｏａｄ',
-            'ｃａｌｌ',         
-            'ｅｘｅｃ',            
+            'ｃａｌｌ',
+            'ｅｘｅｃ',
 	);
 
 	return is_array($string) ? array_map('strip_sql', $string) : preg_replace($pattern_arr, $replace_arr, $string);
@@ -65,13 +65,13 @@ function strip_sql($string) {
  * @param $arr
  * @param $key_name
  * @return array
- * 将数据库中查出的列表以指定的 id 作为数组的键名 
+ * 将数据库中查出的列表以指定的 id 作为数组的键名
  */
 function convert_arr_key($arr, $key_name)
 {
 	$arr2 = array();
 	foreach($arr as $key => $val){
-		$arr2[$val[$key_name]] = $val;        
+		$arr2[$val[$key_name]] = $val;
 	}
 	return $arr2;
 }
@@ -79,7 +79,7 @@ function convert_arr_key($arr, $key_name)
 function encrypt($str){
 	return md5(C("AUTH_CODE").$str);
 }
-            
+
 /**
  * 获取数组中的某一列
  * @param type $arr 数组
@@ -228,7 +228,7 @@ function arrayRes($status, $info, $url = "")
 {
     return array("status" => $status, "info" => $info, "url" => $url);
 }
-       
+
 /**
  * @param $arr
  * @param $key_name
@@ -251,15 +251,15 @@ function get_id_val($arr, $key_name,$key_name2)
  * @return boolean
  */
 function checkAttrValues($attr_values)
-{        
-    if((trim($attr_values) == '') && ($_POST['attr_input_type'] == '1'))        
+{
+    if((trim($attr_values) == '') && ($_POST['attr_input_type'] == '1'))
         return false;
     else
         return true;
  }
- 
+
  // 定义一个函数getIP() 客户端IP，
-function getIP(){            
+function getIP(){
     if (getenv("HTTP_CLIENT_IP"))
          $ip = getenv("HTTP_CLIENT_IP");
     else if(getenv("HTTP_X_FORWARDED_FOR"))
@@ -267,25 +267,25 @@ function getIP(){
     else if(getenv("REMOTE_ADDR"))
          $ip = getenv("REMOTE_ADDR");
     else $ip = "Unknow";
-    
-    if(preg_match('/^((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1 -9]?\d))))$/', $ip))          
+
+    if(preg_match('/^((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1 -9]?\d))))$/', $ip))
         return $ip;
     else
         return '';
 }
 // 服务器端IP
- function serverIP(){   
-  return gethostbyname($_SERVER["SERVER_NAME"]);   
- }  
- 
- 
+ function serverIP(){
+  return gethostbyname($_SERVER["SERVER_NAME"]);
+ }
+
+
  /**
   * 自定义函数递归的复制带有多级子目录的目录
   * 递归复制文件夹
   * @param type $src 原目录
   * @param type $dst 复制到的目录
-  */                        
-//参数说明：            
+  */
+//参数说明：
 //自定义函数递归的复制带有多级子目录的目录
 function recurse_copy($src, $dst)
 {
@@ -351,7 +351,7 @@ function delFile($dir,$file_type='') {
 	}
 }
 
- 
+
 /**
  * 多个数组的笛卡尔积
 *
@@ -363,13 +363,13 @@ function combineDika() {
 	$cnt = count($data);
 	$result = array();
     $arr1 = array_shift($data);
-	foreach($arr1 as $key=>$item) 
+	foreach($arr1 as $key=>$item)
 	{
 		$result[] = array($item);
-	}		
+	}
 
-	foreach($data as $key=>$item) 
-	{                                
+	foreach($data as $key=>$item)
+	{
 		$result = combineArray($result,$item);
 	}
 	return $result;
@@ -381,11 +381,11 @@ function combineDika() {
  * @param unknown_type $arr1
  * @param unknown_type $arr2
 */
-function combineArray($arr1,$arr2) {		 
+function combineArray($arr1,$arr2) {
 	$result = array();
-	foreach ($arr1 as $item1) 
+	foreach ($arr1 as $item1)
 	{
-		foreach ($arr2 as $item2) 
+		foreach ($arr2 as $item2)
 		{
 			$temp = $item1;
 			$temp[] = $item2;
@@ -437,8 +437,8 @@ function get_rand_str($randLength=6,$addtime=1,$includenumber=0){
 
 /**
  * CURL请求
- * @param $url 请求url地址
- * @param $method 请求方法 get post
+ * @param $url string 请求url地址
+ * @param $method string 请求方法 get post
  * @param null $postfields post数据数组
  * @param array $headers 请求header信息
  * @param bool|false $debug  调试开启 默认false
@@ -578,13 +578,13 @@ function isMobile()
         }
     }
             return false;
- } 
+ }
 
 //php获取中文字符拼音首字母
 function getFirstCharter($str){
       if(empty($str))
       {
-            return '';          
+            return '';
       }
       $fchar=ord($str{0});
       if($fchar>=ord('A')&&$fchar<=ord('z')) return strtoupper($str{0});
@@ -641,9 +641,9 @@ function arrayToXml($arr)
 //@add by wangqh 修复返回列表默认翻到第一页问题 @{
 function checkIsBack(){
       session("is_back" ,  I('is_back',0));
-     
+
 }
- 
+
 function cacheIsBack(){
     session("is_back" , 1);
 }
@@ -659,4 +659,19 @@ function cachePage($p){
 function getPageFromCache(){
     return session("TPSHOP_PAGE");
 }
+
+function getDiscount($shop_price, $market_price)
+{
+    return round($shop_price/$market_price,2)*10;
+}
+
+
+function getShopPosition($store_shop)
+{
+    $province = M('region')->where(['id' => $store_shop['province_id']])->getField('name');
+    $city = M('region')->where(['id' => $store_shop['city_id']])->getField('name');
+    $distinct = M('region')->where(['id' => $store_shop['district_id']])->getField('name');
+    return $province . $city . $distinct . $store_shop['position'];
+}
+
 // @}

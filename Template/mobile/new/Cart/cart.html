@@ -26,7 +26,7 @@
       <div class="h-mid">购物车   </div>
     </div>
 </div>
- 
+
 <div class="screen-wrap fullscreen login">
     <div class="page-shopping ">
       <div class="cart_list">
@@ -50,7 +50,7 @@ function showCheckoutOther(obj)
   var spanzi = obj.getElementsByTagName('span')[0];
   spanzi.className= spanzi.className == 'right_arrow_flow' ? 'right_arrow_flow2' : 'right_arrow_flow';
 }
-</script> 
+</script>
 <script type="text/javascript">
 $(document).ready(function(){
     ajax_cart_list(); // ajax 请求获取购物车列表
@@ -59,11 +59,11 @@ $(document).ready(function(){
 // ajax 提交购物车
 var before_request = 1; // 上一次请求是否已经有返回来, 有才可以进行下一次请求
 function ajax_cart_list(){
-	
+
 	if(before_request == 0) // 上一次请求没回来 不进行下一次请求
 	    return false;
 	before_request = 0;
-	
+
     $.ajax({
         type : "POST",
         url:"{:U('Mobile/Cart/ajaxCartList')}",//+tab,
@@ -71,7 +71,7 @@ function ajax_cart_list(){
         success: function(data){
             $("#cart_form").html('');
             $("#cart_form").append(data);
-			before_request = 1;			
+			before_request = 1;
         }
     });
 }
@@ -106,8 +106,8 @@ function ajax_del_cart(ids)
         success: function(data){
             if(data.status == 1)
         	{
-            	ajax_cart_list(); //ajax 请求获取购物车列表	
-        	}               
+            	ajax_cart_list(); //ajax 请求获取购物车列表
+        	}
         }
     });
 }
@@ -128,6 +128,6 @@ function del_cart_more()
     if(chk_value.length > 0)
         ajax_del_cart(chk_value.join(','));
 }
-</script> 
+</script>
 </body>
 </html>

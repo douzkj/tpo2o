@@ -10,7 +10,7 @@
 
 <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
 <link rel="stylesheet" type="text/css" href="__STATIC__/css/public.css"/>
-<link rel="stylesheet" type="text/css" href="__STATIC__/css/login.css"/>  
+<link rel="stylesheet" type="text/css" href="__STATIC__/css/login.css"/>
 <script type="text/javascript" src="__STATIC__/js/jquery.js"></script>
 <script type="text/javascript" src="__STATIC__/js/common.js"></script>
 <script type="text/javascript" src="__STATIC__/js/layer.js" ></script>
@@ -21,26 +21,37 @@
 	<div class="h-mid">会员登录     </div>
  </header>
   	<div class="denglu">
-		<form action="" method="post">        	
+		<form action="" method="post">
             <div class="Login">
 				<dl>
-	            <dt>用户名：</dt>
-			    	<dd><input type="text" name="username" id="username" placeholder="请输入邮箱/手机号" value="" /></dd>
+	            <dt>手机号：</dt>
+			    	<dd>
+                        <input onkeyup="value=value.replace(/[^\d]/g,'')" onblur="checkMobile(this.value)" type="text" name="username" id="username" placeholder="请输入手机号" value=""  />
+                        <div class="tips">
+                            <span id="mobile_phone_notice"></span>
+                        </div>
+                    </dd>
 				</dl>
                 <dl style=" margin-top:15px;">
-                <dt>密码：</dt>
-					<dd><input type="password" name="password" id="password" placeholder="密码"/></dd>
+                    <div class="yanzheng"  style=" margin-top:0px;">
+                        <div class="codeTxt">
+                            <input type="text" id="mobile_code"  name="mobile_code" placeholder="手机验证码" />
+                        </div>
+                        <div class="codePhoto">
+                            <input id="zphone" type="button" rel="mobile" value="获取手机验证码 " onClick="sendcode(this)" class="zphone" style=" color:#FFF">
+                        </div>
+                    </div>
 	            </dl>
 				<div class="field submit-btn">
 					<input type="button" class="btn_big1" onClick="checkSubmit()" value="登 录" />
 					<input type="hidden" name="referurl" id="referurl" value="{$referurl}">
 				</div>
             <div class="ng-foot">
-              <div class="ng-cookie-area" >
-                <label class="bf1 login_ffri">
-					<input type="checkbox" name="remember" value="1" checked=""> &nbsp;自动登录 
-				</label>
-              </div>
+              <!--<div class="ng-cookie-area" >-->
+                <!--<label class="bf1 login_ffri">-->
+					<!--<input type="checkbox" name="remember" value="1" checked=""> &nbsp;自动登录-->
+				<!--</label>-->
+              <!--</div>-->
               <div class="ng-link-area" >
                 <span style=" margin-right:5px; border-right:1px solid #eeeeee">
                   <a href="{:U('User/reg')}" >免费注册</a>
@@ -53,9 +64,9 @@
               <div class="third-area ">
                 <div class="third-area-a">第三方登录</div>
                 <a class="ta-qq" href="{:U('LoginApi/login',array('oauth'=>'qq'))}" target="_blank" title="QQ"></a>
-                <a class="ta-alipay" href="{:U('LoginApi/login',array('oauth'=>'alipay'))}" target="_blank" title="alipay"></a>
+                <a class="ta-weibo" href="{:U('LoginApi/login',array('oauth'=>'weixin'))}" target="_blank" title="weixin"></a>
               </div>
-            </div>			
+            </div>
           </div>
 		</form>
 	</div>
@@ -63,32 +74,28 @@
 
 function checkSubmit()
 {
-	
+
 	var username = $.trim($('#username').val());
 	var password = $.trim($('#password').val());
 	var referurl = $('#referurl').val();
 	if(username == ''){
-		showErrorMsg('用户名不能为空!');
+		showErrorMsg('手机号不能为空!');
 		return false;
 	}
 	if(!checkMobile(username) && !checkEmail(username)){
 		showErrorMsg('账号格式不匹配!');
 		return false;
 	}
-	if(password == ''){
-		showErrorMsg('密码不能为空!');
+
+	if($.trim($('#mobile_code').val()) == ''){
+		showErrorMsg('验证码不能为空!');
 		return false;
 	}
-	
-	if($.trim($('#verify_code').val()) == ''){
-		//showErrorMsg('验证码不能为空!');
-		//return false;
-	}	
 	//$('#login-form').submit();
 	$.ajax({
 		type : 'post',
 		url : '/index.php?m=Mobile&c=User&a=do_login&t='+Math.random(),
-		data : {username:username,password:password,referurl:referurl},		
+		data : {username:username,password:password,referurl:referurl},
 		dataType : 'json',
 		success : function(res){
 			if(res.status == 1){
@@ -112,7 +119,7 @@ function checkSubmit()
             return false;
         };
     }
-    
+
     function checkEmail(str){
         var reg = /^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
         if(reg.test(str)){
@@ -121,17 +128,58 @@ function checkSubmit()
             return false;
         }
     }
-    
+
     function showErrorMsg(msg){
     	//$('.msg-err').show();
     	//$('.J-errorMsg').html(msg);
     	layer.open({content:msg,time:2});
     }
-    
+
     function verify(){
         $('#verify_code_img').attr('src','/index.php?m=Home&c=User&a=verify&r='+Math.random());
      }
 
-</script>	
+     var flag = true;
+function sendcode(o){
+    if(checkMobile($.trim($("#username").val()))) {
+        $.ajax({
+            url:'/index.php?m=Mobile&c=User&a=send_validate_code&t='+Math.random(),
+            type:'post',
+            dataType:'json',
+            data:{type:$(o).attr('rel'),send:$.trim($('#username').val())},
+            success:function(res){
+                if(res.status==1){
+                    countdown(o);
+                }else{
+                    layer.open({content:res.msg,time:2});
+                }
+            }
+        })
+    } else {
+        showErrorMsg('手机号格式不正确');
+    }
+}
+
+var wait = 150;
+function countdown(obj, msg) {
+    obj = $(obj);
+    if (wait == 0) {
+        obj.removeAttr("disabled");
+        obj.val(msg);
+        wait = 150;
+    } else {
+        if (msg == undefined || msg == null) {
+            msg = obj.val();
+        }
+        obj.attr("disabled", "disabled");
+        obj.val(wait + "秒后重新获取");
+        wait--;
+        setTimeout(function() {
+            countdown(obj, msg)
+        }, 1000)
+    }
+}
+
+</script>
 </body>
 </html>

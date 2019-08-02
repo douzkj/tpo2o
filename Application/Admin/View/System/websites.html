@@ -1,0 +1,118 @@
+<include file="Public/min-header"/>
+
+<link href="__PUBLIC__/plugins/daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" />
+<script src="__PUBLIC__/plugins/daterangepicker/moment.min.js" type="text/javascript"></script>
+<script src="__PUBLIC__/plugins/daterangepicker/daterangepicker.js" type="text/javascript"></script>
+
+
+<style>
+    ul.group-list {
+        width: 96%;min-width: 1000px; margin: auto 5px;list-style: disc outside none;
+    }
+    ul.group-list li {
+        white-space: nowrap;float: left;
+        width: 150px; height: 25px;
+        padding: 3px 5px;list-style-type: none;
+        list-style-position: outside;border: 0px;margin: 0px;
+    }
+</style>
+
+<div class="wrapper">
+    <include file="Public/breadcrumb"/>
+    <section class="content" style="padding:0px 15px;">
+        <!-- Main content -->
+        <div class="container-fluid">
+            <div class="pull-right">
+                <a href="javascript:history.go(-1)" data-toggle="tooltip" title="" class="btn btn-default" data-original-title="返回"><i class="fa fa-reply"></i></a>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body ">
+                    <ul class="nav nav-tabs">
+                        <foreach name="group_list" item="vo" key="k">
+                            <li <if condition="$k eq 'websites'">class="active"</if>><a href="javascript:void(0)" data-url="{:U('System/index',array('inc_type'=>$k))}" data-toggle="tab" onclick="goset(this)">{$vo}</a></li>
+                        </foreach>
+                    </ul>
+                    <!--表单数据-->
+                    <form method="post" id="handlepost" action="{:U('System/handle')}">
+                        <!--通用信息-->
+                        <div class="tab-content" style="padding:20px 0px;">
+                            <div class="tab-pane active" id="tab_tongyong">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                    <tr>
+                                        <td class="col-sm-2">系统开通站点：</td>
+                                        <td class="col-sm-8">
+                                            <!-- 适用门店-->
+                                            <div class="tab-pane" id="tab_goods_shop">
+                                                <h4><input type="checkbox" onclick="choosebox(this)">全选</h4>
+                                                <table class="table table-bordered table-striped dataTable" id="goods_shop_table">
+                                                    <tr>
+                                                        <input type="hidden" name="provinces" value="{$config.provinces}">
+                                                        <td>
+                                                            <ul class="group-list">
+                                                                <foreach name="sites" item="site" key="k_shop">
+                                                                    <li>
+                                                                        <label>
+                                                                            <input type="checkbox"  value="{$site.id}"
+                                                                            <if condition="in_array($site['id'], explode(',', $config[provinces]))"> checked='checked='</if>
+                                                                            ck="mod-{$k_shop}">{$site.name}
+                                                                        </label>
+                                                                    </li>
+                                                                </foreach>
+                                                                <div class="clear-both"></div>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <td><input type="hidden" name="inc_type" value="{$inc_type}"></td>
+                                        <td class="text-right"><input class="btn btn-primary" type="button" onclick="adsubmit()" value="保存"></td></tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </form><!--表单数据-->
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+    function adsubmit(){
+        var checked = $('input[type=checkbox]:checked');
+        var v = '';
+        for (var i = 0; i < checked.length; i++) {
+            if (i == 0) {
+                v += checked[i].value;
+            } else {
+                v += "," + checked[i].value;
+            }
+        }
+        $("input[name=provinces]").val(v);
+        $('#handlepost').submit();
+    }
+
+    $(document).ready(function(){
+        get_province();
+    });
+
+    function goset(obj){
+        window.location.href = $(obj).attr('data-url');
+    }
+
+    function choosebox(o){
+        var vt = $(o).is(':checked');
+        if(vt){
+            $('input[type=checkbox]').prop('checked',vt);
+        }else{
+            $('input[type=checkbox]').removeAttr('checked');
+        }
+    }
+</script>
+</body>
+</html>

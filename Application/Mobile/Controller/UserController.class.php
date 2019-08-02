@@ -208,7 +208,7 @@ class UserController extends MobileBaseController
     public function order_list()
     {
         $where = ' user_id=' . $this->user_id;
-        //条件搜索 
+        //条件搜索
         if (in_array(strtoupper(I('type')), array('WAITCCOMMENT', 'COMMENTED'))) {
             $where .= " AND order_status in(1,4) "; //代评价 和 已评价
         } elseif (I('type')) {
@@ -427,20 +427,20 @@ class UserController extends MobileBaseController
      */
     public function del_address(){
         $id = I('get.id');
-        
+
         $address = M('user_address')->where("address_id = $id")->find();
-        $row = M('user_address')->where(array('user_id'=>$this->user_id,'address_id'=>$id))->delete();                
+        $row = M('user_address')->where(array('user_id'=>$this->user_id,'address_id'=>$id))->delete();
         // 如果删除的是默认收货地址 则要把第一个地址设置为默认收货地址
         if($address['is_default'] == 1)
         {
-            $address2 = M('user_address')->where("user_id = {$this->user_id}")->find();            
+            $address2 = M('user_address')->where("user_id = {$this->user_id}")->find();
             $address2 && M('user_address')->where("address_id = {$address2['address_id']}")->save(array('is_default'=>1));
-        }        
+        }
         if(!$row)
             $this->error('操作失败',U('User/address_list'));
         else
             $this->success("操作成功",U('User/address_list'));
-    } 
+    }
 
     /*
      * 评论晒单
@@ -940,15 +940,16 @@ class UserController extends MobileBaseController
         $type = I('type');
         $send = I('send');
         $logic = new UsersLogic();
-        $logic->send_validate_code($send, $type);
-    }
+        $res = $logic->send_validate_code($send, $type);
+        $this->ajaxReturn($res);
+}
 
     public function check_validate_code()
     {
         $code = I('post.code');
         $send = I('send');
         $logic = new UsersLogic();
-        $logic->check_validate_code($code, $send);
+        $this->ajaxReturn($logic->check_validate_code($code, $send));
     }
 
     /**
@@ -1007,14 +1008,14 @@ class UserController extends MobileBaseController
         $order_sn = I('order_sn', 0);
         $goods_id = I('goods_id', 0);
         $spec_key = I('spec_key');
-        
+
         $c = M('order')->where("order_id = $order_id and user_id = {$this->user_id}")->count();
         if($c == 0)
         {
             $this->error('非法操作');
             exit;
-        }          
-        
+        }
+
         $return_goods = M('return_goods')->where("order_id = $order_id and goods_id = $goods_id and spec_key = '$spec_key'")->find();
         if (!empty($return_goods)) {
             $this->success('已经提交过退货申请!', U('Mobile/User/return_goods_info', array('id' => $return_goods['id'])));
@@ -1048,8 +1049,8 @@ class UserController extends MobileBaseController
             $data['addtime'] = time();
             $data['user_id'] = $this->user_id;
             $data['type'] = I('type'); // 服务类型  退货 或者 换货
-            $data['reason'] = I('reason'); // 问题描述     
-            $data['spec_key'] = I('spec_key'); // 商品规格						       
+            $data['reason'] = I('reason'); // 问题描述
+            $data['spec_key'] = I('spec_key'); // 商品规格
             M('return_goods')->add($data);
             $this->success('申请成功,客服第一时间会帮你处理', U('Mobile/User/order_list'));
             exit;
@@ -1076,7 +1077,7 @@ class UserController extends MobileBaseController
             $goodsList = M('goods')->where("goods_id in (" . implode(',', $goods_id_arr) . ")")->getField('goods_id,goods_name');
         $this->assign('goodsList', $goodsList);
         $this->assign('list', $list);
-        $this->assign('page', $page->show());// 赋值分页输出                    	    	
+        $this->assign('page', $page->show());// 赋值分页输出
         if ($_GET['is_ajax']) {
             $this->display('return_ajax_goods_list');
             exit;
@@ -1098,14 +1099,14 @@ class UserController extends MobileBaseController
         $this->assign('return_goods', $return_goods);
         $this->display();
     }
-    
+
     public  function recharge(){
        	$order_id = I('order_id');
-        $paymentList = M('Plugin')->where("`type`='payment' and code!='cod' and status = 1 and  scene in(0,1)")->select();        
+        $paymentList = M('Plugin')->where("`type`='payment' and code!='cod' and status = 1 and  scene in(0,1)")->select();
         //微信浏览器
         if(strstr($_SERVER['HTTP_USER_AGENT'],'MicroMessenger')){
-            $paymentList = M('Plugin')->where("`type`='payment' and status = 1 and code='weixin'")->select();            
-        }        
+            $paymentList = M('Plugin')->where("`type`='payment' and status = 1 and code='weixin'")->select();
+        }
         $paymentList = convert_arr_key($paymentList, 'code');
 
         foreach($paymentList as $key => $val)
@@ -1121,11 +1122,11 @@ class UserController extends MobileBaseController
         $this->assign('paymentList',$paymentList);
         $this->assign('bank_img',$bank_img);
         $this->assign('bankCodeList',$bankCodeList);
-        
+
         if($order_id>0){
-        	$order = M('recharge')->where("order_id = $order_id")->find();    
+        	$order = M('recharge')->where("order_id = $order_id")->find();
         	$this->assign('order',$order);
-        }    
+        }
     	$this->display();
     }
     /**

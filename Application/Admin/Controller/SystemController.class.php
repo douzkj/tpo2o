@@ -8,29 +8,31 @@
  * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用 .
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ============================================================================
- * Author: 当燃      
+ * Author: 当燃
  * Date: 2015-10-09
  */
 
 namespace Admin\Controller;
 use Admin\Logic\GoodsLogic;
 class SystemController extends BaseController{
-	
+
 	/*
 	 * 配置入口
 	 */
 	public function index()
-	{          
+	{
 		/*配置列表*/
-		$group_list = array('shop_info'=>'网站信息','basic'=>'基本设置','sms'=>'短信设置','shopping'=>'购物流程设置','smtp'=>'邮件设置','water'=>'水印设置');// ,'distribut'=>'分销设置');		
+		$group_list = array('shop_info'=>'网站信息','basic'=>'基本设置','sms'=>'短信设置','shopping'=>'购物流程设置','smtp'=>'邮件设置','water'=>'水印设置', 'websites' => '开通站点');// ,'distribut'=>'分销设置');
 		$this->assign('group_list',$group_list);
 		$inc_type =  I('get.inc_type','shop_info');
 		$this->assign('inc_type',$inc_type);
-		$this->assign('config',tpCache($inc_type));//当前配置项
+        $sites = M('region')->where(['parent_id' => 0])->select();
+		$this->assign('sites', $sites);
+        $this->assign('config',tpCache($inc_type));//当前配置项
         C('TOKEN_ON',false);
 		$this->display($inc_type);
 	}
-	
+
 	/*
 	 * 新增修改配置
 	 */
@@ -42,23 +44,23 @@ class SystemController extends BaseController{
 		unset($param['inc_type']);
 		tpCache($inc_type,$param);
 		$this->success("操作成功",U('System/index',array('inc_type'=>$inc_type)));
-	}        
-        
+	}
+
        /**
         * 自定义导航
         */
     public function navigationList(){
            $model = M("Navigation");
-           $navigationList = $model->order("id desc")->select();            
+           $navigationList = $model->order("id desc")->select();
            $this->assign('navigationList',$navigationList);
-           $this->display('navigationList');          
+           $this->display('navigationList');
      }
-    
+
      /**
      * 添加修改编辑 前台导航
      */
-    public  function addEditNav(){                        
-            $model = D("Navigation");            
+    public  function addEditNav(){
+            $model = D("Navigation");
             if(IS_POST)
             {
                     $model->create();
@@ -67,49 +69,49 @@ class SystemController extends BaseController{
                         $model->save();
                     else
                         $model->add();
-                    
-                    $this->success("操作成功!!!",U('Admin/System/navigationList'));               
+
+                    $this->success("操作成功!!!",U('Admin/System/navigationList'));
                     exit;
-            }                    
-           // 点击过来编辑时                 
-           $id = $_GET['id'] ? $_GET['id'] : 0;       
-           $navigation = $model->find($id);      
-           
+            }
+           // 点击过来编辑时
+           $id = $_GET['id'] ? $_GET['id'] : 0;
+           $navigation = $model->find($id);
+
            // 系统菜单
            $GoodsLogic = new GoodsLogic();
            $cat_list = $GoodsLogic->goods_cat_list();
-           $select_option = array();                       
+           $select_option = array();
             foreach ($cat_list AS $key => $value)
             {
                     $strpad_count = $value['level']*4;
                     $select_val = U("/Home/Goods/goodsList",array('id'=>$key));
-                    $select_option[$select_val] = str_pad('',$strpad_count,"-",STR_PAD_LEFT).$value['name'];                                        
-            }           
+                    $select_option[$select_val] = str_pad('',$strpad_count,"-",STR_PAD_LEFT).$value['name'];
+            }
            $system_nav = array(
-               'http://www.tp-shop.cn' => 'tpshop官网',                              
+               'http://www.tp-shop.cn' => 'tpshop官网',
                'http://www.99soubao.com' => '搜豹公司',
                '/index.php?m=Home&c=Index&a=promoteList' => '限时抢购',
-               '/index.php?m=Home&c=Activity&a=group_list' => '团购',       
+               '/index.php?m=Home&c=Activity&a=group_list' => '团购',
                '/index.php?m=Home&c=Index&a=street' => '店铺街',
                '/index.php?m=Home&c=Goods&a=integralMall' => '积分商城',
-           );           
+           );
            $system_nav = array_merge($system_nav,$select_option);
            $this->assign('system_nav',$system_nav);
-           
+
            $this->assign('navigation',$navigation);
            $this->display('_navigation');
-    }   
-    
+    }
+
     /**
      * 删除前台 自定义 导航
      */
     public function delNav()
-    {     
+    {
         // 删除导航
-        M('Navigation')->where("id = {$_GET['id']}")->delete();   
+        M('Navigation')->where("id = {$_GET['id']}")->delete();
         $this->success("操作成功!!!",U('Admin/System/navigationList'));
     }
-	
+
 	public function refreshMenu(){
 		$pmenu = $arr = array();
 		$rs = M('system_module')->where('level>1 AND visible=1')->order('mod_id ASC')->select();
@@ -218,7 +220,7 @@ class SystemController extends BaseController{
 		$json_str = json_encode($json_arr);
 		exit($json_str);
 	}
-        
+
       //发送测试邮件
       public function send_email(){
         	$param = I('post.');
@@ -230,28 +232,28 @@ class SystemController extends BaseController{
         		exit(json_encode(0));
         	}
       }
-	        
+
     /**
-     *  管理员登录后 处理相关操作          
+     *  管理员登录后 处理相关操作
      */
      public function login_task()
      {
-         
+
         // 随机清空购物车的垃圾数据
         $time = time() - 3600; // 删除购物车数据  1小时以前的
-        M("Cart")->where("user_id = 0 and  add_time < $time")->delete();            
+        M("Cart")->where("user_id = 0 and  add_time < $time")->delete();
         $today_time = time();
-        
+
         // 发货后满多少天自动收货确认
         $auto_confirm_date = tpCache('shopping.auto_confirm_date');
-        $auto_confirm_date = $auto_confirm_date * (60 * 60 * 24); // 7天的时间戳        
-        $order_id_arr = M('order')->where("order_status = 1 and shipping_status = 1 and ($today_time - shipping_time) >  $auto_confirm_date")->getField('order_id',true);       
+        $auto_confirm_date = $auto_confirm_date * (60 * 60 * 24); // 7天的时间戳
+        $order_id_arr = M('order')->where("order_status = 1 and shipping_status = 1 and ($today_time - shipping_time) >  $auto_confirm_date")->getField('order_id',true);
         foreach($order_id_arr as $k => $v)
         {
             confirm_order($v);
-        }        
-     }     
-     
+        }
+     }
+
      function ajax_get_action()
      {
      	$control = I('controller');
@@ -265,7 +267,7 @@ class SystemController extends BaseController{
      	}
      	exit($html);
      }
-     
+
      function right_list(){
      	$group = array('system'=>'系统设置','content'=>'内容管理','goods'=>'商品中心','member'=>'会员中心',
      			'order'=>'订单中心','marketing'=>'营销推广','tools'=>'插件工具','count'=>'统计报表'
@@ -275,7 +277,7 @@ class SystemController extends BaseController{
      	$this->assign('group',$group);
      	$this->display();
      }
-      
+
      public function edit_right(){
      	if(IS_POST){
      		$data = I('post.');
@@ -316,7 +318,7 @@ class SystemController extends BaseController{
      	$this->assign('group',$group);
      	$this->display();
      }
-      
+
      public function right_del(){
      	$id = I('del_id');
      	if(is_array($id)){

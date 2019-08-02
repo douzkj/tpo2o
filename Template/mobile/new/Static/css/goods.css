@@ -28,6 +28,115 @@
 
 .product_info{ width:100%; overflow:hidden;}
 .product_info .info_dottm{ height:50px; padding-top:15px; padding-bottom:15px; background:#ffffff}
+
+
+.subNavBox .navContent .shop-list {
+}
+ .subNavBox .navContent .shop-list .shop-item {
+	 display: flex;
+	 align-items: center;
+	 padding: 11px 12px;
+	 border-bottom: 1px solid #ededed;
+ }
+ .subNavBox .navContent .shop-list .shop-item .shop-phone{
+	 width: 23px;
+	 height: 23px;
+	 text-align: center;
+	 display: contents;
+ }
+
+
+ .subNavBox .navContent .shop-list .shop-item .shop-phone i{
+	 font-size: 23px;
+	 color: red;
+ }
+
+ .subNavBox .navContent .shop-list .shop-item .shop-location-img{
+	 width: 23px;
+	 height: 23px;
+	 text-align: center;
+	 display: contents;
+ }
+
+ .subNavBox .navContent .shop-list .shop-item .shop-location-img i{
+	 font-size: 23px;
+	 color: red;
+ }
+
+
+ .subNavBox .navContent .shop-list .shop-item .shop-des{
+    flex : 1;
+    font-size: 14px;
+	line-height: 18px;
+ }
+ .timer-wrapper {
+	 display: flex;
+	 margin: 0  10px 10px 10px;
+	 font-size: 14px;
+	 background: #fff2e2;
+	 color: #ff8000;
+	 border-radius: 8px;
+ }
+ .timer-wrapper .des{
+	padding: 0 20px 0 16px;
+ }
+
+ .recommend-shops {
+
+ }
+
+ .recommend-shops .recommend-tips{
+	 display: flex;
+	 align-items: center;
+	 box-sizing: border-box;
+	 height: 41px;
+	 background: yellow;
+	 padding: 12px;
+  }
+ .recommend-shops .recommend-tips .text{
+	 font-size: 14px;
+ }
+ .recommend-shops .recommend-list {
+	 display: flex;
+	 padding: 5px 0px;
+ }
+ .recommend-shops .recommend-list .recommend-item{
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	width: 33.33%;
+	padding: 0px 5px;
+ }
+ .recommend-shops .recommend-list .recommend-item img {
+	 width: 100%;
+ }
+ .recommend-shops .recommend-list .recommend-item .desc {
+	 overflow:hidden;
+	 text-overflow:ellipsis;
+	 display:-webkit-box;
+	 -webkit-box-orient:vertical;
+	 -webkit-line-clamp:2;
+	 line-height: 16px;
+	 height: 31px;
+	 font-size: 12px;
+ }
+ .recommend-shops .recommend-list .recommend-item .price {
+	 color: red;
+	 font-size: 12px;
+	 line-height: 1;
+ }
+
+
+ .css-nobuy {
+	 line-height: 50px;
+	 text-align: center;
+	 background: rgba(0,0,0,.6);
+	 color: #fff;
+	 font-size: 16px;
+ }
+
+
+
 .info_dottm .name{ width:94%; float:left; height:50px; font-size:16px; line-height:25px; color:#333; padding-left:3%; padding-right:3%; overflow:hidden; font-weight:normal}
 .info_dottm .right{ width:18%; float:left; height:50px; font-size:16px;color:#333; border-left:1px solid #e2dfdf; margin-left:-1px; text-align:center}
 .info_dottm .right .share{ width:40px; height:50px; margin:auto;background:url(../images/pub_goods.png) no-repeat;background-size: auto 350px;background-position:0 -150px;}
@@ -646,3 +755,51 @@
 	 background-position: center;
  }
 
+ .mbody {
+	 width: 90%;
+	 max-width: 487px;
+	 margin: 0 auto;
+ }
+ .progress-bar {
+	 background: #fff;
+	 padding: 10px 15px;
+ }
+ .progress-bar .hd {
+	 position: relative;
+	 min-height: 24px;
+	 line-height: 24px;
+	 font-size: 13px;
+	 color: #333;
+	 margin-bottom: 15px;
+ }
+ .progress-bar .bar-bg {
+	 position: relative;
+	 height: 4px;
+	 border-radius: 4px;
+	 overflow: hidden;
+	 background-color: #e6e6e6;
+	 overflow: hidden;
+ }
+
+
+ .progress-bar .bar-bg .bar {
+	 position: absolute;
+	 width: 50%;
+	 height: 4px;
+	 left: 0;
+	 top: 0;
+	 background-color: #fb4f45;
+ }
+ .text-middle {
+	 display: inline-block;
+	 vertical-align: middle;
+ }
+ .progress-bar .hd .text-red {
+	 font-size: 19px;
+	 color: #fb4f45;
+ }
+ .progress-bar .hd .text-right {
+	 position: absolute;
+	 right: 15px;
+	 top: 0;
+ }

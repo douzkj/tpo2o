@@ -8,7 +8,7 @@
  * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用 .
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ============================================================================
- * Author: 当燃      
+ * Author: 当燃
  * Date: 2016-05-27
  */
 
@@ -16,7 +16,7 @@ namespace Admin\Controller;
 use Admin\Logic\StoreLogic;
 
 class StoreController extends BaseController{
-	
+
 	//店铺等级
 	public function store_grade(){
 		$model =  M('store_grade');
@@ -28,7 +28,7 @@ class StoreController extends BaseController{
 		$this->assign('page',$show);
 		$this->display();
 	}
-	
+
 	public function grade_info(){
 		$sg_id = I('sg_id');
 		if($sg_id){
@@ -37,7 +37,7 @@ class StoreController extends BaseController{
 		}
 		$this->display();
 	}
-	
+
 	public function grade_info_save(){
 		$data = I('post.');
 		if($data['sg_id'] > 0 || $data['act']=='del'){
@@ -60,7 +60,7 @@ class StoreController extends BaseController{
 			$this->error('提交失败');
 		}
 	}
-	
+
 	public function store_class(){
 		$model =  M('store_class');
 		$count = $model->where('1=1')->count();
@@ -71,7 +71,7 @@ class StoreController extends BaseController{
 		$this->assign('page',$show);
 		$this->display();
 	}
-	
+
 	//店铺分类
 	public function class_info(){
 		$sc_id = I('sc_id');
@@ -81,7 +81,7 @@ class StoreController extends BaseController{
 		}
 		$this->display();
 	}
-	
+
 	public function class_info_save(){
 		$data = I('post.');
 		if($data['sc_id'] > 0 || $data['act']=='del'){
@@ -104,7 +104,7 @@ class StoreController extends BaseController{
 			$this->error('提交失败');
 		}
 	}
-	
+
 	//普通店铺列表
 	public function store_list(){
 		$model =  M('store');
@@ -123,7 +123,7 @@ class StoreController extends BaseController{
 		$Page = new \Think\Page($count,10);
 		$list = $model->where($map)->order('store_id DESC')->limit($Page->firstRow.','.$Page->listRows)->select();
 		$this->assign('list',$list);
-		
+
 		$show = $Page->show();
 		$this->assign('page',$show);
 		$store_grade = M('store_grade')->getField('sg_id,sg_name');
@@ -131,7 +131,7 @@ class StoreController extends BaseController{
 		$this->assign('store_class',M('store_class')->getField('sc_id,sc_name'));
 		$this->display();
 	}
-	
+
 	/*添加店铺*/
 	public function store_add(){
 		if(IS_POST){
@@ -170,7 +170,7 @@ class StoreController extends BaseController{
 		$this->assign('is_own_shop',$is_own_shop);
 		$this->display();
 	}
-	
+
 	/*验证店铺名称，店铺登陆账号*/
 	public function store_check(){
 		$store_name = I('store_name');
@@ -180,7 +180,7 @@ class StoreController extends BaseController{
 		if($store_name && M('store')->where("store_name='$store_name'")->count()>0){
 			$res = array('stat'=>'fail','msg'=>'店铺名称已存在');
 		}
-		
+
 		if(!empty($user_name)){
 			if(!check_email($user_name) && !check_mobile($user_name)){
 				$res = array('stat'=>'fail','msg'=>'店主账号格式有误');
@@ -195,7 +195,7 @@ class StoreController extends BaseController{
 		}
 		respose($res);
 	}
-	
+
 	/*编辑自营店铺*/
 	public function store_edit(){
 		if(IS_POST){
@@ -212,7 +212,22 @@ class StoreController extends BaseController{
 		$this->assign('store',$store);
 		$this->display();
 	}
-	
+
+
+	public function store_poster()
+    {
+        if(IS_POST){
+            $poster = I('post.poster');
+            $store_id = I('post.store_id');
+            M('store')->where(array('store_id'=>$store_id))->save(['poster' => $poster]);
+            $this->success('编辑店铺成功',U('Store/store_list'));
+        }
+        $store_id = I('store_id');
+        $store = M('store')->where("store_id=$store_id")->find();
+        $this->assign('store',$store);
+        $this->display();
+    }
+
 	//编辑外驻店铺
 	public function store_info_edit(){
 		if(IS_POST){
@@ -245,7 +260,7 @@ class StoreController extends BaseController{
 		$this->assign('province',$province);
 		$this->display();
 	}
-	
+
 	/*删除店铺*/
 	public function store_del(){
 		$store_id = I('del_id');
@@ -263,7 +278,7 @@ class StoreController extends BaseController{
 			respose('基础自营店，不得删除');
 		}
 	}
-	
+
 	//店铺信息
 	public function store_info(){
 		$store_id = I('store_id');
@@ -281,7 +296,7 @@ class StoreController extends BaseController{
 		$this->assign('bind_class_list',$bind_class_list);
 		$this->display();
 	}
-	
+
 	//自营店铺列表
 	public function store_own_list(){
 		$model =  M('store');
@@ -299,7 +314,7 @@ class StoreController extends BaseController{
 		$count = $model->where($map)->count();
 		$Page = new \Think\Page($count,10);
 		$list = $model->where($map)->order('store_id DESC')->limit($Page->firstRow.','.$Page->listRows)->select();
-		$this->assign('list',$list);	
+		$this->assign('list',$list);
 		$show = $Page->show();
 		$this->assign('page',$show);
 		$store_grade = M('store_grade')->getField('sg_id,sg_name');
@@ -307,7 +322,7 @@ class StoreController extends BaseController{
 		$this->assign('store_class',M('store_class')->getField('sc_id,sc_name'));
 		$this->display();
 	}
-	
+
 	//店铺申请列表
 	public function apply_list(){
 		$model =  M('store_apply');
@@ -330,7 +345,7 @@ class StoreController extends BaseController{
 		$this->assign('store_class',M('store_class')->getField('sc_id,sc_name'));
 		$this->display();
 	}
-	
+
 	public function apply_del(){
 		$id = I('del_id');
 		if($id && M('store_apply')->where(array('id'=>$id))->delete()){
@@ -346,7 +361,7 @@ class StoreController extends BaseController{
 			$bind_class = M('store_bind_class')->where(array('state'=>$state))->select();
 		}else{
 			$bind_class = M('store_bind_class')->select();
-		}		
+		}
 		$goods_class = M('goods_category')->getField('id,name');
 		for($i = 0, $j = count($bind_class); $i < $j; $i++) {
 			$bind_class[$i]['class_1_name'] = $goods_class[$bind_class[$i]['class_1']];
@@ -359,7 +374,7 @@ class StoreController extends BaseController{
 		$this->assign('bind_class',$bind_class);
 		$this->display();
 	}
-	
+
 	//查看-添加店铺经营类目
 	public function store_class_info(){
 		$store_id = I('store_id');
@@ -391,8 +406,8 @@ class StoreController extends BaseController{
 		$this->assign('cat_list',$cat_list);
 		$this->display();
 	}
-	
-	
+
+
 	public function apply_class_save(){
 		$data = I('post.');
 		if($data['act']== 'del'){
@@ -408,7 +423,7 @@ class StoreController extends BaseController{
 			$this->error('提交失败');
 		}
 	}
-	
+
 	//店铺申请信息详情
 	public function apply_info(){
 		$id = I('id');
@@ -431,7 +446,7 @@ class StoreController extends BaseController{
 		$this->assign('store_grade',M('store_grade')->select());
 		$this->display();
 	}
-	
+
 	//审核店铺开通申请
 	public function review(){
 		$data = I('post.');
@@ -446,7 +461,7 @@ class StoreController extends BaseController{
 							'grade_id'=>$data['sg_id'],'store_name'=>$apply['store_name'],'sc_id'=>$apply['sc_id'],
 							'company_name'=>$apply['company_name'],'store_phone'=>$apply['store_person_mobile'],
 							'store_address'=>empty($apply['store_address']) ? '待完善' : $apply['store_address'] ,
-							'store_time'=>time(),'store_state'=>1,'store_qq'=>$apply['store_person_qq'],							
+							'store_time'=>time(),'store_state'=>1,'store_qq'=>$apply['store_person_qq'],
 					);
 					$store_id = M('store')->add($store);//通过审核开通店铺
 					if($store_id){
@@ -476,8 +491,8 @@ class StoreController extends BaseController{
 			}
 		}
 	}
-	
-	
+
+
 	public function reopen_list(){
 		$this->assign('store_class',M('store_class')->getField('sc_id,sc_name'));
 		$this->display();

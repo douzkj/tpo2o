@@ -17,71 +17,102 @@ class MobileBaseController extends Controller {
     public $session_id;
     public $weixin_config;
     public $cateTrre = array();
-    
+    public $select_region = 0;
+    public $select_area = 0;
+    public $tp_config;
+
     /*
      * 初始化操作
      */
-    public function _initialize() {       
-        $this->session_id = session_id(); // 当前的 session_id       
-        define('SESSION_ID',$this->session_id); //将当前的session_id保存为常量，供其它方法调用
-        // 判断当前用户是否手机                
+    public function _initialize() {
+        $this->session_id = session_id(); // 当前的 session_id
+
+        // 判断当前用户是否手机
         if(isMobile())
-            cookie('is_mobile','1',3600); 
-        else 
-            cookie('is_mobile','0',3600);                 
+            cookie('is_mobile','1',3600);
+        else
+            cookie('is_mobile','0',3600);
         //微信浏览器
         if(strstr($_SERVER['HTTP_USER_AGENT'],'MicroMessenger') && empty($_SESSION['openid'])){
             $this->weixin_config = M('wx_user')->find(); //获取微信配置
-            $this->assign('wechat_config', $this->weixin_config); 
+            $this->assign('wechat_config', $this->weixin_config);
             if(is_array($this->weixin_config) && $this->weixin_config['wait_access'] == 1){
                 $wxuser = $this->GetOpenid(); //授权获取openid以及微信用户信息
                 session('subscribe', $wxuser['subscribe']);// 当前这个用户是否关注了微信公众号
-                //微信自动登录                             
+                //微信自动登录
                 $logic = new UsersLogic();
-                $data = $logic->thirdLogin($wxuser);                                
-                
+                $data = $logic->thirdLogin($wxuser);
+
                 if($data['status'] == 1){
                     session('user',$data['result']);
                     setcookie('user_id',$data['result']['user_id'],null,'/');
                     setcookie('is_distribut',$data['result']['is_distribut'],null,'/');
-                    setcookie('uname',$data['result']['nickname'],null,'/');                    
+                    setcookie('uname',$data['result']['nickname'],null,'/');
                     // 登录后将购物车的商品的 user_id 改为当前登录的id
                     M('cart')->where("session_id = '{$this->session_id}'")->save(array('user_id'=>$data['result']['user_id']));
                 }
             }
-           
-            // 微信Jssdk 操作类 用分享朋友圈 JS            
+
+            // 微信Jssdk 操作类 用分享朋友圈 JS
             $jssdk = new \Mobile\Logic\Jssdk($this->weixin_config['appid'], $this->weixin_config['appsecret']);
-            $signPackage = $jssdk->GetSignPackage();            
+            $signPackage = $jssdk->GetSignPackage();
             $this->assign('signPackage', $signPackage);
         }
-         
+
+        //通过定位设置地区
+        $this->select_region = $this->getSelectProvinceCookie();
+        $this->select_area = $this->getSelectAreaCookie();
+        define('SESSION_ID',$this->session_id); //将当前的session_id保存为常量，供其它方法调用
+        define('PROVINCE_ID', $this->select_region);
+        define('AREA_ID', $this->select_area);
         $this->public_assign();
     }
-    
+
+    public function setSelectProvinceCookie($province_id)
+    {
+        setcookie('select_region', $province_id, null, '/');
+    }
+
+    public function setSelectAreaCookie($area_id)
+    {
+        setcookie('select_area', $area_id, null, '/');
+    }
+
+    public function getSelectProvinceCookie()
+    {
+        return cookie('select_region');
+    }
+    public function getSelectAreaCookie()
+    {
+        return cookie('select_area');
+    }
+
     /**
-     * 保存公告变量到 smarty中 比如 导航 
-     */   
+     * 保存公告变量到 smarty中 比如 导航
+     */
     public function public_assign()
     {
-        
+
        $tpshop_config = array();
-       $tp_config = M('config')->cache(true,TPSHOP_CACHE_TIME)->select();       
+       $tp_config = M('config')->cache(true,TPSHOP_CACHE_TIME)->select();
        foreach($tp_config as $k => $v)
        {
        	  if($v['name'] == 'hot_keywords'){
        	  	 $tpshop_config['hot_keywords'] = explode('|', $v['value']);
-       	  }       	  
+       	  }
           $tpshop_config[$v['inc_type'].'_'.$v['name']] = $v['value'];
-       }                        
-       
-       $goods_category_tree = get_goods_category_tree();    
+       }
+
+       $goods_category_tree = get_goods_category_tree();
        $this->cateTrre = $goods_category_tree;
-       $this->assign('goods_category_tree', $goods_category_tree);                     
-       $brand_list = M('brand')->cache(true,TPSHOP_CACHE_TIME)->field('id,cat_id1,logo,is_hot')->where("cat_id1>0")->select();              
+       $this->assign('goods_category_tree', $goods_category_tree);
+       $brand_list = M('brand')->cache(true,TPSHOP_CACHE_TIME)->field('id,cat_id1,logo,is_hot')->where("cat_id1>0")->select();
        $this->assign('brand_list', $brand_list);
        $this->assign('tpshop_config', $tpshop_config);
-    }      
+       $this->assign("select_region", $this->select_region);
+       $this->assign("select_area", $this->select_area);
+       $this->tp_config = $tpshop_config;
+    }
 
     // 网页授权登录获取 OpendId
     public function GetOpenid()
@@ -103,8 +134,8 @@ class MobileBaseController extends Controller {
             $data2 = $this->GetUserInfo($data['access_token'],$data['openid']);//获取微信用户信息
             $data['nickname'] = empty($data2['nickname']) ? '微信用户' : trim($data2['nickname']);
             $data['sex'] = $data2['sex'];
-            $data['head_pic'] = $data2['headimgurl']; 
-            $data['subscribe'] = $data2['subscribe'];                         
+            $data['head_pic'] = $data2['headimgurl'];
+            $data['subscribe'] = $data2['subscribe'];
             $_SESSION['openid'] = $data['openid'];
             $data['oauth'] = 'weixin';
             if(isset($data2['unionid'])){
@@ -124,8 +155,8 @@ class MobileBaseController extends Controller {
         $path_info = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
         $relate_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : $php_self.(isset($_SERVER['QUERY_STRING']) ? '?'.$_SERVER['QUERY_STRING'] : $path_info);
         return $sys_protocal.(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '').$relate_url;
-    }    
-    
+    }
+
     /**
      *
      * 通过code从工作平台获取openid机器access_token
@@ -138,39 +169,39 @@ class MobileBaseController extends Controller {
         //通过code获取网页授权access_token 和 openid 。网页授权access_token是一次性的，而基础支持的access_token的是有时间限制的：7200s。
     	//1、微信网页授权是通过OAuth2.0机制实现的，在用户授权给公众号后，公众号可以获取到一个网页授权特有的接口调用凭证（网页授权access_token），通过网页授权access_token可以进行授权后接口调用，如获取用户基本信息；
     	//2、其他微信接口，需要通过基础支持中的“获取access_token”接口来获取到的普通access_token调用。
-        $url = $this->__CreateOauthUrlForOpenid($code);       
-        $ch = curl_init();//初始化curl        
+        $url = $this->__CreateOauthUrlForOpenid($code);
+        $ch = curl_init();//初始化curl
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);//设置超时
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,FALSE);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,FALSE);
         curl_setopt($ch, CURLOPT_HEADER, FALSE);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);         
-        $res = curl_exec($ch);//运行curl，结果以jason形式返回            
-        $data = json_decode($res,true);         
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        $res = curl_exec($ch);//运行curl，结果以jason形式返回
+        $data = json_decode($res,true);
         curl_close($ch);
         return $data;
     }
-    
-    
+
+
         /**
      *
-     * 通过access_token openid 从工作平台获取UserInfo      
+     * 通过access_token openid 从工作平台获取UserInfo
      * @return openid
      */
     public function GetUserInfo($access_token,$openid)
-    {         
+    {
         // 获取用户 信息
         $url = $this->__CreateOauthUrlForUserinfo($access_token,$openid);
-        $ch = curl_init();//初始化curl        
+        $ch = curl_init();//初始化curl
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);//设置超时
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER,FALSE);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,FALSE);
         curl_setopt($ch, CURLOPT_HEADER, FALSE);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);         
-        $res = curl_exec($ch);//运行curl，结果以jason形式返回            
-        $data = json_decode($res,true);            
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        $res = curl_exec($ch);//运行curl，结果以jason形式返回
+        $data = json_decode($res,true);
         curl_close($ch);
         //获取用户是否关注了微信公众号， 再来判断是否提示用户 关注
         if(!isset($data['unionid'])){
@@ -179,11 +210,11 @@ class MobileBaseController extends Controller {
         	$subscribe_info = httpRequest($url,'GET');
         	$subscribe_info = json_decode($subscribe_info,true);
         	$data['subscribe'] = $subscribe_info['subscribe'];
-        }                
+        }
         return $data;
     }
-    
-    
+
+
     public function get_access_token(){
         //判断是否过了缓存期
         $expire_time = $this->weixin_config['web_expires'];
@@ -196,7 +227,7 @@ class MobileBaseController extends Controller {
         $web_expires = time() + 7140; // 提前60秒过期
         M('wx_user')->where(array('id'=>$this->weixin_config['id']))->save(array('web_access_token'=>$return['access_token'],'web_expires'=>$web_expires));
         return $return['access_token'];
-    }    
+    }
 
     /**
      *
@@ -236,18 +267,18 @@ class MobileBaseController extends Controller {
 
     /**
      *
-     * 构造获取拉取用户信息(需scope为 snsapi_userinfo)的url地址     
+     * 构造获取拉取用户信息(需scope为 snsapi_userinfo)的url地址
      * @return 请求的url
      */
     private function __CreateOauthUrlForUserinfo($access_token,$openid)
     {
         $urlObj["access_token"] = $access_token;
         $urlObj["openid"] = $openid;
-        $urlObj["lang"] = 'zh_CN';        
+        $urlObj["lang"] = 'zh_CN';
         $bizString = $this->ToUrlParams($urlObj);
-        return "https://api.weixin.qq.com/sns/userinfo?".$bizString;                    
-    }    
-    
+        return "https://api.weixin.qq.com/sns/userinfo?".$bizString;
+    }
+
     /**
      *
      * 拼接签名字符串

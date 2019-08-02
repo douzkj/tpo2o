@@ -8,7 +8,7 @@
  * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用 .
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ============================================================================
- * Author: 当燃      
+ * Author: 当燃
  * Date: 2016-05-29
  */
 
@@ -16,12 +16,68 @@ namespace Seller\Controller;
 use Think\Page;
 
 class StoreController extends BaseController{
+
+    /**
+     * 门店信息
+     */
+    public function shop_list() {
+            //普通店铺列表
+            $model = M('store_shops');
+            $map['store_id'] = STORE_ID;
+            $count = $model->where($map)->count();
+            $Page = new \Think\Page($count,10);
+            $list = $model->where($map)->order('sort DESC')->limit($Page->firstRow.','.$Page->listRows)->select();
+            $this->assign('list',$list);
+
+            $show = $Page->show();
+
+            $this->assign('page',$show);
+            $this->display();
+    }
+
+    public function shop_add()
+    {
+        $store = M('store_shops')->where(['id' => $_GET['shop_id']])->find();
+
+        if ($store) {
+            $city =  M('region')->where(array('parent_id'=>$store['province_id']))->select();
+            $area =  M('region')->where(array('parent_id'=>$store['city_id']))->select();
+            $this->assign('city',$city);
+            $this->assign('area',$area);
+        }
+        $province = M('region')->where(array('parent_id'=>0))->select();
+        $this->assign('province',$province);
+        $this->assign('store', $store);
+        $this->display();
+    }
+
+    public function shop_save() {
+        if (IS_POST) {
+            $data = I('post.');
+            $data['store_id'] = STORE_ID;
+            if ($data['id']) {
+                $data['created_at'] = time();
+                M('store_shops')->where(['id' => $data['id']])->save($data);
+            } else {
+                M('store_shops')->add($data);
+            }
+            $this->success("操作成功",U('Store/shop_list'));
+        }
+    }
+    public function shop_del() {
+        if (IS_POST) {
+            M('store_shops')->where(['id' => $_POST['id']])->delete();
+            respose(1);
+        }
+    }
+
+
 	public function store_info(){
 		$store = M('store')->where("store_id=".STORE_ID)->find();
 		$this->assign('store',$store);
 		$apply = M('store_apply')->where("user_id=".$store['user_id'])->find();
 		$this->assign('apply',$apply);
-		
+
 		$bind_class_list = M('store_bind_class')->where("store_id=".STORE_ID)->select();
 		$goods_class = M('goods_category')->getField('id,name');
 		for($i = 0, $j = count($bind_class_list); $i < $j; $i++) {
@@ -32,7 +88,7 @@ class StoreController extends BaseController{
 		$this->assign('bind_class_list',$bind_class_list);
 		$this->display();
 	}
-	
+
 	public function store_setting(){
 		$store = M('store')->where("store_id=".STORE_ID)->find();
 		if($store){
@@ -48,7 +104,7 @@ class StoreController extends BaseController{
 		$this->assign('store',$store);
 		$this->display();
 	}
-	
+
 	public function setting_save(){
 		$data = I('post.');
 		if($data['act']=='update'){
@@ -68,7 +124,7 @@ class StoreController extends BaseController{
 			}
 		}
 	}
-	
+
 	public function store_slide(){
 		$store = M('store')->where("store_id=".STORE_ID)->find();
 		$store_slide = $store_slide_url = array();
@@ -89,7 +145,7 @@ class StoreController extends BaseController{
 		$this->assign('store_slide_url',$store_slide_url);
 		$this->display();
 	}
-	
+
 	public function mobile_slide(){
 		$store = M('store')->where("store_id=".STORE_ID)->find();
 		$store_slide = $store_slide_url = array();
@@ -110,7 +166,7 @@ class StoreController extends BaseController{
 		$this->assign('store_slide_url',$store_slide_url);
 		$this->display();
 	}
-	
+
 	public function theme(){
 		$template = include APP_PATH.'Common/Conf/style_inc.php';
 		$theme = include APP_PATH.'Home/Conf/html.php';
@@ -120,7 +176,7 @@ class StoreController extends BaseController{
 		$this->assign('store',$store);
 		$this->display();
 	}
-	
+
 	public function bind_class_list(){
 		$bind_class_list = M('store_bind_class')->where("store_id=".STORE_ID)->select();
 		$goods_class = M('goods_category')->getField('id,name');
@@ -132,7 +188,7 @@ class StoreController extends BaseController{
 		$this->assign('bind_class_list',$bind_class_list);
 		$this->display();
 	}
-	
+
 	public function get_bind_class(){
 		$cat_list = M('goods_category')->where("parent_id = 0")->select();
 		$this->assign('cat_list',$cat_list);
@@ -148,11 +204,11 @@ class StoreController extends BaseController{
 				respose(array('stat'=>'ok'));
 			}else{
 				respose(array('stat'=>'fail','msg'=>'操作失败'));
-			}			
+			}
 		}
 		$this->display();
 	}
-	
+
 	public function bind_class_del(){
 		$data = I('post.');
 		$r = M('store_bind_class')->where(array('bid'=>$data['bid']))->delete();
@@ -163,7 +219,7 @@ class StoreController extends BaseController{
 		}
 		respose($res);
 	}
-	
+
 	public function navigation_list(){
 		$Model =  M('store_navigation');
 		$res = $Model->where("sn_store_id=".STORE_ID)->order('sn_sort')->page($_GET['p'].',10')->select();
@@ -181,7 +237,7 @@ class StoreController extends BaseController{
 		$this->assign('page',$show);
 		$this->display();
 	}
-	
+
 	public function navigation(){
 		$sn_id = I('sn_id',0);
 		if($sn_id>0){
@@ -191,7 +247,7 @@ class StoreController extends BaseController{
 		$this->initEditor();
 		$this->display();
 	}
-	
+
 	public function navigationHandle(){
 		$data = I('post.');
 		if($data['act'] == 'del'){
@@ -210,15 +266,15 @@ class StoreController extends BaseController{
 			$this->error("操作失败",U('Store/navigation_list'));
 		}
 	}
-	
+
 	public function goods_class(){
 		$Model =  M('store_goods_class');
-		$res = $Model->where("store_id=".STORE_ID)->select();	
+		$res = $Model->where("store_id=".STORE_ID)->select();
 		$cat_list = $this->getTreeClassList(2,$res);
 		$this->assign('cat_list',$cat_list);
 		$this->display();
 	}
-	
+
 	public function goods_class_info(){
 		$cat_id = I('get.cat_id',0);
 		$info['parent_id'] = I('get.parent_id',0);
@@ -230,7 +286,7 @@ class StoreController extends BaseController{
 		$this->assign('parent',$parent);
 		$this->display();
 	}
-	
+
 	public function goods_class_save(){
 		$data = I('post.');
 		if($data['act'] == 'del'){
@@ -256,7 +312,7 @@ class StoreController extends BaseController{
 		$this->assign('chat_msg',$chat_msg);
 		$this->display();
 	}
-	
+
 	function store_collect(){
 		$keywords = I('keywords');
 		$map['store_id'] = STORE_ID;
@@ -271,7 +327,7 @@ class StoreController extends BaseController{
 		$this->assign('collect',$collect);
 		$this->display();
 	}
-	
+
 	public function store_decoration(){
 		if(IS_POST){
 			//店铺装修设置
@@ -290,7 +346,7 @@ class StoreController extends BaseController{
 		$this->assign('store',$store);
 		$this->display();
 	}
-	
+
 	/**
 	 * 递归 整理分类
 	 *
@@ -322,7 +378,7 @@ class StoreController extends BaseController{
 		}
 		return $show_class;
 	}
-	
+
 	private function initEditor()
 	{
 		$this->assign("URL_upload", U('Admin/Ueditor/imageUp',array('savepath'=>'decoration')));
@@ -334,7 +390,7 @@ class StoreController extends BaseController{
 		$this->assign("URL_getMovie", U('Admin/Ueditor/getMovie',array('savepath'=>'decoration')));
 		$this->assign("URL_Home", "");
 	}
-        
+
         /**
          * 三级分销设置
          */
@@ -343,20 +399,20 @@ class StoreController extends BaseController{
             $store_distribut = M('store_distribut')->where("store_id=".STORE_ID)->find();
             if(IS_POST)
             {
-                $Model = M('store_distribut');                
+                $Model = M('store_distribut');
                 if(!$Model->create())
                     $this->error("提交失败",U('Store/distribut'));
-               
+
                 $Model->store_id = STORE_ID;
-                
-                if($store_distribut)      
+
+                if($store_distribut)
                     $Model->save();
                 else
                     $Model->add();
                 $this->success("操作成功",U('Store/distribut'));
                 exit;
-            }            
+            }
             $this->assign('config',$store_distribut);
             $this->display();
-	}            
+	}
 }

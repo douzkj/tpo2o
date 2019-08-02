@@ -1,0 +1,88 @@
+<include file="Public/min-header" />
+<div class="wrapper">
+	<include file="Public/breadcrumb"/>
+	<section class="content">
+       <div class="row">
+       		<div class="col-xs-12">
+	       		<div class="box">
+	             <div class="box-header">
+	           	   <nav class="navbar navbar-default">
+				      <div class="collapse navbar-collapse">
+	    				<div class="navbar-form form-inline">
+
+				            <div class="form-group pull-right">
+					            <a href="{:U('Store/shop_add',array('is_own_shop'=>0))}" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> 新增店铺</a>
+				            </div>
+				          </div>
+				       </div>
+	    		 	</nav>
+	               	<nav class="navbar navbar-default">
+				        <div class="collapse navbar-collapse">
+				          <form class="navbar-form form-inline" action="{:U('Store/shop_list')}" method="post">
+
+				           <div class="form-group">
+				              	<input type="text" name="title" class="form-control" placeholder="请输入门店名称">
+				            </div>
+				            <div class="form-group">
+				            	<label class="control-label" for="input-order-id">门店状态</label>
+				            	 <select name="state" class="form-control">
+				            	 	   <option>选择状态</option>
+									   <option value="1">开启</option>
+				            	 	   <option value="0">关闭</option>
+                                 </select>
+				            </div>
+				            <button type="submit" class="btn btn-primary">查询</button>
+				          </form>
+				      	</div>
+	    			</nav>
+	             </div>
+	             <div class="box-body">
+	           	 <div class="row">
+	            	<div class="col-sm-12">
+		              <table id="list-table" class="table table-bordered table-striped dataTable">
+		                 <thead>
+		                   <tr role="row">
+                               <th>门店名称</th>
+							   <th>门店地址</th>
+			                   <th>状态</th>
+		                  	   <th>排序</th>
+		                  	   <th>创建时间</th>
+		                  	   <th>操作</th>
+		                   </tr>
+		                 </thead>
+						<tbody>
+                          <foreach name="list" item="vo" key="k" >
+                             <tr role="row">
+                             <td>{$vo.title}</td>
+                             <td>{$vo.position}</td>
+							 <td><img width="20" height="20" src="__PUBLIC__/images/<if condition='$vo[state] eq 1'>yes.png<else />cancel.png</if>" onclick="changeTableVal('store_shops','id','{$vo.id}','state',this)"/></td>
+		                     <td>{$vo.sort}</td>
+		                     <td>{$vo.created_at|date='Y-m-d',###}</td>
+
+		                     <td class="text-center">
+		                      	<a class="btn btn-info" href="{:U('Store/shop_add',array('shop_id'=>$vo['id']))}">编辑</a>
+		                      	<a class="btn btn-danger" onclick="delfunc(this)" data-url="{:U('Store/shop_del')}" data-id="{$vo.shop_id}">删除</a>
+				     		</td>
+		                   </tr>
+		                  </foreach>
+		                   </tbody>
+		                 <tfoot>
+
+		                 </tfoot>
+		               </table>
+	               </div>
+	          </div>
+              <div class="row">
+              	    <div class="col-sm-6 text-left">
+              	    	<button class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
+              	    </div>
+                    <div class="col-sm-6 text-right">{$page}</div>
+              </div>
+	          </div>
+	        </div>
+       	</div>
+       </div>
+   </section>
+</div>
+</body>
+</html>

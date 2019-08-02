@@ -5,24 +5,24 @@
         <!-- Main content -->
         <div class="container-fluid">
             <div class="pull-right">
-            
+
                 <a href="javascript:history.go(-1)" data-toggle="tooltip" title="" class="btn btn-default" data-original-title="返回"><i class="fa fa-reply"></i></a>
                 <a onclick="get_help(this)" data-url="http://www.tp-shop.cn/Doc/Indexbbc/article/id/1064/developer/user.html" class="btn btn-default" href="javascript:;"><i class="fa fa-question-circle"></i> 帮助</a>
             </div>
-            <div class="panel panel-default">           
-                <div class="panel-body ">   
+            <div class="panel panel-default">
+                <div class="panel-body ">
                     <include file="store_setting_navtabs"/>
                     <!--表单数据-->
-                    <form method="post" id="handlepost" action="{:U('Store/setting_save')}">                    
+                    <form method="post" id="handlepost" action="{:U('Store/setting_save')}">
                         <!--通用信息-->
-                    <div class="tab-content" style="padding:20px 0px;">                 	  
-                        <div class="tab-pane active" id="tab_tongyong">                           
+                    <div class="tab-content" style="padding:20px 0px;">
+                        <div class="tab-pane active" id="tab_tongyong">
                             <table class="table table-bordered">
-                                <tbody> 
-                                <tr><td>店铺等级：</td>
+                                <tbody>
+                                <tr><td>商家等级：</td>
                                 	<td colspan="2">{$store.grade_name}</td>
                                 </tr>
-                                <tr><td>店铺名称：</td>
+                                <tr><td>商家名称：</td>
                                 	<td><input type="text" name="store_name" value="{$store.store_name}"></td>
                                 	<td></td>
                                 </tr>
@@ -31,15 +31,15 @@
                                     <td><textarea rows="4" name="store_zy" cols="80" >{$store.store_zy}</textarea></td>
                                		<td class="text-warning">关键字最多可输入50字，请用","进行分隔，例如”男装,女装,童装”</td>
                                 </tr>
-                                <!--   
+                                <!--
                               	<tr>
                                     <td>店铺二维码：</td>
-                                    <td>                     		
+                                    <td>
             							<img src="" height="100px" title="">
                                     </td>
                                     <td class="text-warning">保存后，生成新的二维码</td>
-                                </tr>  
-                                -->                             
+                                </tr>
+                                -->
                                 <tr>
                                     <td>店铺LOGO：</td>
                                     <td><div style="width: 200px;height: 80px;">
@@ -49,7 +49,7 @@
                          		 		<input type="button" class="button" onClick="GetUploadify(1,'store_logo','seller','callback1')"  value="上传  logo"/>
                                    </td>
                                 	<td  class="text-warning">建议使用宽200像素-高60像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</td>
-                                </tr>                                    
+                                </tr>
                             	<tr>
                                     <td>店铺banner：</td>
                                     <td><div style="height:100px;">
@@ -63,19 +63,19 @@
                                 		<p>banner背景颜色<input class="form-control" name="bgcolor" type="color" value="{$info.bgcolor}" style="width:200px;"/></p>
                                 	</td>
                                 </tr>
-                                
+
                                 <tr>
-                                    <td>店铺电话：</td>
+                                    <td>商家电话：</td>
                                     <td colspan="2"><input type="text"  pattern="^\d{1,}$" title="只能输入数字"  class="input-sm" name="store_phone" value="{$store.store_phone}"></td>
                                 </tr>
-                                <tr>
-                                	<td>客服QQ：</td>
-                                	<td colspan="2"><input type="number" name="store_qq" class="input-sm" value="{$store.store_qq}"></td>
-                                </tr>
-                                <tr>
-                                    <td>阿里旺旺：</td>
-                                    <td colspan="2"><input type="text" name="store_aliwangwang" class="input-sm" value="{$store.store_aliwangwang}"></td>
-                                </tr>
+                                <!--<tr>-->
+                                	<!--<td>客服QQ：</td>-->
+                                	<!--<td colspan="2"><input type="number" name="store_qq" class="input-sm" value="{$store.store_qq}"></td>-->
+                                <!--</tr>-->
+                                <!--<tr>-->
+                                    <!--<td>阿里旺旺：</td>-->
+                                    <!--<td colspan="2"><input type="text" name="store_aliwangwang" class="input-sm" value="{$store.store_aliwangwang}"></td>-->
+                                <!--</tr>-->
                                 <tr>
                                 	<td>店铺地址：</td>
                                 	<td colspan="2">
@@ -86,26 +86,26 @@
                                                 <option value="{$vo.id}" <if condition="$store[province_id] eq $vo[id]">selected</if>>{$vo.name}</option>
                                             </volist>
                                         </select>
-                                        </div>   
-                                        <div class="col-xs-2">                                        
+                                        </div>
+                                        <div class="col-xs-2">
                                         <select onchange="get_area(this)" id="city" name="city_id" class="form-control">
                                             <option value="0">选择城市</option>
                                             <volist name="city" id="vo">
                                                 <option value="{$vo.id}" <if condition="$store[city_id] eq $vo[id]">selected</if>>{$vo.name}</option>
                                             </volist>
                                         </select>
-                                        </div>   
-                                        <div class="col-xs-2">                                        
+                                        </div>
+                                        <div class="col-xs-2">
                                         <select id="district" name="district" class="form-control">
                                             <option value="0">选择区域</option>
                                             <volist name="area" id="vo">
                                                 <option value="{$vo.id}" <if condition="$store[district] eq $vo[id]">selected</if>>{$vo.name}</option>
                                             </volist>
                                         </select>
-                                        </div> 
+                                        </div>
                                         <div class="col-xs-3">
                                         	<input type="text" placeholder="详细地址" class="form-control" name="store_address" value="{$store.store_address}">
-                                        </div>      
+                                        </div>
                                 	</td>
                                 </tr>
                                 <tr>
@@ -117,25 +117,25 @@
                                 	<td>SEO关键字：</td>
                                 	<td><input type="text" class="form-control" name="seo_keywords" value="{$store.seo_keywords}"></td>
                                 	<td class="text-warning">用于店铺搜索引擎的优化，关键字之间请用英文逗号分隔</td>
-                                	
-                                </tr>  
+
+                                </tr>
                                 <tr>
                                 	<td>SEO店铺描述：</td>
                                 	<td colspan="2">
                                 		<textarea rows="4" cols="80" name="seo_description">{$store.seo_description}</textarea>
                                 	</td>
-                                </tr>          
-                                </tbody> 
+                                </tr>
+                                </tbody>
                                 <tfoot>
                                 	<tr>
                                 	<td><input type="hidden" name="store_id" value="{$store.store_id}"></td>
                                 	<td></td>
                                 	<td class="text-right"><input class="btn btn-primary" type="button" onclick="adsubmit()" value="保存"></td>
                                 	</tr>
-                                </tfoot>                               
+                                </tfoot>
                                 </table>
-                        </div>                           
-                    </div>              
+                        </div>
+                    </div>
 			    	</form><!--表单数据-->
                 </div>
             </div>
