@@ -2,7 +2,7 @@
 /* 数据库配置 */
 return array(
     'DB_TYPE' => 'mysql', //数据库类型
-    'DB_HOST' => 'mysql', //数据库主机
+    'DB_HOST' => '129.28.60.118', //数据库主机
     'DB_NAME' => 'tpo2o', //数据库名称
     'DB_USER' => 'tpo2o', //数据库用户名
     'DB_PWD' => 'nHeXShyePRfRsZp2', //数据库密码
