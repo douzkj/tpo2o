@@ -15,7 +15,7 @@
 <script src="__PUBLIC__/js/mobile_common.js"></script>
 </head>
 <body>
-<section class="_pre" >
+<section class="_pre" style="display: none;">
 <header id="head_search_box" style="position: fixed; top: 0px; width: 100%;">
 <div class="search_header">
     <a href="javascript:history.back(-1)" class="back search_back"></a>
@@ -49,23 +49,23 @@
      <li>
 		<a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$vo[goods_id]))}" class="item">
 			<div class="pic_box">
-				<div class="active_box">
-					<span style=" background-position:0px -36px">新品</span>
-				</div>
+				<!--<div class="active_box">-->
+					<!--<span style=" background-position:0px -36px">新品</span>-->
+				<!--</div>-->
 				<img src="{$vo.goods_id|goods_thum_images=400,400}">
 			</div>
 			<div class="title_box">{$vo.goods_name}</div>
-			<div class="price_box">
-				<span class="new_price"><i>￥{$vo.shop_price}元</i></span>
+			<div class="price-wrapper">
+				<span class="sale-price">￥{$vo.shop_price}元</span>
+				<span class="sale-num">已售999</span>
 			</div>
-			<div class="comment_box">已售0</div>
 		</a>
-		<div class="ui-number b"> 
-			<a class="decrease" onClick="goods_cut({$vo.goods_id});">-</a>
-			<input class="num" id="number_{$vo.goods_id}" type="text" onBlur="changePrice();" value="1" onFocus="if(value=='1') {value=''}" size="4" maxlength="5">
-			<a class="increase" onClick="goods_add({$vo.goods_id});">+</a> 
-		</div>
-		<span class="bug_car" onClick="AjaxAddCart({$vo[goods_id]},1,0);"><i class="icon-shop_cart"></i></span>
+		<!--<div class="ui-number b"> -->
+			<!--<a class="decrease" onClick="goods_cut({$vo.goods_id});">-</a>-->
+			<!--<input class="num" id="number_{$vo.goods_id}" type="text" onBlur="changePrice();" value="1" onFocus="if(value=='1') {value=''}" size="4" maxlength="5">-->
+			<!--<a class="increase" onClick="goods_add({$vo.goods_id});">+</a> -->
+		<!--</div>-->
+		<!--<span class="bug_car" onClick="AjaxAddCart({$vo[goods_id]},1,0);"><i class="icon-shop_cart"></i></span>-->
 	  </li>
    </foreach>
   </empty>
@@ -190,7 +190,7 @@ var  page = 1;
 	    </form>
 	</section>
 </section>
-<section id="mix_search_div" style="display: none;">
+<section id="mix_search_div">
 <header class="con floatsearch">
    <section class="mix_new_header">
         <a href="javascript:void(0)" class="mix_back"></a>

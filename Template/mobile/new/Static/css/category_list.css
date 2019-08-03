@@ -198,8 +198,18 @@ body { background-color: #f8f8f8; }
 /* 商品列表 */
 
 .touchweb-com_searchListBox.hide { display: none; }
-.touchweb-com_searchListBox li { position: relative; border-bottom: 1px solid #e5e5e5; border-right: 1px solid #e5e5e5; margin-left:-1px; padding-bottom:13px;}
-.touchweb-com_searchListBox .item { display: block; padding: 12px 12px 0px 12px; position: relative; z-index: 1; left: 0; top: 0; }
+
+/*.touchweb-com_searchListBox li { position: relative; border-bottom: 1px solid #e5e5e5; border-right: 1px solid #e5e5e5; margin-left:-1px; padding-bottom:13px;}*/
+
+.touchweb-com_searchListBox li {
+    padding : 5px;
+    box-sizing: border-box;
+}
+
+/*.touchweb-com_searchListBox .item { display: block; padding: 12px 12px 0px 12px; position: relative; z-index: 1; left: 0; top: 0; }*/
+
+.touchweb-com_searchListBox .item { font-size:0px;display: block; padding: 12px 12px 0px 12px; position: relative; z-index: 1; left: 0; top: 0; background: #ffffff;border-radius: 6px; }
+
 .touchweb-com_searchListBox .item:active { background-color: #f5f5f5; }
 .touchweb-com_searchListBox .item:after { content: ""; display: table; clear: both; }
 .touchweb-com_searchListBox .item .pic_box { float: left; margin-right: 10px; background-size: cover; background-position: center; width: 90px; height: 90px; background-color: #fff; overflow: hidden; position: relative; }
@@ -224,7 +234,7 @@ background: url(../images/HOT.png) no-repeat;background-size: auto 100px;text-in
 .touchweb-com_searchListBox .item .active_box .active_tag .icon { display: inline-block; width: 10px; height: 12px; line-height: 12px; text-align: center; vertical-align: middle; }
 .touchweb-com_searchListBox .item .price_box { height: 25px; line-height: 25px;}
 
-.touchweb-com_searchListBox .item .price_box .new_price { display: inline-block; color: #ff3c3c; vertical-align: middle; }
+.touchweb-com_searchListBox .item .price_box .new_price { font-size:14px;width:100%;display: inline-block; color: #ff3c3c; vertical-align: middle;overflow: hidden;text-overflow: ellipsis;white-space: nowrap; }
 .touchweb-com_searchListBox .item .price_box i { font-size: 18px; }
 .touchweb-com_searchListBox .item .price_box i { font-size:18px; }
 .touchweb-com_searchListBox .item .price_box small { font-size: 1.4rem; }
@@ -254,7 +264,7 @@ background: url(../images/flow/shop-cart.png) no-repeat 5px -26px; background-si
 
 .touchweb-com_searchListBox.openList li { float: left; width: 50%; }
 .touchweb-com_searchListBox.openList li:nth-child(even) .item { border-right-color: #fff; }
-.touchweb-com_searchListBox.openList .item .price_box {height:50px; }
+
 
 .touchweb-com_searchListBox.openList .item .pic_box { float: none; width: 100%; height: auto; margin-right: 0; margin-bottom: 10px; position: relative; }
 .touchweb-com_searchListBox.openList .item .pic_box.cloth:after { content: ''; padding-top: 140%; display: block; width: 100%; }
@@ -262,7 +272,7 @@ background: url(../images/flow/shop-cart.png) no-repeat 5px -26px; background-si
 
 .touchweb-com_searchListBox.openList .item .active_box .active_tag { display: none; }
 .touchweb-com_searchListBox.openList .item .active_box .active_tag:nth-child(-n+1) { display: inline-block; }
-.touchweb-com_searchListBox.openList .item .comment_box { height:50px; padding-left:3px; display:none;}
+
 .touchweb-com_searchListBox.openList .bug_car { border-left: none; }
 .touchweb-com_searchListBox .bug_car { position: absolute; bottom: 12px; right: 0; z-index: 2; width: 40px; height: 28px; color: #ff3c3c; font-size: 2.2rem; text-align: center; }
 .touchweb-com_searchListBox.openList .bug_car { border-left: none; }
@@ -410,3 +420,29 @@ background: url(../images/flow/shop-cart.png) no-repeat 5px -26px; background-si
 
 /*遮罩层的时候，页面固定高度不可滚动样式*/
 .sidebar-move { height: 100%; overflow: hidden; animation: sidebar-body-move .5s 1 ease 0; -webkit-animation: sidebar-body-move .5s 1 ease 0; }
+
+
+.touchweb-com_searchListBox .item .price-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 100%;
+    font-size: 0px;
+}
+
+.touchweb-com_searchListBox .item .price-wrapper .sale-price,.touchweb-com_searchListBox .item .price-wrapper .sale-num {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.touchweb-com_searchListBox .item .price-wrapper .sale-price {
+    font-size: 14px;
+    color: red;
+    max-width: 70%;
+}
+.touchweb-com_searchListBox .item .price-wrapper .sale-num {
+    font-size: 10px;
+    color: #999999;
+    max-width: 30%;
+}

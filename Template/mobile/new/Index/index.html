@@ -62,7 +62,16 @@
         border-radius: 17px;
         font-size: 14px;
         line-height: 33px;
-        color: #bbb; height: 100%;
+        color: #bbb;
+        height: 100%;
+
+        position: relative;
+    }
+    .search-right a {
+        position: absolute;
+        width: 100%;
+        left : 0px;
+        height: -webkit-fill-available;
     }
 
     .rotation-chart-footer {
@@ -439,7 +448,7 @@ $('#searchtype').val($(this).attr('0'));
             document.querySelector('.hidden-area-btn').style.display = 'none';
             var area = document.querySelectorAll('.entry-list .area-list .area-item');
             area.forEach(function (item,index) {
-                if(index > 9){
+                if(index > 7){
                     item.style.display = "none";
                 }
             })
@@ -447,7 +456,7 @@ $('#searchtype').val($(this).attr('0'));
         function getMoreArea () {
             var area = document.querySelectorAll('.entry-list .area-list .area-item');
             area.forEach(function (item,index) {
-                if(index > 9){
+                if(index > 7){
                     item.style.display = "block";
                 }
             });
@@ -458,7 +467,7 @@ $('#searchtype').val($(this).attr('0'));
         function hiddenMoreArea() {
             var area = document.querySelectorAll('.entry-list .area-list .area-item');
             area.forEach(function (item,index) {
-                if(index > 9){
+                if(index > 7){
                     item.style.display = "none";
                 }
             });
