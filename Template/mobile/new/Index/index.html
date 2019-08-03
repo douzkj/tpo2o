@@ -437,7 +437,7 @@ $('#searchtype').val($(this).attr('0'));
 
         (function  () {
             document.querySelector('.hidden-area-btn').style.display = 'none';
-            var area = document.querySelectorAll('.area-item');
+            var area = document.querySelectorAll('.entry-list .area-list .area-item');
             area.forEach(function (item,index) {
                 if(index > 9){
                     item.style.display = "none";
@@ -445,7 +445,7 @@ $('#searchtype').val($(this).attr('0'));
             })
         })();
         function getMoreArea () {
-            var area = document.querySelectorAll('.area-item');
+            var area = document.querySelectorAll('.entry-list .area-list .area-item');
             area.forEach(function (item,index) {
                 if(index > 9){
                     item.style.display = "block";
@@ -456,7 +456,7 @@ $('#searchtype').val($(this).attr('0'));
         }
 
         function hiddenMoreArea() {
-            var area = document.querySelectorAll('.area-item');
+            var area = document.querySelectorAll('.entry-list .area-list .area-item');
             area.forEach(function (item,index) {
                 if(index > 9){
                     item.style.display = "none";
