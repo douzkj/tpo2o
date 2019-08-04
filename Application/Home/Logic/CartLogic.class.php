@@ -108,6 +108,17 @@ class CartLogic extends RelationModel
             $data2['activity_type'] = $val['activity_type']; // 商品活动状态
             $data2['cost_price'] = M('goods')->where("goods_id = {$val['goods_id']} ")->getField('cost_price');// 商品成本价
             $order_goods_id = M("OrderGoods")->data($data2)->add();
+
+
+            //系统生成兑换码
+            for ($i = 0 ; $i < $val['goods_num']; $i ++ ){
+                $code = [
+                    'order_id' => $order_id,
+                    'code' => generateRedemptionCode(),
+                ];
+                M('OrderCodes')->data($code)->add();
+            }
+
             // 扣除商品库存  扣除库存移到 付完款后扣除
             //M('Goods')->where("goods_id = ".$val['goods_id'])->setDec('store_count',$val['goods_num']); // 商品减少库存
         }
