@@ -506,7 +506,7 @@ function trim_array_element($array){
 
 /**
  * 检查手机号码格式
- * @param $mobile 手机号码
+ * @param string  手机号码
  */
 function check_mobile($mobile){
     if(preg_match('/1[34578]\d{9}$/',$mobile))

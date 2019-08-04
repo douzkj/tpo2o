@@ -21,7 +21,7 @@
 	<div class="h-mid">会员登录     </div>
  </header>
   	<div class="denglu">
-		<form action="" method="post">
+		<div>
             <div class="Login">
 				<dl>
 	            <dt>手机号：</dt>
@@ -43,7 +43,7 @@
                     </div>
 	            </dl>
 				<div class="field submit-btn">
-					<input type="button" class="btn_big1" onClick="checkSubmit()" value="登 录" />
+					<input type="button" class="btn_big1"  value="登 录" />
 					<input type="hidden" name="referurl" id="referurl" value="{$referurl}">
 				</div>
             <div class="ng-foot">
@@ -68,47 +68,47 @@
               </div>
             </div>
           </div>
-		</form>
+		</div>
 	</div>
 <script type="text/javascript">
 
-function checkSubmit()
-{
+$('.btn_big1').on('click', function () {
 
-	var username = $.trim($('#username').val());
-	var password = $.trim($('#password').val());
-	var referurl = $('#referurl').val();
-	if(username == ''){
-		showErrorMsg('手机号不能为空!');
-		return false;
-	}
-	if(!checkMobile(username) && !checkEmail(username)){
-		showErrorMsg('账号格式不匹配!');
-		return false;
-	}
+    var username = $.trim($('#username').val());
+    var password = $.trim($('#password').val());
+    var referurl = $('#referurl').val();
+    var mobile_code = $.trim($('#mobile_code').val());
+    if(username == ''){
+        showErrorMsg('手机号不能为空!');
+        return false;
+    }
+    if(!checkMobile(username) && !checkEmail(username)){
+        showErrorMsg('账号格式不匹配!');
+        return false;
+    }
 
-	if($.trim($('#mobile_code').val()) == ''){
-		showErrorMsg('验证码不能为空!');
-		return false;
-	}
-	//$('#login-form').submit();
-	$.ajax({
-		type : 'post',
-		url : '/index.php?m=Mobile&c=User&a=do_login&t='+Math.random(),
-		data : {username:username,password:password,referurl:referurl},
-		dataType : 'json',
-		success : function(res){
-			if(res.status == 1){
-				top.location.href = res.url;
-			}else{
-				showErrorMsg(res.msg);
-			}
-		},
-		error : function(XMLHttpRequest, textStatus, errorThrown) {
-			showErrorMsg('网络失败，请刷新页面后重试');
-		}
-	})
-}
+    if(mobile_code == ''){
+        showErrorMsg('验证码不能为空!');
+        return false;
+    }
+    //$('#login-form').submit();
+    $.ajax({
+        type : 'post',
+        url : '/index.php?m=Mobile&c=User&a=do_mobile_login&t='+Math.random(),
+        data : {username:username,password:password,referurl:referurl, mobile_code: mobile_code},
+        dataType : 'json',
+        success : function(res){
+            if(res.status == 1){
+                top.location.href = res.url;
+            }else{
+                showErrorMsg(res.msg);
+            }
+        },
+        error : function(XMLHttpRequest, textStatus, errorThrown) {
+            showErrorMsg('网络失败，请刷新页面后重试');
+        }
+    });
+});
 
 
     function checkMobile(tel) {

@@ -42,6 +42,7 @@ class UserController extends MobileBaseController
             'login', 'pop_login', 'do_login', 'logout', 'verify', 'set_pwd', 'finished',
             'verifyHandle', 'reg', 'send_sms_reg_code', 'find_pwd', 'check_validate_code',
             'forget_pwd', 'check_captcha', 'check_username', 'send_validate_code', 'express',
+            'do_mobile_login'
         );
         if (!$this->user_id && !in_array(ACTION_NAME, $nologin)) {
             header("location:" . U('Mobile/User/login'));
@@ -138,6 +139,40 @@ class UserController extends MobileBaseController
     }
 
 
+    public function do_mobile_login()
+    {
+        $username = I('post.username');
+        $username = trim($username);
+        $code = I('post.mobile_code', '');
+        $code = trim($code);
+        if (!$code) {
+            exit(json_encode(['status' => 0, 'msg' => '验证码出错']));
+        }
+        $logic = new UsersLogic();
+
+        if (check_mobile($username)) {
+            $check_code = $logic->check_validate_code($code, $username);
+
+            if ($check_code['status'] != 1)
+                exit(json_encode($check_code));
+
+        }
+        $res = $logic->mobileLogin($username);
+        if ($res['status'] == 1) {
+            $res['url'] = urldecode(I('post.referurl'));
+            session('user', $res['result']);
+            setcookie('user_id', $res['result']['user_id'], null, '/');
+            setcookie('is_distribut', $res['result']['is_distribut'], null, '/');
+            $nickname = empty($res['result']['nickname']) ? $username : $res['result']['nickname'];
+            setcookie('uname', $nickname, null, '/');
+            setcookie('cn',0,time()-3600,'/');
+//            $cartLogic = new \Home\Logic\CartLogic();
+//            $cartLogic->login_cart_handle($this->session_id, $res['result']['user_id']);  //用户登录后 需要对购物车 一些操作
+        }
+        exit(json_encode($res));
+    }
+
+
     public function do_login()
     {
         $username = I('post.username');
@@ -180,13 +215,14 @@ class UserController extends MobileBaseController
 
                 if (!$code)
                     $this->error('请输入验证码');
-                $check_code = $logic->sms_code_verify($username, $code, $this->session_id);
+//                $check_code = $logic->sms_code_verify($username, $code, $this->session_id);
+                $check_code = $logic->check_validate_code($code, $username);
                 if ($check_code['status'] != 1)
                     $this->error($check_code['msg']);
 
             }
 
-            $data = $logic->reg($username, $password, $password2);
+            $data = $logic->mobileReg($username);
             if ($data['status'] != 1)
                 $this->error($data['msg']);
             session('user', $data['result']);

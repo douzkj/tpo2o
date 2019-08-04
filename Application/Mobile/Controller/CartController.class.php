@@ -42,7 +42,44 @@ class CartController extends MobileBaseController {
     public function confirmOrder()
     {
         $goods_id = I('goods_id');
+        $goods_num = I('goods_num');
+        $consignee = I('consignee');
+        $mobile = I('mobile');
         $goods = M('goods')->where(['goods_id' => $goods_id])->find();
+        if (IS_POST) {
+            $this->cartLogic->flushCart($this->user_id);
+            $result = $this->cartLogic->addCart($goods_id, $goods_num, '',$this->session_id,$this->user_id); // 将商品加入购物车
+            if ($result['status'] != 1) {
+                exit(json_encode($result));
+            }
+            $order_goods = M('cart')->where("user_id = {$this->user_id} and selected = 1")->select();
+            $result = calculate_price($this->user_id,$order_goods);
+            if($result['status'] < 0)
+                exit(json_encode($result));
+
+            $car_price = array(
+                'postFee'      => $result['result']['shipping_price'], // 物流费
+                'couponFee'    => $result['result']['coupon_price'], // 优惠券
+                'balance'      => $result['result']['user_money'], // 使用用户余额
+                'pointsFee'    => $result['result']['integral_money'], // 积分支付
+                'payables'     => array_sum($result['result']['store_order_amount']), // 订单总额 减去 积分 减去余额
+                'goodsFee'     => $result['result']['goods_price'],// 总商品价格
+                'order_prom_amount' => array_sum($result['result']['store_order_prom_amount']), // 总订单优惠活动优惠了多少钱
+
+                'store_order_prom_id'=> $result['result']['store_order_prom_id'], // 每个商家订单优惠活动的id号
+                'store_order_prom_amount'=> $result['result']['store_order_prom_amount'], // 每个商家订单活动优惠了多少钱
+                'store_order_amount' => $result['result']['store_order_amount'], // 每个商家订单优惠后多少钱, -- 应付金额
+                'store_shipping_price'=>$result['result']['store_shipping_price'],  //每个商家的物流费
+                'store_coupon_price'=>$result['result']['store_coupon_price'],  //每个商家的优惠券抵消金额
+                'store_point_count' => $result['result']['store_point_count'], // 每个商家平摊使用了多少积分
+                'store_balance'=>$result['result']['store_balance'], // 每个商家平摊用了多少余额
+                'store_goods_price'=>$result['result']['store_goods_price'], // 每个商家的商品总价
+            );
+
+            $result = $this->cartLogic->newAddOrder($this->user_id,$consignee, $mobile, $car_price); // 添加订单
+            exit(json_encode($result));
+
+        }
         $this->assign('goods', $goods);
         $this->display();
     }
@@ -229,7 +266,7 @@ class CartController extends MobileBaseController {
         {
             $sum_order_amount = M('order')->where("master_order_sn = '$master_order_sn'")->sum('order_amount');
             if($sum_order_amount == 0){
-                $order_order_list = U("Home/User/order_list");
+                $order_order_list = U("Mobile/User/order_list");
                 header("Location: $order_order_list");
             }
         }

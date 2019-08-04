@@ -66,7 +66,7 @@
     </div>
     <div class="pay-price-num">
         <span class="pay-price-remove-num">-</span>
-        <input class="pay-price-input" type="text" value="1">
+        <input class="pay-price-input" type="text" value="1" name="goods_num" id="goods_num">
         <span class="pay-price-add-num">+</span>
     </div>
 </div>
@@ -74,11 +74,11 @@
 <div class="pay-price-input-message-wrapper">
     <div class="pay-price-input-name">
         <span class="input-name">姓名</span>
-        <input type="text" placeholder="请输入姓名">
+        <input type="text" placeholder="请输入姓名" name="consignee" id="consignee">
     </div>
     <div class="pay-price-input-phone">
         <span class="input-phone">手机</span>
-        <input type="text" placeholder="请输入手机">
+        <input type="text" placeholder="请输入手机" name="mobile" id="mobile" value="{$user.mobile}">
     </div>
     <div class="pay-price-input-tips">
         <i class="tips-icon"></i>
@@ -96,8 +96,46 @@
             <em>0.0000</em>
         </span>
     </div>
-    <div class="pay-price">立即付款</div>
+    <input type="hidden" name="goods_id" id="goods_id" value="{$goods.goods_id}">
+    <div class="pay-price" onclick="addToCart()">立即付款</div>
 </div>
+
+<script>
+    //先调用此方法，加入购物车,再跳转到付款页面
+    function addToCart() {
+        $.ajax({
+            type : "POST",
+            url:"/index.php?m=Mobile&c=Cart&a=confirmOrder",
+            data :{
+                goods_id:$('#goods_id').val(),
+                goods_num:$('#goods_num').val(),
+                consignee: $('#consignee').val(),
+                mobile: $('#mobile').val()
+            } ,
+            dataType:'json',
+            success: function(data){
+
+                if(data.status == 1)
+                {
+                    //layer.open({content: data.msg,time: 2});
+                    //去付款页面
+                    location.href = "/index.php?m=Mobile&c=Cart&a=cart4&order_id="+data.result;
+                }
+                else
+                {
+                    //输出错误信息
+                    if(data.status < 0)
+                    {
+                        layer.open({content:data.msg, time:2});
+                        return false;
+                    }
+                    return false;
+                }
+            }
+        });
+    }
+
+</script>
 
 </body>
 </html>

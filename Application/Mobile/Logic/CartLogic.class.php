@@ -104,7 +104,8 @@ class CartLogic extends RelationModel
                     'spec_key_name'   => "{$specGoodsPriceList[$spec_key]['key_name']}", // 规格 key_name
                     'sku'             => "{$specGoodsPriceList[$spec_key]['sku']}", // 商品条形码
                     'activity_type'   => $activity_type ? $activity_type : 0, // 商品活动状态
-                    'add_time'        => time(), // 加入购物车时间
+                    'add_time'        => time(), // 加入购物车时间,
+                    'selected'        => 1 //默认选中
         );
 
        // 如果商品购物车已经存在

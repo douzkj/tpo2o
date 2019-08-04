@@ -146,7 +146,7 @@ function getAllMenu(){
 			'member' => array('name'=>'会员管理','icon'=>'fa-user','sub_menu'=>array(
 					array('name'=>'会员列表','act'=>'index','control'=>'User'),
 					array('name'=>'会员等级','act'=>'levelList','control'=>'User'),
-					array('name'=>'会员充值','act'=>'recharge','control'=>'User'),
+//					array('name'=>'会员充值','act'=>'recharge','control'=>'User'),
 					//array('name'=>'会员整合','act'=>'integrate','control'=>'User'),
 			)),
 			'goods' => array('name' => '商品管理', 'icon'=>'fa-tasks', 'sub_menu' => array(

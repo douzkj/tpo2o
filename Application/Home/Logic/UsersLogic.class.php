@@ -25,6 +25,20 @@ use Think\Page;
  */
 class UsersLogic extends RelationModel
 {
+
+    public function mobileLogin($username)
+    {
+        $result = array();
+        if(!check_mobile($username))
+            return array('status'=>0,'msg'=>'请填写手机号');
+        $user = M('users')->where("mobile='{$username}'")->find();
+        if(!$user) {
+            $result = array('status' => -1, 'msg' => '账号不存在!');
+        } else{
+            $result = array('status'=>1,'msg'=>'登陆成功','result'=>$user);
+        }
+        return $result;
+    }
     /*
      * 登陆
      */
@@ -148,6 +162,56 @@ class UsersLogic extends RelationModel
         }
 
         return array('status'=>1,'msg'=>'登陆成功','result'=>$user);
+    }
+
+    public function mobileReg($username)
+    {
+        $is_validated = 0 ;
+
+        if(check_mobile($username)){
+            $is_validated = 1;
+            $map['mobile_validated'] = 1;
+            $map['nickname'] = $map['mobile'] = $username; //手机注册
+        }
+
+        if($is_validated != 1)
+            return array('status'=>-1,'msg'=>'手机号不正确','result'=>'');
+
+        //验证是否存在用户名
+        if(get_user_info($username,2))
+            return array('status'=>-1,'msg'=>'此手机号已注册','result'=>'');
+
+        $map['password'] = '';
+        $map['reg_time'] = time();
+        $map['first_leader'] = cookie('first_leader'); // 推荐人id
+        // 如果找到他老爸还要找他爷爷他祖父等
+        if(!$map['first_leader']) {
+            $map['first_leader'] = 0;
+        }
+
+        // 成为分销商条件
+        //$distribut_condition = tpCache('distribut.condition');
+        //if($distribut_condition == 0)  // 直接成为分销商, 每个人都可以做分销
+        $map['is_distribut']  = 1; // 默认每个人都可以成为分销商
+
+        $user_id = M('users')->add($map);
+        if(!$user_id)
+            return array('status'=>-1,'msg'=>'注册失败','result'=>'');
+
+        $pay_points = tpCache('basic.reg_integral'); // 会员注册赠送积分
+        if($pay_points > 0)
+            accountLog($user_id, 0,$pay_points, '会员注册赠送积分'); // 记录日志流水
+        $user = M('users')->where("user_id = {$user_id}")->find();
+        // 会员注册送优惠券
+        $coupon = M('coupon')->where("send_end_time > ".time()." and ((createnum - send_num) > 0 or createnum = 0) and type = 2")->select();
+        if(!empty($coupon)){
+            foreach ($coupon as $key => $val)
+            {
+                M('coupon_list')->add(array('cid'=>$val['id'],'type'=>$val['type'],'uid'=>$user_id,'send_time'=>time()));
+                M('Coupon')->where("id = {$val['id']}")->setInc('send_num'); // 优惠券领取数量加一
+            }
+        }
+        return array('status'=>1,'msg'=>'注册成功','result'=>$user);
     }
 
     /**
