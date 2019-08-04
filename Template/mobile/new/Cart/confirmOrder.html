@@ -60,14 +60,14 @@
         <span class="pay-price-text">活动价</span>
         <span class="pay-price-one">
             <em>¥</em>
-            <strong>{$goods.shop_price}</strong>
+            <strong id="goods_price">{$goods.shop_price}</strong>
             <i>/件</i>
         </span>
     </div>
     <div class="pay-price-num">
-        <span class="pay-price-remove-num">-</span>
-        <input class="pay-price-input" type="text" value="1" name="goods_num" id="goods_num">
-        <span class="pay-price-add-num">+</span>
+        <span class="pay-price-remove-num" onclick="removeProductNum()">-</span>
+        <input class="pay-price-input" type="text" value="1" readonly="readonly" name="goods_num" id="goods_num">
+        <span class="pay-price-add-num" onclick="addProductNum()">+</span>
     </div>
 </div>
 
@@ -93,7 +93,7 @@
         <span class="price-wrapper">
             <small>总计</small>
             <i>¥</i>
-            <em>0.0000</em>
+            <em id="goods_total">0.0000</em>
         </span>
     </div>
     <input type="hidden" name="goods_id" id="goods_id" value="{$goods.goods_id}">
@@ -133,6 +133,28 @@
                 }
             }
         });
+    }
+
+    var input = document.getElementById('goods_num');
+    var price = document.getElementById('goods_price');
+    var total = document.getElementById('goods_total');
+    total.textContent = (parseInt(input.value) * parseFloat(price.textContent)).toFixed(2);
+    /*
+     * 减小商品数
+     */
+    function removeProductNum() {
+        if(input.value == 0){
+          return
+        }
+        input.value = parseInt(input.value) - 1;
+        total.textContent = (parseInt(input.value) * parseFloat(price.textContent)).toFixed(2);
+    }
+    /*
+     * 增加商品数
+     */
+    function addProductNum() {
+        input.value = parseInt(input.value) + 1;
+        total.textContent = (parseInt(input.value) * parseFloat(price.textContent)).toFixed(2);
     }
 
 </script>
