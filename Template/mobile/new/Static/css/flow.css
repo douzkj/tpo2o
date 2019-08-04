@@ -629,3 +629,215 @@ flex: 1;
 .touchweb_com-indexPop1 .inner .content_name p {line-height:20px;font-size:14px; color: #000; border-bottom:#D5D5D5 1px solid; padding-bottom:5px;}
 .touchweb_com-indexPop1 .inner .btn_box .btn { font-size:14px;}
 a.revise{ color:#FF4650; font-size:14px; margin-left:5px;}
+
+
+
+
+
+.pay-header-wrapper {
+    height: 48px;
+    width: 100%;
+    background: #f6f6f6;
+    border-bottom: solid 1px #d9d9d9
+}
+.pay-header-wrapper .pay-h {
+    display: flex;
+}
+.pay-header-wrapper .pay-h .pay-h-back {
+    width: 48px;
+    height: 48px;
+    background: url(../images/category/arrow_left.png) no-repeat 15px center;
+    background-size: auto 16px;
+}
+.pay-header-wrapper .pay-h .pay-h-title {
+    flex:1;
+    font-size: 16px;
+    text-align: center;
+    line-height: 48px;
+}
+.pay-header-wrapper .pay-h .pay-h-vator{
+    width: 48px;
+    height: 48px;
+}
+.pay-desc-tips-wrapper {
+    font-size: 0px;
+    margin-top: 10px;
+    background: white;
+    padding: 0 16px 12px 16px;
+}
+
+.pay-desc-tips-wrapper .pay-desc-tips-text {
+     height: 52px;
+     color: #333333;
+     padding-top: 5px;
+     font-size: 15px;
+     overflow: hidden;
+ }
+
+.pay-desc-tips-wrapper .pay-desc-tips-date {
+    color: #333333;
+    margin-top: 3px;
+    font-size: 12px;
+}
+
+.pay-price-num-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    background: white;
+    height: 71px;
+    align-items: center;
+    padding: 5px 15px;
+}
+.pay-price-num-wrapper .pay-price-wrapper {
+    display: flex;
+}
+
+.pay-price-num-wrapper .pay-price-wrapper .pay-price-text {
+     font-size: 16px;
+ }
+
+.pay-price-num-wrapper .pay-price-wrapper .pay-price-one {
+    margin-left: 10px;
+    font-size: 0px;
+}
+
+.pay-price-num-wrapper .pay-price-wrapper .pay-price-one em {
+    font-size: 11px;
+}
+
+.pay-price-num-wrapper .pay-price-wrapper .pay-price-one strong {
+    display: inline-block;
+     margin: 0 4px;
+     font-size: 20px;
+     max-width: 73px;
+     text-overflow: ellipsis;
+     overflow: hidden;
+     white-space: nowrap;
+     vertical-align: top;
+ }
+
+.pay-price-num-wrapper .pay-price-wrapper .pay-price-one i {
+    font-size: 14px;
+}
+
+.pay-price-num-wrapper .pay-price-num {
+    width: 40%;
+    display: flex;
+    border-radius: 4px;
+    border: solid 1px #e5e5e5;
+}
+
+.pay-price-num-wrapper .pay-price-num .pay-price-add-num,.pay-price-num-wrapper .pay-price-num .pay-price-remove-num{
+    width: 36px;
+    height: 36px;
+    font-size: 50px;
+    text-align: center;
+    background: rgb(255, 190, 0);
+    color: rgb(255, 255, 255);
+    opacity: 1;
+    border-radius: 2px;
+}
+.pay-price-num-wrapper .pay-price-num .pay-price-add-num {
+    line-height: 36px;
+}
+
+
+.pay-price-num-wrapper .pay-price-num .pay-price-input {
+    width: calc(100% - 72px);
+    color: transparent;
+    text-shadow: 0 0 0 #000;
+    text-align: center;
+}
+
+.pay-price-input-message-wrapper {
+    margin-top: 10px;
+    background:#f6f6f6;
+}
+.pay-price-input-message-wrapper .pay-price-input-name,.pay-price-input-message-wrapper .pay-price-input-phone {
+    height: 73px;
+    padding: 0px 16px;
+    width: 100%;
+    border-bottom: solid 1px #e5e5e5;
+    font-size: 0px;
+    display: flex;
+    background: white;
+    box-sizing: border-box;
+}
+.pay-price-input-message-wrapper .pay-price-input-name .input-name,.pay-price-input-message-wrapper .pay-price-input-phone .input-phone {
+    font-size: 16px;
+    line-height: 73px;
+    margin-right: 20px;
+}
+
+.pay-price-input-message-wrapper .pay-price-input-name input,.pay-price-input-message-wrapper .pay-price-input-phone input {
+    flex: 1;
+    padding: 10px 0px;
+    font-size: 16px;
+}
+
+.pay-price-input-message-wrapper .pay-price-input-tips {
+    padding: 8px 16px 8px 16px;
+    font-size: 11px;
+    background: white;
+    line-height: 16px;
+}
+
+.pay-price-input-message-wrapper .pay-price-input-tips .tips-icon {
+    background: red;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    position: relative;
+    top:3px;
+}
+
+.pay-price-bottom-btn {
+    height: 60px;
+    width: 100%;
+    position: fixed;
+    bottom: 0px;
+    font-size: 0px;
+    display: flex;
+}
+
+.pay-price-bottom-btn .total-price {
+    width: 60%;
+    height: 100%;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pay-price-bottom-btn .total-price .price-wrapper {
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.pay-price-bottom-btn .total-price .price-wrapper small {
+    font-size: 14px;
+    margin-left: 2%;
+}
+.pay-price-bottom-btn .total-price .price-wrapper i{
+    color: red;
+    font-size: 14px;
+    margin: 0 2% 0 5%;
+}
+.pay-price-bottom-btn .total-price .price-wrapper em{
+    color: red;
+    font-size: 16px;
+}
+.pay-price-bottom-btn .pay-price {
+    width: 40%;
+    height: 100%;
+    line-height: 60px;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    text-align: center;
+    overflow: hidden;
+    background-color: #ffbe00;
+}
