@@ -43,8 +43,8 @@ class CartController extends MobileBaseController {
     {
         $goods_id = I('goods_id');
         $goods_num = I('goods_num');
-        $consignee = I('consignee');
-        $mobile = I('mobile');
+        $consignee = trim(I('consignee'));
+        $mobile = trim(I('mobile'));
         $goods = M('goods')->where(['goods_id' => $goods_id])->find();
         if (IS_POST) {
             $this->cartLogic->flushCart($this->user_id);

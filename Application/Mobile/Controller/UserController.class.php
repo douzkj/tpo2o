@@ -315,19 +315,19 @@ class UserController extends MobileBaseController
         //$region_list = get_region_list();
         $store = M('store')->where("store_id = {$order_info['store_id']}")->find(); // 找出这个商家
         // 店铺地址id
-        $ids[] = $store['province_id'];
-        $ids[] = $store['city_id'];
-        $ids[] = $store['district'];
+        $ids[] = $store['province_id'] ? :0;
+        $ids[] = $store['city_id']? :0;
+        $ids[] = $store['district']? :0;
 
         $ids[] = $order_info['province'];
         $ids[] = $order_info['city'];
         $ids[] = $order_info['district'];
-        if (!empty($ids))
+        if (!empty($ids)) {
             $regionLits = M('region')->where("id in (" . implode(',', $ids) . ")")->getField("id,name");
-
+        }
         $region_list = get_region_list();
         $invoice_no = M('DeliveryDoc')->where("order_id = $id")->getField('invoice_no', true);
-        $order_info[invoice_no] = implode(' , ', $invoice_no);
+        $order_info['invoice_no'] = implode(' , ', $invoice_no);
         //获取订单操作记录
         $order_action = M('order_action')->where(array('order_id' => $id))->select();
         $this->assign('store', $store);

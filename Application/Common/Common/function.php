@@ -702,7 +702,7 @@ function generateRedemptionCode()
     $i = 0;
     while ($i < 10) {
         $code = $getCode();
-        if ( ! M('order_codes')->where("code <> '{$code}'")->count()) {
+        if ( ! M('order_codes')->where("code='{$code}'")->find()) {
             return $code;
         }
         $i++;

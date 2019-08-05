@@ -39,7 +39,7 @@ class OrderController extends BaseController {
      */
     public function index(){
     	$begin = date('Y/m/d',(time()-30*60*60*24));//30天前
-    	$end = date('Y/m/d',strtotime('+1 days')); 	
+    	$end = date('Y/m/d',strtotime('+1 days'));
     	$this->assign('timegap',$begin.'-'.$end);
         $this->display();
     }
@@ -48,7 +48,7 @@ class OrderController extends BaseController {
      *Ajax首页
      */
     public function ajaxindex(){
-        $orderLogic = new OrderLogic();       
+        $orderLogic = new OrderLogic();
         $timegap = I('timegap');
         if($timegap){
         	$gap = explode('-', $timegap);
@@ -56,7 +56,7 @@ class OrderController extends BaseController {
         	$end = strtotime($gap[1]);
         }
         // 搜索条件 STORE_ID
-        $condition = array('store_id'=>STORE_ID); // 商家id 
+        $condition = array('store_id'=>STORE_ID); // 商家id
         I('consignee') ? $condition['consignee'] = trim(I('consignee')) : false;
         if($begin && $end){
         	$condition['add_time'] = array('between',"$begin,$end");
@@ -66,7 +66,7 @@ class OrderController extends BaseController {
         I('pay_status') != '' ? $condition['pay_status'] = I('pay_status') : false;
         I('pay_code') != '' ? $condition['pay_code'] = I('pay_code') : false;
         I('shipping_status') != '' ? $condition['shipping_status'] = I('shipping_status') : false;
-        
+
         $sort_order = I('order_by','DESC').' '.I('sort');
         $count = M('order')->where($condition)->count();
         $Page  = new AjaxPage($count,20);
@@ -78,7 +78,7 @@ class OrderController extends BaseController {
         $this->display();
     }
 
-    
+
     /*
      * ajax 发货订单列表
     */
@@ -98,7 +98,7 @@ class OrderController extends BaseController {
     	$this->assign('page',$show);// 赋值分页输出
     	$this->display();
     }
-    
+
     /**
      * 订单详情
      * @param int $id 订单id
@@ -135,10 +135,10 @@ class OrderController extends BaseController {
         if($order['shipping_status'] != 0){
             $this->error('已发货订单不允许编辑');
             exit;
-        } 
-    
+        }
+
         $orderGoods = $orderLogic->getOrderGoods($order_id);
-                
+
        	if(IS_POST)
         {
             $order['consignee'] = I('consignee');// 收货人
@@ -146,14 +146,14 @@ class OrderController extends BaseController {
             $order['city'] = I('city'); // 城市
             $order['district'] = I('district'); // 县
             $order['address'] = I('address'); // 收货地址
-            $order['mobile'] = I('mobile'); // 手机           
+            $order['mobile'] = I('mobile'); // 手机
             $order['invoice_title'] = I('invoice_title');// 发票
             $order['admin_note'] = I('admin_note'); // 管理员备注
-            $order['admin_note'] = I('admin_note'); //                  
+            $order['admin_note'] = I('admin_note'); //
             $order['shipping_code'] = I('shipping');// 物流方式
-            $order['shipping_name'] = M('plugin')->where(array('status'=>1,'type'=>'shipping','code'=>I('shipping')))->getField('name');            
-            $order['pay_code'] = I('payment');// 支付方式            
-            $order['pay_name'] = M('plugin')->where(array('status'=>1,'type'=>'payment','code'=>I('payment')))->getField('name');                            
+            $order['shipping_name'] = M('plugin')->where(array('status'=>1,'type'=>'shipping','code'=>I('shipping')))->getField('name');
+            $order['pay_code'] = I('payment');// 支付方式
+            $order['pay_name'] = M('plugin')->where(array('status'=>1,'type'=>'payment','code'=>I('payment')))->getField('name');
             $goods_id_arr = I("goods_id");
             $new_goods = $old_goods_arr = array();
             //################################订单添加商品
@@ -168,7 +168,7 @@ class OrderController extends BaseController {
             			$this->error('添加失败');
             	}
             }
-            
+
             //################################订单修改删除商品
             $old_goods = I('old_goods');
             foreach ($orderGoods as $val){
@@ -183,21 +183,21 @@ class OrderController extends BaseController {
             		$old_goods_arr[] = $val;
             	}
             }
-            
+
             $goodsArr = array_merge($old_goods_arr,$new_goods);
             $result = calculate_price($order['user_id'],$goodsArr,$order['shipping_code'],0,$order['province'],$order['city'],$order['district'],0,0,0,0);
             if($result['status'] < 0)
             {
             	$this->error($result['msg']);
             }
-       
+
             //################################修改订单费用
             $order['goods_price']    = $result['result']['goods_price']; // 商品总价
             $order['shipping_price'] = $result['result']['shipping_price'];//物流费
             $order['order_amount']   = $result['result']['order_amount']; // 应付金额
-            $order['total_amount']   = $result['result']['total_amount']; // 订单总价           
+            $order['total_amount']   = $result['result']['total_amount']; // 订单总价
             $o = M('order')->where("order_id = $order_id and store_id =".STORE_ID)->save($order);
-            
+
 			$seller_id = session('seller_id');
             $l = $orderLogic->orderActionLog($order,'edit','修改订单',$seller_id,1);//操作日志
             if($o && $l){
@@ -217,7 +217,7 @@ class OrderController extends BaseController {
         $payment_list = M('plugin')->where(array('status'=>1,'type'=>'payment'))->select();
         //获取配送方式
         $shipping_list = M('plugin')->where(array('status'=>1,'type'=>'shipping'))->select();
-        
+
         $this->assign('order',$order);
         $this->assign('province',$province);
         $this->assign('city',$city);
@@ -227,7 +227,7 @@ class OrderController extends BaseController {
         $this->assign('payment_list',$payment_list);
         $this->display();
     }
-    
+
     /*
      * 拆分订单
      */
@@ -309,7 +309,7 @@ class OrderController extends BaseController {
     		$this->success('操作成功',U('Order/detail',array('order_id'=>$order_id)));
             exit;
     	}
-    	
+
     	foreach ($orderGoods as $val){
     		$brr[$val['rec_id']] = array('goods_num'=>$val['goods_num'],'goods_name'=>getSubstr($val['goods_name'], 0, 35).$val['spec_key_name']);
     	}
@@ -318,7 +318,7 @@ class OrderController extends BaseController {
     	$this->assign('orderGoods',$orderGoods);
     	$this->display();
     }
-    
+
     /*
      * 价钱修改
      */
@@ -326,7 +326,7 @@ class OrderController extends BaseController {
         $orderLogic = new OrderLogic();
         $order = $orderLogic->getOrderInfo($order_id);
         $this->editable($order);
-        if(IS_POST){        	
+        if(IS_POST){
             $update['discount'] = I('post.discount');
             $update['shipping_price'] = I('post.shipping_price');
 	    $update['order_amount'] = $order['goods_price'] + $update['shipping_price'] - $update['discount'] - $order['user_money'] - $order['integral_money'] - $order['coupon_price'];
@@ -345,7 +345,7 @@ class OrderController extends BaseController {
     /**
      * 订单删除
      * @param int $id 订单id
-     *  store_id   
+     *  store_id
      */
     public function delete_order($order_id){
     	$orderLogic = new OrderLogic();
@@ -356,7 +356,7 @@ class OrderController extends BaseController {
         	$this->error('订单删除失败');
         }
     }
-    
+
     /**
      * 订单取消付款
      */
@@ -370,7 +370,7 @@ class OrderController extends BaseController {
     		$orderLogic = new OrderLogic();
             $orderLogic->orderProcessHandle($data['order_id'],'pay_cancel');
             $order = $orderLogic->getOrderInfo($data['order_id']);
-			$seller_id = session('seller_id');			
+			$seller_id = session('seller_id');
     		$d = $orderLogic->orderActionLog($order,'取消付款',$data['remark'].':'.$note[$data['refundType']],$seller_id,1);
     		if($d){
     			exit("<script>window.parent.pay_callback(1);</script>");
@@ -413,7 +413,7 @@ class OrderController extends BaseController {
         $orderLogic = new OrderLogic();
         $order = $orderLogic->getOrderInfo($order_id);
         //查询是否存在订单及物流
-        $shipping = M('plugin')->where(array('code'=>$order['shipping_code'],'type'=>'shipping'))->find();        
+        $shipping = M('plugin')->where(array('code'=>$order['shipping_code'],'type'=>'shipping'))->find();
         if(!$shipping){
         	$this->error('物流插件不存在');
         }
@@ -435,8 +435,8 @@ class OrderController extends BaseController {
         	$this->assign('config',unserialize($shipping['config']));
         }
         $template_var = array("发货点-名称", "发货点-联系人", "发货点-电话", "发货点-省份", "发货点-城市",
-        		 "发货点-区县", "发货点-手机", "发货点-详细地址", "收件人-姓名", "收件人-手机", "收件人-电话", 
-        		"收件人-省份", "收件人-城市", "收件人-区县", "收件人-邮编", "收件人-详细地址", "时间-年", "时间-月", 
+        		 "发货点-区县", "发货点-手机", "发货点-详细地址", "收件人-姓名", "收件人-手机", "收件人-电话",
+        		"收件人-省份", "收件人-城市", "收件人-区县", "收件人-邮编", "收件人-详细地址", "时间-年", "时间-月",
         		"时间-日","时间-当前日期","订单-订单号", "订单-备注","订单-配送费用");
         $content_var = array($shop['store_name'],$shop['seller_name'],$shop['store_phone'],$shop['province'],$shop['city'],
         	$shop['district'],$shop['store_phone'],$shop['store_address'],$order['consignee'],$order['mobile'],$order['phone'],
@@ -462,7 +462,7 @@ class OrderController extends BaseController {
 		}
     }
 
-    
+
     public function delivery_info(){
     	$order_id = I('order_id');
     	$orderLogic = new OrderLogic();
@@ -477,7 +477,7 @@ class OrderController extends BaseController {
 		$this->assign('delivery_record',$delivery_record);//发货记录
     	$this->display();
     }
-    
+
     /**
      * 发货单列表
      */
@@ -489,25 +489,25 @@ class OrderController extends BaseController {
      */
     public function return_list(){
         $this->display();
-    }	
+    }
     /*
      * ajax 退货订单列表
      */
     public function ajax_return_list(){
-        // 搜索条件        
+        // 搜索条件
         $order_sn =  trim(I('order_sn'));
         $order_by = I('order_by') ? I('order_by') : 'id';
         $sort_order = I('sort_order') ? I('sort_order') : 'desc';
         $status =  I('status','');
-        
+
         $where = " store_id = ".STORE_ID;
         $order_sn && $where.= " and order_sn like '%$order_sn%' ";
-        if($status !== '') 
+        if($status !== '')
             $where.= " and status = '$status' ";
         $count = M('return_goods')->where($where)->count();
         $Page  = new AjaxPage($count,20);
         $show = $Page->show();
-        $list = M('return_goods')->where($where)->order("$order_by $sort_order")->limit("{$Page->firstRow},{$Page->listRows}")->select();        
+        $list = M('return_goods')->where($where)->order("$order_by $sort_order")->limit("{$Page->firstRow},{$Page->listRows}")->select();
         $goods_id_arr = get_arr_column($list, 'goods_id');
         if(!empty($goods_id_arr))
             $goods_list = M('goods')->where("goods_id in (".implode(',', $goods_id_arr).")")->getField('goods_id,goods_name');
@@ -516,13 +516,13 @@ class OrderController extends BaseController {
         $this->assign('page',$show);// 赋值分页输出
         $this->display();
     }
-    
+
     /**
      * 删除某个退换货申请
      */
     public function return_del(){
         $id = I('get.id');
-        M('return_goods')->where("id = $id and store_id = ".STORE_ID)->delete(); 
+        M('return_goods')->where("id = $id and store_id = ".STORE_ID)->delete();
         $this->success('成功删除!');
     }
     /**
@@ -533,8 +533,8 @@ class OrderController extends BaseController {
         $id = I('id');
         $return_goods = M('return_goods')->where("id= $id  and store_id = ".STORE_ID)->find();
         empty($return_goods) && $this->error("参数有误");
-        
-        if($return_goods['imgs'])            
+
+        if($return_goods['imgs'])
              $return_goods['imgs'] = explode(',', $return_goods['imgs']);
         $user = M('users')->where("user_id = {$return_goods[user_id]}")->find();
         $goods = M('goods')->where("goods_id = {$return_goods[goods_id]}")->find();
@@ -542,59 +542,59 @@ class OrderController extends BaseController {
         $type_msg = array('退换','换货');
         $status_msg = array('未处理','处理中','已完成');
         if(IS_POST)
-        {            
+        {
             $data['status'] = I('status');
-            $data['remark'] = I('remark');                                    
+            $data['remark'] = I('remark');
             $note ="退换货:{$type_msg[$return_goods['type']]}, 状态:{$status_msg[$data['status']]},处理备注：{$data['remark']}";
-            $result = M('return_goods')->where("id= $id  and store_id = ".STORE_ID)->save($data);    
+            $result = M('return_goods')->where("id= $id  and store_id = ".STORE_ID)->save($data);
             if($result)
-            {                    	
+            {
                 // 如果是换货
                 if($return_goods['type'] == 1)
                 {
                     $where = " order_id = ".$return_goods['order_id']." and goods_id=".$return_goods['goods_id'];
-                    M('order_goods')->where($where)->save(array('is_send'=>2));//更改商品状态                           
+                    M('order_goods')->where($where)->save(array('is_send'=>2));//更改商品状态
                 }
                 $orderLogic = new OrderLogic();
                 $seller_id = session('seller_id');
                 $order = $orderLogic->getOrderInfo($return_goods['order_id']);
                 $log = $orderLogic->orderActionLog($order,'订单退货',$note,$seller_id,1);
-                $this->success('修改成功!');            
+                $this->success('修改成功!');
                 exit;
-            }  
-        }        
-        
+            }
+        }
+
         $this->assign('id',$id); // 用户
         $this->assign('user',$user); // 用户
-        $this->assign('goods',$goods);// 商品        
+        $this->assign('goods',$goods);// 商品
         $this->assign('order_goods',$order_goods);// 商品列表
-        $this->assign('return_goods',$return_goods);// 退换货               
+        $this->assign('return_goods',$return_goods);// 退换货
         $this->display();
     }
-    
+
     /**
      * 管理员生成申请退货单
      */
     public function add_return_goods()
-   {                
-            $order_id = I('order_id'); 
+   {
+            $order_id = I('order_id');
             $goods_id = I('goods_id');
-                
-            $return_goods = M('return_goods')->where("order_id = $order_id and goods_id = $goods_id")->find();            
+
+            $return_goods = M('return_goods')->where("order_id = $order_id and goods_id = $goods_id")->find();
             if(!empty($return_goods))
             {
                 $this->error('已经提交过退货申请!',U('Admin/Order/return_list'));
                 exit;
             }
             $order = M('order')->where("order_id = $order_id")->find();
-            
-            $data['order_id'] = $order_id; 
-            $data['order_sn'] = $order['order_sn']; 
-            $data['goods_id'] = $goods_id; 
-            $data['addtime'] = time(); 
-            $data['user_id'] = $order[user_id];            
-            $data['remark'] = '管理员申请退换货'; // 问题描述            
-            M('return_goods')->add($data);            
+
+            $data['order_id'] = $order_id;
+            $data['order_sn'] = $order['order_sn'];
+            $data['goods_id'] = $goods_id;
+            $data['addtime'] = time();
+            $data['user_id'] = $order[user_id];
+            $data['remark'] = '管理员申请退换货'; // 问题描述
+            M('return_goods')->add($data);
             $this->success('申请成功,现在去处理退货',U('Admin/Order/return_list'));
             exit;
     }
@@ -603,14 +603,14 @@ class OrderController extends BaseController {
      * 订单操作
      * @param $id
      */
-    public function order_action(){    	
+    public function order_action(){
         $orderLogic = new OrderLogic();
         $action = I('get.type');
         $order_id = I('get.order_id');
         if($action && $order_id){
         	 $a = $orderLogic->orderProcessHandle($order_id,$action,STORE_ID);
 			 $seller_id = session('seller_id');
-			 $order = $orderLogic->getOrderInfo($order_id);			 
+			 $order = $orderLogic->getOrderInfo($order_id);
         	 $res = $orderLogic->orderActionLog($order,$action,I('note'),$seller_id,1);
         	 if($res && $a){
         	 	exit(json_encode(array('status' => 1,'msg' => '操作成功')));
@@ -621,7 +621,7 @@ class OrderController extends BaseController {
         	$this->error('参数错误',U('Admin/Order/detail',array('order_id'=>$order_id)));
         }
     }
-    
+
     public function order_log(){
     	$timegap = I('timegap');
     	if($timegap){
@@ -647,9 +647,9 @@ class OrderController extends BaseController {
     	$show = $Page->show();
     	$list = $log->where($condition)->order('action_id desc')->limit($Page->firstRow.','.$Page->listRows)->select();
     	$this->assign('list',$list);
-    	$this->assign('page',$show);   	
+    	$this->assign('page',$show);
     	$seller = M('seller')->getField('seller_id,seller_name');
-    	$this->assign('admin',$seller);    	
+    	$this->assign('admin',$seller);
     	$this->display();
     }
 
@@ -667,7 +667,7 @@ class OrderController extends BaseController {
 
     public function export_order()
     {
-    	//搜索条件        
+    	//搜索条件
 		$where = "where store_id =".STORE_ID." ";
 		$consignee = I('consignee');
 		if($consignee){
@@ -680,7 +680,7 @@ class OrderController extends BaseController {
 		if(I('order_status')){
 			$where .= " AND order_status = ".I('order_status');
 		}
-		
+
 		$timegap = I('timegap');
 		if($timegap){
 			$gap = explode('-', $timegap);
@@ -689,9 +689,9 @@ class OrderController extends BaseController {
 			$where .= " AND add_time>$begin and add_time<$end";
 		}
 	$region	= M('region')->getField('id,name');
-                
+
 	$sql = "select *,FROM_UNIXTIME(add_time,'%Y-%m-%d') as create_time from __PREFIX__order $where order by order_id";
-    	$orderList = D()->query($sql);   
+    	$orderList = D()->query($sql);
     	$strTable ='<table width="500" border="1">';
     	$strTable .= '<tr>';
     	$strTable .= '<td style="text-align:center;font-size:12px;width:120px;">订单编号</td>';
@@ -706,7 +706,7 @@ class OrderController extends BaseController {
     	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">发货状态</td>';
     	$strTable .= '<td style="text-align:center;font-size:12px;" width="*">商品信息</td>';
     	$strTable .= '</tr>';
-    	
+
     	foreach($orderList as $k=>$val){
     		$strTable .= '<tr>';
     		$strTable .= '<td style="text-align:center;font-size:12px;">&nbsp;'.$val['order_sn'].'</td>';
@@ -718,7 +718,7 @@ class OrderController extends BaseController {
     		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['order_amount'].'</td>';
     		$strTable .= '<td style="text-align:left;font-size:12px;">'.$val['pay_name'].'</td>';
     		$strTable .= '<td style="text-align:left;font-size:12px;">'.$this->pay_status[$val['pay_status']].'</td>';
-    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$this->shipping_status[$val['shipping_status']].'</td>';    
+    		$strTable .= '<td style="text-align:left;font-size:12px;">'.$this->shipping_status[$val['shipping_status']].'</td>';
     		$orderGoods = D('order_goods')->where('order_id='.$val['order_id'])->select();
     		$strGoods="";
     		foreach($orderGoods as $goods){
@@ -735,7 +735,7 @@ class OrderController extends BaseController {
     	downloadExcel($strTable,'order');
     	exit();
     }
-   
+
     /**
      * 添加一笔订单
      */
@@ -760,31 +760,31 @@ class OrderController extends BaseController {
             $order['city'] = I('city'); // 城市
             $order['district'] = I('district'); // 县
             $order['address'] = I('address'); // 收货地址
-            $order['mobile'] = I('mobile'); // 手机           
+            $order['mobile'] = I('mobile'); // 手机
             $order['invoice_title'] = I('invoice_title');// 发票
-            $order['admin_note'] = I('admin_note'); // 管理员备注            
+            $order['admin_note'] = I('admin_note'); // 管理员备注
             $order['order_sn'] = date('YmdHis').mt_rand(1000,9999); // 订单编号;
-            $order['admin_note'] = I('admin_note'); // 
-            $order['add_time'] = time(); //                    
+            $order['admin_note'] = I('admin_note'); //
+            $order['add_time'] = time(); //
             $order['shipping_code'] = I('shipping');// 物流方式
-            $order['shipping_name'] = M('plugin')->where(array('status'=>1,'type'=>'shipping','code'=>I('shipping')))->getField('name');            
-            $order['pay_code'] = I('payment');// 支付方式            
-            $order['pay_name'] = M('plugin')->where(array('status'=>1,'type'=>'payment','code'=>I('payment')))->getField('name');            
-                            
+            $order['shipping_name'] = M('plugin')->where(array('status'=>1,'type'=>'shipping','code'=>I('shipping')))->getField('name');
+            $order['pay_code'] = I('payment');// 支付方式
+            $order['pay_name'] = M('plugin')->where(array('status'=>1,'type'=>'payment','code'=>I('payment')))->getField('name');
+
             $goods_id_arr = I("goods_id");
             $orderLogic = new OrderLogic();
-            $order_goods = $orderLogic->get_spec_goods($goods_id_arr);          
-            $result = calculate_price($order['user_id'],$order_goods, array(STORE_ID => $order['shipping_code']), 0,$order[province],$order[city],$order[district],0,0,0,0);      
-            if($result['status'] < 0)	
+            $order_goods = $orderLogic->get_spec_goods($goods_id_arr);
+            $result = calculate_price($order['user_id'],$order_goods, array(STORE_ID => $order['shipping_code']), 0,$order[province],$order[city],$order[district],0,0,0,0);
+            if($result['status'] < 0)
             {
-                 $this->error($result['msg']);      
-            } 
-           
+                 $this->error($result['msg']);
+            }
+
            $order['goods_price']    = $result['result']['goods_price']; // 商品总价
            $order['shipping_price'] = $result['result']['store_shipping_price'][STORE_ID]; //物流费
            $order['order_amount']   = $result['result']['order_amount']; // 应付金额
            $order['total_amount']   = $result['result']['total_amount']; // 订单总价
-           
+
             // 添加订单
             $order_id = M('order')->add($order);
             if($order_id)
@@ -794,24 +794,24 @@ class OrderController extends BaseController {
                     $val['order_id'] = $order_id;
                     $val['store_id'] = STORE_ID;
                     $rec_id = M('order_goods')->add($val);
-                    if(!$rec_id)                 
-                        $this->error('添加失败');                                  
+                    if(!$rec_id)
+                        $this->error('添加失败');
                 }
                 $this->success('添加商品成功',U("Order/detail",array('order_id'=>$order_id)));
                 exit();
             }
             else{
                 $this->error('添加失败');
-            }                
-        }     
+            }
+        }
         $this->assign('shipping_list',$shipping_list);
         $this->assign('payment_list',$payment_list);
         $this->assign('province',$province);
         $this->assign('city',$city);
-        $this->assign('area',$area);        
+        $this->assign('area',$area);
         $this->display();
     }
-    
+
     /**
      * 选择搜索商品
      */
@@ -820,12 +820,12 @@ class OrderController extends BaseController {
     	$brandList =  M("brand")->select();
     	$categoryList =  M("goods_category")->select();
     	$this->assign('categoryList',$categoryList);
-    	$this->assign('brandList',$brandList);   	
+    	$this->assign('brandList',$brandList);
     	$where = ' store_id = '.STORE_ID.' and  is_on_sale = 1 ';//搜索条件
     	I('intro')  && $where = "$where and ".I('intro')." = 1";
-        
+
         $cat_id = I('cat_id');
-    	if($cat_id){    	    
+    	if($cat_id){
             $goods_category = M('goods_category')->where("id = $cat_id")->find();
             $where = " $where  and cat_id{$goods_category['level']} = $cat_id "; // 初始化搜索条件
             $this->assign('cat_id',$cat_id);
@@ -838,26 +838,26 @@ class OrderController extends BaseController {
     	{
     		$this->assign('keywords',I('keywords'));
     		$where = "$where and (goods_name like '%".I('keywords')."%' or keywords like '%".I('keywords')."%')" ;
-    	}  	
+    	}
     	$goodsList = M('goods')->where($where)->order('goods_id DESC')->limit(10)->select();
-                
+
         foreach($goodsList as $key => $val)
         {
             $spec_goods = M('spec_goods_price')->where("goods_id = {$val['goods_id']}")->select();
-            $goodsList[$key]['spec_goods'] = $spec_goods;            
+            $goodsList[$key]['spec_goods'] = $spec_goods;
         }
-        
+
         $store_bind_class = M('store_bind_class')->where("store_id =".STORE_ID)->select();
         $cat_id1 = get_arr_column($store_bind_class, 'class_1');
         $cat_id2 = get_arr_column($store_bind_class, 'class_2');
         $cat_id3 = get_arr_column($store_bind_class, 'class_3');
         $cat_id0 = array_merge($cat_id1,$cat_id2,$cat_id3);
-        
+
         $this->assign('cat_id0',$cat_id0);
     	$this->assign('goodsList',$goodsList);
-    	$this->display();        
+    	$this->display();
     }
-    
+
     public function ajaxOrderNotice(){
         $order_amount = M('order')->where(array('order_status'=>0))->count();
         echo $order_amount;
