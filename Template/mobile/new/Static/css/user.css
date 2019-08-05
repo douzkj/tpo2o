@@ -104,7 +104,8 @@
 
 /*订单订单详情user_order_detail.lbi*/
 .lan{ background:#5D6B85}
-.detail_top{ width:100%; overflow:hidden; background:#FFF; border-bottom:1px solid #CCC}
+/*.detail_top{ width:100%; overflow:hidden; background:#FFF; border-bottom:1px solid #CCC}*/
+.detail_top{ width:100%; overflow:hidden; background:#FFF;}
 .detail_top dl{ width:95%;margin:auto; overflow:hidden; padding-top:10px; padding-bottom:10px;}
 .detail_top dl dt{ float:left; overflow:hidden; width:10%;}
 .dingdan_1{ width:30px; height:30px; display:block; background-position:0 -218px;}

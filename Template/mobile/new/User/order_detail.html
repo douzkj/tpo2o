@@ -1,4 +1,5 @@
 <include file="Public/header"/>
+<link rel="stylesheet" href="__STATIC__/css/order_detail.css">
 <body>
 <header>
 <div class="tab_nav">
@@ -38,7 +39,7 @@
 			</dd>
 			</dl>
 
-			<dl>
+			<dl style="border-bottom:1px solid #eeeeee;">
 			<dt class="dingdan_3"></dt>
 			<dd><h3>收货人姓名&nbsp;:&nbsp;{$order_info.consignee}<em>{$order_info.mobile}</em></h3>
 				<div class="adss">详细地址&nbsp;:&nbsp;{$regionLits[$order_info['province']]},{$regionLits[$order_info['city']]},{$regionLits[$order_info['district']]},{$order_info.address}</div>
@@ -46,22 +47,54 @@
 			</dl>
 
 
-			<dl style="border-top:1px solid #eeeeee; margin-top:10px; height:140px; padding-bottom:0px;">
-			<dd>
+			<!--<dl style="border-top:1px solid #eeeeee; margin-top:10px; height:140px; padding-bottom:0px;">-->
+			<!--<dd>-->
 
-			<h3>商家名称:{$store['store_name']}</h3>
-			<h3>地址：
-	              {$regionLits[$store['province_id']]}
-                  {$regionLits[$store['city_id']]}
-                  {$regionLits[$store['district']]}
-                  {$store['store_address']}
-            </h3>
-			<h3>
-                联系电话：{$store['store_phone']}
-            </h3>
-			</dd>
-			</dl>
+			<!--<h3>商家名称:{$store['store_name']}</h3>-->
+			<!--<h3>地址：-->
+	              <!--{$regionLits[$store['province_id']]}-->
+                  <!--{$regionLits[$store['city_id']]}-->
+                  <!--{$regionLits[$store['district']]}-->
+                  <!--{$store['store_address']}-->
+            <!--</h3>-->
+			<!--<h3>-->
+                <!--联系电话：{$store['store_phone']}-->
+            <!--</h3>-->
+			<!--</dd>-->
+			<!--</dl>-->
 
+		</div>
+        <!--门店信息-->
+		<div class="subNavBox">
+			<div class="subNav">
+				<strong>门店信息</strong>
+			</div>
+			<ul class="navContent" style="display: none;">
+				<div class="detail-shop-address-wrapper">
+					<span class="detail-shop-location-img"></span>
+					<div class="detail-shop-des-wrapper">
+						<span class="shop-name">{$store['store_name']}</span>
+						<span class="shop-address">{$store['store_address']}</span>
+					</div>
+					<div class="detail-shop-phone-img"></div>
+				</div>
+			</ul>
+		</div>
+        <!--二维码-->
+		<div class="QRcode-wrapper-list">
+			<div class="QRcode-item">
+				<div class="QRcode">
+					<img src="/Public/upload/goods/thumb/79/goods_thumb_79_100_100.jpeg" alt="">
+				</div>
+				<span class="QRcode-number"><i class="tip">兑换码：</i><i class="code">4563 0863</i></span>
+			</div>
+			<div class="QRcode-item">
+				<div class="QRcode QRcode-consume">
+					<img src="/Public/upload/goods/thumb/79/goods_thumb_79_100_100.jpeg" alt="">
+				</div>
+				<span class="QRcode-number"><i class="tip consume">兑换码：</i><i class="code consume">4563 0863</i></span>
+			</div>
+		</div>
 		</div>
 
 		<div class="ord_list1">
@@ -131,6 +164,18 @@
             return false;
         location.href = "/index.php?m=Mobile&c=User&a=cancel_order&id="+id;
     }
+</script>
+<script type="text/javascript">
+    $(function(){
+        $(".subNav").click(function(){
+            $(this).next(".navContent").slideToggle(300).siblings(".navContent").slideUp(500);
+            $(this).toggleClass("on").siblings(".subNav").removeClass("on");
+            // if($(".is_scroll").length <= 0)
+            // {
+            //     $('html,body').animate({'scrollTop':$('body')[0].scrollHeight},600);
+            // }
+        });
+    })
 </script>
 </body>
 </html>
