@@ -244,7 +244,31 @@ function clock(key)
 	}
 	setInterval(GetRTime2,1000);
 </script>
+   <!--即将上架/即将下架-->
+  <div class="shelf-obtained">
+      <div id="shelf" class="shelf-wrapper active-tab" onclick="getShelf()">即将上架</div>
+      <div id="obtained" class="obtained-wrapper" onclick="getObtained()">即将下架</div>
+  </div>
 
+  <div class="shelf-obtained-products-list">
+      <div class="shelf-obtained-products-item">
+          <div class="products-img"></div>
+          <div class="products-des">
+              <p class="products-end-time">距离结束还有10天</p>
+              <p class="products-tips">主城区九区包邮【七夕葡萄酒鲜花套餐 礼盒一】套餐内容： 礼盒一： 森林干红葡萄酒+鲜花+皮盒</p>
+              <span class="products-sale-num-wrapper">
+                  <span class="products-num">原价
+                      <i class="de-price">¥99.99</i>
+                  </span>
+                  <span class="products-sale">销量:999</span>
+              </span>
+              <div class="price-buy-wrapper">
+                  <span class="products-price">¥88.88</span>
+                  <span class="buy-btn">购买</span>
+              </div>
+          </div>
+      </div>
+  </div>
   <div class="floor_body2" >
     <h2>————&nbsp;热销商品&nbsp;————</h2>
 
@@ -282,7 +306,20 @@ function clock(key)
       autoPage:true, //自动分页
       //switchLoad:"_src" //切换加载，真实图片路径为"_src"
     });
-  </script>
+
+   var shelf =  document.getElementById('shelf');
+   var obtained = document.getElementById('obtained');
+    function getShelf() {
+        shelf.classList.add('active-tab');
+        obtained.classList.remove('active-tab');
+    }
+    function getObtained() {
+        shelf.classList.remove('active-tab');
+        obtained.classList.add('active-tab');
+    }
+
+
+</script>
 
 
 

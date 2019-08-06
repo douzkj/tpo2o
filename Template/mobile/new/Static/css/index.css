@@ -352,3 +352,81 @@ box-shadow: 0 0 1px #ccc; text-indent:-100px; overflow:hidden; }
      background:#ffdb00;
      color: #ffffff;
  }
+.shelf-obtained {
+    display: flex;
+    border-bottom: 1px solid #f3f3f3;
+    background: white;
+    margin-top: 10px;
+}
+ .shelf-obtained .shelf-wrapper {
+     border-right: 1px solid #f3f3f3;
+ }
+ .shelf-obtained .shelf-wrapper.active-tab,.shelf-obtained .obtained-wrapper.active-tab {
+    color: #ff9900;
+ }
+ .shelf-obtained .shelf-wrapper,.shelf-obtained .obtained-wrapper {
+    cursor: pointer;
+    font-size: 14px;
+    width: 50%;
+    text-align: center;
+}
+ .shelf-obtained-products-list .shelf-obtained-products-item{
+     padding: 10px;
+     display: flex;
+     background: white;
+     border-bottom: 1px solid #e7e7e7
+ }
+ .shelf-obtained-products-list .shelf-obtained-products-item .products-img {
+     width: 115px;
+     height: 115px;
+     background: url("http://oss.cjhmai.com/f6c1ce34b8c68daccf94da1a37cdc847.jpg") no-repeat;
+     background-size: 100%;
+ }
+ .shelf-obtained-products-list .shelf-obtained-products-item .products-des {
+     padding-left: 10px;
+     width: calc(100% - 115px);
+     line-height: 1;
+ }
+ .shelf-obtained-products-list .shelf-obtained-products-item .products-des .products-end-time{
+    font-size: 13px;
+    color: #999999;
+ }
+ .shelf-obtained-products-list .shelf-obtained-products-item .products-des .products-tips{
+    margin-top: 6px;
+    font-size: 14px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+     line-height: 18px;
+ }
+ .shelf-obtained-products-list .shelf-obtained-products-item .products-des .products-sale-num-wrapper{
+    font-size: 12px;
+    color: #999999;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3px;
+ }
+ .shelf-obtained-products-list .shelf-obtained-products-item .products-des .products-sale-num-wrapper .products-sale {}
+ .shelf-obtained-products-list .shelf-obtained-products-item .products-des .products-sale-num-wrapper .products-num .de-price {
+     text-decoration: line-through;
+ }
+ .shelf-obtained-products-list .shelf-obtained-products-item .price-buy-wrapper {
+     display: flex;
+     justify-content: space-between;
+     padding-top: 20px;
+ }
+ .shelf-obtained-products-list .shelf-obtained-products-item .price-buy-wrapper  .products-price {
+    font-size: 16px;
+    color: red;
+    font-weight: bold;
+    line-height: 24px;
+ }
+ .shelf-obtained-products-list .shelf-obtained-products-item .price-buy-wrapper  .buy-btn {
+    background: red;
+    color: white;
+    font-size: 12px;
+    padding: 0 7px;
+    line-height: 24px;
+ }
