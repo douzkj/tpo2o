@@ -1,0 +1,96 @@
+.subNavBox{ overflow:hidden; padding-left:10px; padding-bottom:0px; padding-right:10px;background: white;border-bottom:1px solid #eeeeee;}
+.subNav{background: url(../images/arrow_down_off.png) no-repeat right center;background-size: auto 13px;}
+.subNav.on{background: url(../images/arrow_down_on.png) no-repeat right center;background-size: auto 14px;}
+.subNav strong{ display:block;width:100%; height:40px;color:#23232b; font-weight:normal; font-size:16px; line-height:40px;}
+
+.QRcode-wrapper-list {
+    display: flex;
+    flex-direction: column;
+    background: white;
+}
+
+.QRcode-wrapper-list .QRcode-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+}
+
+.QRcode-wrapper-list .QRcode-item .QRcode{
+    width: 160px;
+    height: 160px;
+    margin-bottom: 12px;
+}
+
+.QRcode-wrapper-list .QRcode-item .QRcode.QRcode-consume{
+    position: relative;
+}
+
+.QRcode-wrapper-list .QRcode-item .QRcode.QRcode-consume:after{
+    content: '';
+    background: rgba(237,238,239,0.5);
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.QRcode-wrapper-list .QRcode-item .QRcode img{
+    width: 100%;
+    height: 100%;
+}
+.QRcode-wrapper-list .QRcode-item .QRcode-number {
+    padding: 16px 27px;
+    border: 1px solid #ededed;
+    border-radius: 4px;
+    font-size: 0px;
+    line-height: 1;
+}
+.QRcode-wrapper-list .QRcode-item .QRcode-number .tip {
+    font-size: 13px;
+}
+.QRcode-wrapper-list .QRcode-item .QRcode-number .code{
+    font-size: 16px;
+}
+.QRcode-wrapper-list .QRcode-item .QRcode-number .tip.consume{
+    color: #ededed;
+}
+.QRcode-wrapper-list .QRcode-item .QRcode-number .code.consume{
+    text-decoration: line-through;
+    color: #ededed;
+}
+
+
+.subNavBox .navContent .detail-shop-address-wrapper{
+    height: 36px;
+    padding-bottom: 10px;
+    display: flex;
+    font-size: 0px;
+    background: white;
+    align-items: center;
+}
+.subNavBox .navContent .detail-shop-address-wrapper .detail-shop-location-img {
+    height: 23px;
+    width: 23px;
+    background: red;
+
+}
+.subNavBox .navContent .detail-shop-address-wrapper .detail-shop-phone-img {
+    height: 23px;
+    width: 23px;
+    background: red;
+}
+.subNavBox .navContent .detail-shop-address-wrapper .detail-shop-des-wrapper {
+    display: flex;
+    width: calc(100% - 46px);
+    flex-direction: column;
+    line-height: 1;
+}
+.subNavBox .navContent .detail-shop-address-wrapper .detail-shop-des-wrapper .shop-name,.subNavBox .navContent .detail-shop-address-wrapper .detail-shop-des-wrapper .shop-address{
+    width: 100%;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
