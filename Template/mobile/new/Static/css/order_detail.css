@@ -71,16 +71,30 @@
     align-items: center;
 }
 .subNavBox .navContent .detail-shop-address-wrapper .detail-shop-location-img {
-    height: 23px;
     width: 23px;
-    background: red;
+    height: 23px;
+    text-align: center;
+    display: contents;
+}
 
+.detail-shop-location-img i{
+    font-size: 23px;
+    color: red;
 }
+
 .subNavBox .navContent .detail-shop-address-wrapper .detail-shop-phone-img {
-    height: 23px;
     width: 23px;
-    background: red;
+    height: 23px;
+    text-align: center;
+    display: contents;
 }
+
+.detail-shop-phone-img i{
+    font-size: 23px;
+    color: red;
+}
+
+
 .subNavBox .navContent .detail-shop-address-wrapper .detail-shop-des-wrapper {
     display: flex;
     width: calc(100% - 46px);

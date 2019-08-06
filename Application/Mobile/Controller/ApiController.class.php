@@ -49,12 +49,12 @@ class ApiController extends MobileBaseController {
         $data = $_REQUEST;
         $user = session('user');
         $user['id'] = 1;
-//        if (!$user) {
-//            $this->errorResponse('用户未登录', 401);
-//        }
-//        if (!$user['is_distribut']) {
-//            $this->errorResponse('请先注册未代理', 403);
-//        }
+        if (!$user) {
+            $this->errorResponse('用户未登录', 401);
+        }
+        if (!$user['is_distribut']) {
+            $this->errorResponse('请先成为代理', 403);
+        }
         if ( ! isset($data['goods_id'])) {
             $this->errorResponse('参数有误');
         }
@@ -84,7 +84,6 @@ class ApiController extends MobileBaseController {
         //获取当前用户的此商品分享token
         $url = U('/Mobile/Goods/goodsInfo', ["id" => $data['goods_id'], 'first_leader' => $user['id']], true, true);
         $user_qrcode = $path . "qrcode_" . $user['id'] . ".png";
-        dump($user_qrcode);
         if (! file_exists($user_qrcode)) {
             vendor('phpqrcode.phpqrcode');
             \QRcode::png($url, "./" . $user_qrcode, QR_ECLEVEL_L, 3, 2);

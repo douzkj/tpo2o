@@ -117,9 +117,11 @@ class CartLogic extends RelationModel
                 $order_goods_id              = M("OrderGoods")->data($data2)->add();
                 //系统生成兑换码
                 for ($i = 0 ; $i < $val['goods_num']; $i ++ ){
+                    $get_code = generateRedemptionCode();
                     $code = [
                         'order_id' => $order_id,
-                        'code' => generateRedemptionCode(),
+                        'code' => $get_code,
+                        'token' => md5($get_code . $order_id . time())
                     ];
                     M('OrderCodes')->data($code)->add();
                 }

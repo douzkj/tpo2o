@@ -322,21 +322,25 @@ class UserController extends MobileBaseController
         $ids[] = $order_info['province'];
         $ids[] = $order_info['city'];
         $ids[] = $order_info['district'];
-        if (!empty($ids)) {
-            $regionLits = M('region')->where("id in (" . implode(',', $ids) . ")")->getField("id,name");
-        }
-        $region_list = get_region_list();
         $invoice_no = M('DeliveryDoc')->where("order_id = $id")->getField('invoice_no', true);
         $order_info['invoice_no'] = implode(' , ', $invoice_no);
         //获取订单操作记录
         $order_action = M('order_action')->where(array('order_id' => $id))->select();
+        //获取订单的二维码清空
+        $codes = M('order_codes')->where(['order_id' => $id])->select();
+        $shops = M('store_shops')
+            ->where(['store_id' => $store['store_id']])
+            ->order('sort desc')
+            ->select();
         $this->assign('store', $store);
         $this->assign('order_status', C('ORDER_STATUS'));
         $this->assign('shipping_status', C('SHIPPING_STATUS'));
         $this->assign('pay_status', C('PAY_STATUS'));
         //$this->assign('region_list',$region_list);
-        $this->assign('regionLits', $regionLits);
+//        $this->assign('regionLits', $regionLits);
         $this->assign('order_info', $order_info);
+        $this->assign('codes', $codes);
+        $this->assign('shops', $shops);
         $this->assign('order_action', $order_action);
         $this->display();
     }
@@ -1211,5 +1215,15 @@ class UserController extends MobileBaseController
             exit;
         }
         $this->display();
+    }
+
+    public function consumeCode()
+    {
+        $token = I('get.token');
+        $code_id = I('get.code_id');
+        $code = M('order_codes')->where(['token' => $token, 'code_id' => $code_id, ''])->find();
+        if ($code) {
+
+        }
     }
 }

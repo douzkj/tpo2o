@@ -133,6 +133,33 @@ function goods_thum_images($goods_id,$width,$height){
 }
 
 /**
+ *  订单二维码展示
+ * @param array $code  码信息
+ * @param string $width     生成缩略图的宽度
+ * @param string $height    生成缩略图的高度
+ */
+function order_qrcode($code){
+
+    if(empty($code))
+        return '';
+    //判断缩略图是否存在
+    $path = "Public/upload/order/codes/{$code['order_id']}/";
+    $goods_thumb_name ="{$code['token']}.png";
+    if(!is_dir($path))
+        mkdir($path,0777,true);
+    // 这个商品 已经生成过这个比例的图片就直接返回了
+    if(file_exists($path.$goods_thumb_name))  return '/'.$path.$goods_thumb_name;
+    vendor('phpqrcode.phpqrcode');
+    $url = U("User/consumeCode", ['token' => $code['token'], 'code_id' => $code['id']], true, true);
+    \QRcode::png($url, "./" .$path. $goods_thumb_name, QR_ECLEVEL_L, 3, 2);
+    return '/'.$path.$goods_thumb_name;
+}
+
+
+
+
+
+/**
  * 商品相册缩略图
  */
 function get_sub_images($sub_img,$goods_id,$width,$height){

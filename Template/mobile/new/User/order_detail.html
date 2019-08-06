@@ -1,5 +1,7 @@
 <include file="Public/header"/>
 <link rel="stylesheet" href="__STATIC__/css/order_detail.css">
+<link rel="stylesheet" type="text/css" href="__STATIC__/font/iconfont.css"/>
+
 <body>
 <header>
 <div class="tab_nav">
@@ -42,7 +44,7 @@
 			<dl style="border-bottom:1px solid #eeeeee;">
 			<dt class="dingdan_3"></dt>
 			<dd><h3>收货人姓名&nbsp;:&nbsp;{$order_info.consignee}<em>{$order_info.mobile}</em></h3>
-				<div class="adss">详细地址&nbsp;:&nbsp;{$regionLits[$order_info['province']]},{$regionLits[$order_info['city']]},{$regionLits[$order_info['district']]},{$order_info.address}</div>
+				<!--<div class="adss">详细地址&nbsp;:&nbsp;{$regionLits[$order_info['province']]},{$regionLits[$order_info['city']]},{$regionLits[$order_info['district']]},{$order_info.address}</div>-->
 			</dd>
 			</dl>
 
@@ -70,30 +72,36 @@
 				<strong>门店信息</strong>
 			</div>
 			<ul class="navContent" style="display: none;">
-				<div class="detail-shop-address-wrapper">
-					<span class="detail-shop-location-img"></span>
-					<div class="detail-shop-des-wrapper">
-						<span class="shop-name">{$store['store_name']}</span>
-						<span class="shop-address">{$store['store_address']}</span>
+				<foreach name="shops" item="shop">
+					<div class="detail-shop-address-wrapper">
+						<a href="{:U('Map/byStore', ['shop_id' => $shop[id]])}"><span class="detail-shop-location-img"><i class=" icon icon-dingwei1"></i></span></a>
+						<div class="detail-shop-des-wrapper">
+							<span class="shop-name">{$shop.title}</span>
+							<span class="shop-address">{:getShopPosition($shop)}</span>
+						</div>
+						<div class="detail-shop-phone-img"><i class=" icon icon-tel_phone"></i></div>
 					</div>
-					<div class="detail-shop-phone-img"></div>
-				</div>
+				</foreach>
+
 			</ul>
 		</div>
         <!--二维码-->
 		<div class="QRcode-wrapper-list">
-			<div class="QRcode-item">
-				<div class="QRcode">
-					<img src="/Public/upload/goods/thumb/79/goods_thumb_79_100_100.jpeg" alt="">
+			<foreach name="codes" item="code">
+				<div class="QRcode-item">
+					<div class="QRcode <if condition='$code[is_checked] eq 1'>QRcode-consume</if>">
+						<img src="{$code|order_qrcode}" class="order-qrcode" data-code="{$code.code}"  alt="">
+					</div>
+					<span class="QRcode-number"><i class="tip">兑换码：</i><i class="code">{$code.code}</i></span>
 				</div>
-				<span class="QRcode-number"><i class="tip">兑换码：</i><i class="code">4563 0863</i></span>
-			</div>
-			<div class="QRcode-item">
-				<div class="QRcode QRcode-consume">
-					<img src="/Public/upload/goods/thumb/79/goods_thumb_79_100_100.jpeg" alt="">
-				</div>
-				<span class="QRcode-number"><i class="tip consume">兑换码：</i><i class="code consume">4563 0863</i></span>
-			</div>
+			</foreach>
+
+			<!--<div class="QRcode-item">-->
+				<!--<div class="QRcode QRcode-consume">-->
+					<!--<img src="/Public/upload/goods/thumb/79/goods_thumb_79_100_100.jpeg" alt="">-->
+				<!--</div>-->
+				<!--<span class="QRcode-number"><i class="tip consume">兑换码：</i><i class="code consume">4563 0863</i></span>-->
+			<!--</div>-->
 		</div>
 		</div>
 
@@ -126,11 +134,11 @@
 	<!-- end 商品列表-->
 			<div class="jiage">
 				<p>商品总价&nbsp;:&nbsp;<span class="price">￥{$order_info.order_amount}元</span></p>
-				<p>配送费用&nbsp;:&nbsp;<span class="price">￥{$order_info.shipping_price}元</span></p>
-                                <p>优惠券&nbsp;:&nbsp;<span class="price">￥{$order_info.coupon_price}元</span></p>
-				<p>积分&nbsp;:&nbsp;<span class="price">￥{$order_info.integral_money}元</span></p>
-                                <p>余额&nbsp;:&nbsp;<span class="price">￥{$order_info.user_money}元</span></p>
-                                <p>活动优惠&nbsp;:&nbsp;<span class="price">￥{$order_info.order_prom_amount}元</span></p>
+				<!--<p>配送费用&nbsp;:&nbsp;<span class="price">￥{$order_info.shipping_price}元</span></p>-->
+                                <!--<p>优惠券&nbsp;:&nbsp;<span class="price">￥{$order_info.coupon_price}元</span></p>-->
+				<!--<p>积分&nbsp;:&nbsp;<span class="price">￥{$order_info.integral_money}元</span></p>-->
+                                <!--<p>余额&nbsp;:&nbsp;<span class="price">￥{$order_info.user_money}元</span></p>-->
+                                <!--<p>活动优惠&nbsp;:&nbsp;<span class="price">￥{$order_info.order_prom_amount}元</span></p>-->
 				<p>应付款金额&nbsp;:&nbsp;<span class="price1">￥{$order_info.total_fee}元</span></p>
 			</div>
 		</div>
@@ -150,8 +158,8 @@
 			<div class="anniu1">
                 <if condition="$order_info.cancel_btn eq 1"><a onClick="cancel_order({$order_info.order_id})" class="on_comment">取消订单</a></if>
                 <if condition="$order_info.pay_btn eq 1"><a href="{:U('Mobile/Cart/cart4',array('order_id'=>$order_info['order_id']))}" class="on_comment">立即付款</a></if>
-                <if condition="$order_info.receive_btn eq 1"><a href="{:U('Mobile/User/order_confirm',array('id'=>$order_info['order_id']))}" class="on_comment">收货确认</a></if>
-                <if condition="$order_info.shipping_btn eq 1"><a href="http://www.kuaidi100.com/" target="_blank" class="on_comment">查看物流</a></if>
+                <!--<if condition="$order_info.receive_btn eq 1"><a href="{:U('Mobile/User/order_confirm',array('id'=>$order_info['order_id']))}" class="on_comment">收货确认</a></if>-->
+                <!--<if condition="$order_info.shipping_btn eq 1"><a href="http://www.kuaidi100.com/" target="_blank" class="on_comment">查看物流</a></if>-->
                 <if condition="$order_info.return_btn eq 1"><a href="mqqwpa://im/chat?chat_type=wpa&uin={$store['store_qq']}&version=1&src_type=web&web_src=oicqzone.com" target="_blank" class="on_comment">联系客服</a></if>
 			</div>
 		</div>
