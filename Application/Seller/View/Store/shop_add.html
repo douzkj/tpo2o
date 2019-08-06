@@ -42,37 +42,46 @@
                                     </tr>
                                     <tr>
                                         <td>排序：</td>
-                                        <td colspan="2"><input type="text"  pattern="^\d{1,}$" title="只能输入数字"  class="input-sm" name="sort" value="{$store.sort}"></td>
+                                        <td colspan="2"><input type="text"  pattern="^\d{1,}$" title="只能输入数字"  class="input-sm" name="sort" value="{$store.sort? : 0}"></td>
                                     </tr>
                                     <tr>
                                         <td>店铺地址：</td>
                                         <td colspan="2">
-                                            <div class="col-xs-2">
-                                                <select onchange="get_city(this)" id="province" name="province_id" class="form-control" style="margin-left:-15px;">
-                                                    <option  value="0">选择省份</option>
-                                                    <volist name="province" id="vo">
-                                                        <option value="{$vo.id}" <if condition="$store[province_id] eq $vo[id]">selected</if>>{$vo.name}</option>
-                                                    </volist>
-                                                </select>
-                                            </div>
-                                            <div class="col-xs-2">
-                                                <select onchange="get_area(this)" id="city" name="city_id" class="form-control">
-                                                    <option value="0">选择城市</option>
-                                                    <volist name="city" id="vo">
-                                                        <option value="{$vo.id}" <if condition="$store[city_id] eq $vo[id]">selected</if>>{$vo.name}</option>
-                                                    </volist>
-                                                </select>
-                                            </div>
-                                            <div class="col-xs-2">
-                                                <select id="district" name="district_id" class="form-control">
-                                                    <option value="0">选择区域</option>
-                                                    <volist name="area" id="vo">
-                                                        <option value="{$vo.id}" <if condition="$store[district_id] eq $vo[id]">selected</if>>{$vo.name}</option>
-                                                    </volist>
-                                                </select>
-                                            </div>
-                                            <div class="col-xs-3">
-                                                <input type="text" placeholder="详细地址" class="form-control" name="position" value="{$store.position}">
+                                                <div class="col-xs-2">
+                                                    <select onchange="get_city(this, 1)" id="province" name="province_id" class="form-control" style="margin-left:-15px;">
+                                                        <option  value="0">选择省份</option>
+                                                        <volist name="province" id="vo">
+                                                            <option value="{$vo.id}" <if condition="$store[province_id] eq $vo[id]">selected</if>>{$vo.name}</option>
+                                                        </volist>
+                                                    </select>
+                                                </div>
+                                                <div class="col-xs-2">
+                                                    <select onchange="get_area(this, 1)" id="city" name="city_id" class="form-control">
+                                                        <option value="0">选择城市</option>
+                                                        <volist name="city" id="vo">
+                                                            <option value="{$vo.id}" <if condition="$store[city_id] eq $vo[id]">selected</if>>{$vo.name}</option>
+                                                        </volist>
+                                                    </select>
+                                                </div>
+                                                <div class="col-xs-2">
+                                                    <select id="district" name="district_id" class="form-control">
+                                                        <option value="0">选择区域</option>
+                                                        <volist name="area" id="vo">
+                                                            <option value="{$vo.id}" <if condition="$store[district_id] eq $vo[id]">selected</if>>{$vo.name}</option>
+                                                        </volist>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-xs-3">
+                                                    <input type="text" placeholder="详细地址" class="form-control" name="position" value="{$store.position}">
+                                                </div>
+                                                <div class="col-xs-2">
+                                                   <a class="btn btn-primary" href="javascript:void(0);" onclick="checkPoint()">查询地址</a>
+                                                </div>
+                                            <div class="col-xs-12">
+                                                <div id="l-map" style="height: 300px">
+
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -95,6 +104,8 @@
                                     </tbody>
                                     <tfoot>
                                     <tr>
+                                        <input type="hidden" name="longitude" value="{$store.longitude}">
+                                        <input type="hidden" name="latitude" value="{$store.latitude}">
                                         <td><input type="hidden" name="store_id" value="{$store.store_id}"></td>
                                         <td></td>
                                         <td class="text-right"><input class="btn btn-primary" type="button" onclick="adsubmit()" value="保存"></td>
@@ -111,8 +122,52 @@
     </section>
 </div>
 
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=YtPYQ0XMmcmGnPaLFImTl3719X8oz3p8"></script>
 <script>
+
+    var map = new BMap.Map("l-map");
+    map.addEventListener("click", setPointInfo);
+    var shop = '{$store.store_id}';
+    if (shop) {
+        var lng = $("input[name=longitude]").val();
+        var lat = $("input[name=latitude]").val();
+        var point = new BMap.Point(lng,lat);
+        map.centerAndZoom(point, 16);
+        var mk = new BMap.Marker(point);
+        map.addOverlay(mk);
+        map.panTo(point);
+    }
+
+    function checkPoint() {
+
+        var province = $("select[name=province_id] option:selected").text();
+        var city = $("select[name=city_id] option:selected").text();
+        var district = $("select[name=district_id] option:selected").text();
+        var position = $("input[name=position]").val();
+        map.centerAndZoom(province + city, 16);
+        var local = new BMap.LocalSearch(map, {
+            renderOptions:{map: map}
+        });
+        local.search(district + position);
+
+    }
+
+    function setPointInfo(e)
+    {
+        var point = e.point;
+        if (point) {
+            $("input[name=longitude]").val(point.lng);
+            $("input[name=latitude]").val(point.lat);
+        } else {
+            alert("地址未检索成功");
+        }
+    }
+
     function adsubmit(){
+        if ($("input[name=longitude]").val() == '' || $("input[name=latitude]").val() == '') {
+            alert("未选中地图上的点");
+            return false;
+        }
         $('#handlepost').submit();
     }
 

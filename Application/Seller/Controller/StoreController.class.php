@@ -40,12 +40,12 @@ class StoreController extends BaseController{
         $store = M('store_shops')->where(['id' => $_GET['shop_id']])->find();
 
         if ($store) {
-            $city =  M('region')->where(array('parent_id'=>$store['province_id']))->select();
-            $area =  M('region')->where(array('parent_id'=>$store['city_id']))->select();
+            $city =  M('region')->where(array('parent_id'=>$store['province_id'], 'is_open' => 1))->select();
+            $area =  M('region')->where(array('parent_id'=>$store['city_id'], 'is_open' => 1))->select();
             $this->assign('city',$city);
             $this->assign('area',$area);
         }
-        $province = M('region')->where(array('parent_id'=>0))->select();
+        $province = M('region')->where(array('parent_id'=>0, 'is_open' => 1))->select();
         $this->assign('province',$province);
         $this->assign('store', $store);
         $this->display();

@@ -11,7 +11,7 @@ function get_province(){
             return;
         },
         success: function(v) {
-            v = '<option value="0">选择省份</option>'+ v;          
+            v = '<option value="0">选择省份</option>'+ v;
             $('#province').empty().html(v);
         }
     });
@@ -22,13 +22,13 @@ function get_province(){
  * 获取城市
  * @param t  省份select对象
  */
-function get_city(t){
+function get_city(t, is_shop){
     var parent_id = $(t).val();
     if(!parent_id > 0){
         return;
     }
     $('#twon').empty().css('display','none');
-    var url = '/index.php?m=Home&c=Api&a=getRegion&level=2&parent_id='+ parent_id;
+    var url = '/index.php?m=Home&c=Api&a=getRegion&level=2&parent_id='+ parent_id + "&is_shop=" + is_shop;
     $.ajax({
         type : "GET",
         url  : url,
@@ -37,7 +37,7 @@ function get_city(t){
             return;
         },
         success: function(v) {
-            v = '<option value="0">选择城市</option>'+ v;          
+            v = '<option value="0">选择城市</option>'+ v;
             $('#city').empty().html(v);
         }
     });
@@ -47,12 +47,12 @@ function get_city(t){
  * 获取地区
  * @param t  城市select对象
  */
-function get_area(t){
+function get_area(t, is_shop){
     var parent_id = $(t).val();
     if(!parent_id > 0){
         return;
     }
-    var url = '/index.php?m=Home&c=Api&a=getRegion&level=3&parent_id='+ parent_id;
+    var url = '/index.php?m=Home&c=Api&a=getRegion&level=3&parent_id='+ parent_id + "&is_shop=" + is_shop;
     $.ajax({
         type : "GET",
         url  : url,
@@ -138,14 +138,14 @@ function checkMobile(tel) {
  * @callback string  回调函数(单张图片返回保存路径字符串，多张则为路径数组 )
  */
 function GetUploadify(num,elementid,path,callback)
-{	   	
+{
 	var upurl ='/index.php?m=Admin&c=Uploadify&a=upload&num='+num+'&input='+elementid+'&path='+path+'&func='+callback;
 	var iframe_str='<iframe frameborder="0" ';
-	iframe_str=iframe_str+'id=uploadify ';   		
+	iframe_str=iframe_str+'id=uploadify ';
 	iframe_str=iframe_str+' src='+upurl;
 	iframe_str=iframe_str+' allowtransparency="true" class="uploadframe" scrolling="no"> ';
-	iframe_str=iframe_str+'</iframe>';    	    		
-	$("body").append(iframe_str);	
+	iframe_str=iframe_str+'</iframe>';
+	$("body").append(iframe_str);
 	$("iframe.uploadframe").css("height",$(document).height()).css("width","100%").css("position","absolute").css("left","0px").css("top","0px").css("z-index","999999").show();
 	$(window).resize(function(){
 		$("iframe.uploadframe").css("height",$(document).height()).show();
@@ -161,14 +161,14 @@ function GetUploadify(num,elementid,path,callback)
  * @callback string  回调函数(单张图片返回保存路径字符串，多张则为路径数组 )
  */
 function GetUploadify2(num,elementid,path,callback)
-{	   	
+{
 	var upurl ='/index.php?m=Home&c=Uploadify&a=upload&num='+num+'&input='+elementid+'&path='+path+'&func='+callback;
 	var iframe_str='<iframe frameborder="0" ';
-	iframe_str=iframe_str+'id=uploadify ';   		
+	iframe_str=iframe_str+'id=uploadify ';
 	iframe_str=iframe_str+' src='+upurl;
 	iframe_str=iframe_str+' allowtransparency="true" class="uploadframe" scrolling="no"> ';
-	iframe_str=iframe_str+'</iframe>';    	    		
-	$("body").append(iframe_str);	
+	iframe_str=iframe_str+'</iframe>';
+	$("body").append(iframe_str);
 	$("iframe.uploadframe").css("height",$(document).height()).css("width","100%").css("position","absolute").css("left","0px").css("top","0px").css("z-index","999999").show();
 	$(window).resize(function(){
 		$("iframe.uploadframe").css("height",$(document).height()).show();
@@ -210,7 +210,7 @@ function collect_goods(goods_id){
 			alert(data.msg);
 		}
 	});
-}	
+}
 
 
 // 获取活动剩余天数 小时 分钟
@@ -233,11 +233,11 @@ function GetRTime(end_time){
        var h=Math.floor(t/1000/60/60%24);
        var m=Math.floor(t/1000/60%60);
        var s=Math.floor(t/1000%60);
-	   if(s >= 0)	
+	   if(s >= 0)
 	   return d + '天' + h + '小时' + m + '分' +s+'秒';
    }
-   
-   
+
+
 /**
  * 获取多级联动的商品分类
  */
@@ -265,12 +265,12 @@ function getCookie(c_name)
 	{
 	  c_start = document.cookie.indexOf(c_name + "=")
 	  if (c_start!=-1)
-	  { 
-	    c_start=c_start + c_name.length+1 
+	  {
+	    c_start=c_start + c_name.length+1
 	    c_end=document.cookie.indexOf(";",c_start)
 	    if (c_end==-1) c_end=document.cookie.length
 	    	return unescape(document.cookie.substring(c_start,c_end))
-	  } 
+	  }
 	}
 	return "";
 }
@@ -293,27 +293,27 @@ function setCookies(name, value, time)
 function set_first_leader()
 {
 	   // 获取地址栏 分销推广链接id 将推荐人id 存入cookie
-	  var get_parameters = $.urlGet(); //获取URL的Get参数		  
+	  var get_parameters = $.urlGet(); //获取URL的Get参数
 	  var first_leader = parseInt(get_parameters['first_leader']); //取得first_leader的值
 	  if(first_leader > 0)
-	  {   // 将推荐人id 存入cookie			
+	  {   // 将推荐人id 存入cookie
 		  setCookies('first_leader', first_leader);
-	  }	
+	  }
 }
 // 判断是否手机浏览器
 function isMobileBrowser()
 {
-    var sUserAgent = navigator.userAgent.toLowerCase();    
-    var bIsIpad = sUserAgent.match(/ipad/i) == "ipad";    
-    var bIsIphoneOs = sUserAgent.match(/iphone os/i) == "iphone os";    
-    var bIsMidp = sUserAgent.match(/midp/i) == "midp";    
-    var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";    
-    var bIsUc = sUserAgent.match(/ucweb/i) == "ucweb";    
-    var bIsAndroid = sUserAgent.match(/android/i) == "android";    
-    var bIsCE = sUserAgent.match(/windows ce/i) == "windows ce";    
-    var bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";    
-    if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM ){    
+    var sUserAgent = navigator.userAgent.toLowerCase();
+    var bIsIpad = sUserAgent.match(/ipad/i) == "ipad";
+    var bIsIphoneOs = sUserAgent.match(/iphone os/i) == "iphone os";
+    var bIsMidp = sUserAgent.match(/midp/i) == "midp";
+    var bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";
+    var bIsUc = sUserAgent.match(/ucweb/i) == "ucweb";
+    var bIsAndroid = sUserAgent.match(/android/i) == "android";
+    var bIsCE = sUserAgent.match(/windows ce/i) == "windows ce";
+    var bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";
+    if (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM ){
         return true;
-    }else 
+    }else
 	    return false;
-}                
+}

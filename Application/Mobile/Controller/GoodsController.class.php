@@ -197,7 +197,10 @@ class GoodsController extends MobileBaseController {
         $this->assign('goods',$goods);
         $shop_ids = M('goods_shop')->where(['goods_id' => $goods_id])->getField('shop_id', true);
         if ($shop_ids) {
-            $shops = M('store_shops')->where(['id' => ['in', $shop_ids], 'store_id' => $goods['store_id']])->select();
+            $shops = M('store_shops')
+                ->where(['id' => ['in', $shop_ids], 'store_id' => $goods['store_id']])
+                ->order('sort desc, created_at desc')
+                ->select();
         }
         $this->assign('shops', $shops);
         if($goods['store_id']>0){

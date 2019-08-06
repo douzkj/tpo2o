@@ -33,23 +33,19 @@ class IndexController extends MobileBaseController {
         $this->assign('hot_goods',$hot_goods);
         $favourite_goods = M('goods')->where("is_recommend=1 and is_on_sale=1")->order('goods_id DESC')->limit(20)->cache(true,TPSHOP_CACHE_TIME)->select();//首页推荐商品
         $this->assign('favourite_goods',$favourite_goods);
-        $websites_provinces = $this->tp_config['websites_provinces'];
-        if ($websites_provinces) {
-            $provinces = M('region')->where(['id' => ['in', $websites_provinces]])->select();
-        } else {
-            $provinces = [];
-        }
+        $provinces = M('region')->where(['is_open' => 1, 'parent_id' => 0])->select();
+
         //获取区县
-        $now_region = M('region')->where(['id' => PROVINCE_ID])->find();
+        $now_region = M('region')->where(['id' => PROVINCE_ID, 'is_open' => 1])->find();
         $areas = [];
         if ($now_region) {
             if (preg_match("/[天津|北京|重庆|上海]/", $now_region['name'])) {
-                $subs = M('region')->where(['parent_id' => $now_region['id']])->getField('id', true);
+                $subs = M('region')->where(['parent_id' => $now_region['id'], 'is_open' => 1])->getField('id', true);
                 if ($subs) {
-                    $areas = M('region')->where(['parent_id' => ['in', $subs]])->select();
+                    $areas = M('region')->where(['parent_id' => ['in', $subs], 'is_open' => 1])->select();
                 }
             } else {
-                $areas = M('region')->where(['parent_id' => $now_region['id']])->select();
+                $areas = M('region')->where(['parent_id' => $now_region['id'], 'is_open' => 1])->select();
             }
         }
         $this->assign('areas', $areas);

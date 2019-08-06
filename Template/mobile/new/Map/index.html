@@ -1,0 +1,59 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <meta name="Generator" content="tpshop" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>门店地图</title>
+    <meta http-equiv="keywords" content="{$tpshop_config['shop_info_store_keyword']}" />
+    <meta name="description" content="{$tpshop_config['shop_info_store_desc']}" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link rel="stylesheet" href="__STATIC__/css/public.css">
+    <link rel="stylesheet" href="__STATIC__/css/flow.css">
+    <link rel="stylesheet" href="__STATIC__/css/style_jm.css">
+    <script type="text/javascript" src="__STATIC__/js/jquery.js"></script>
+    <script src="__PUBLIC__/js/global.js"></script>
+    <script src="__PUBLIC__/js/mobile_common.js"></script>
+    <script src="__STATIC__/js/common.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=YtPYQ0XMmcmGnPaLFImTl3719X8oz3p8"></script>
+</head>
+<body style="background: rgb(235, 236, 237);position:relative;">
+<div class="pay-header-wrapper">
+    <div class="pay-h">
+        <div class="pay-h-back">
+            <a style="display: block;width: 100%;height: 100%;" href="javascript:history.back(-1)" title="返回"></a>
+        </div>
+        <div class="pay-h-title">门店地图</div>
+        <div class="pay-h-vator"></div>
+    </div>
+</div>
+
+<div class="pay-desc-tips-wrapper" style="height: 525px;" id="l-map">
+
+</div>
+
+<script>
+    var map = new BMap.Map("l-map");
+    var point = new BMap.Point({$shop.longitude}, {$shop.latitude});
+    map.enableKeyboard(true);
+    map.enableScrollWheelZoom(true);
+    map.centerAndZoom(point, 18);
+    var mk = new BMap.Marker(point);
+    map.addOverlay(mk);
+    map.panTo(point);
+    // var geolocation = new BMap.Geolocation();
+    // geolocation.setPointerCapture()
+    // geolocation.getCurrentPosition(function(r){
+    //     if(this.getStatus() == BMAP_STATUS_SUCCESS){
+    //         var mk = new BMap.Marker(r.point);
+    //         map.addOverlay(mk);
+    //         map.panTo(r.point);
+    //         alert('您的位置：'+r.point.lng+','+r.point.lat);
+    //     }
+    //     else {
+    //         alert('failed'+this.getStatus());
+    //     }
+    // },{enableHighAccuracy: true})
+</script>
+</body>
+</html>

@@ -23,8 +23,15 @@ class ApiController extends Controller {
      */
     public function getRegion(){
         $parent_id = I('get.parent_id');
-        $selected = I('get.selected',0);        
-        $data = M('region')->where("parent_id=$parent_id")->select();
+        $selected = I('get.selected',0);
+        $is_shop = I('get.is_shop', 0);
+        $where = [
+            'parent_id' => $parent_id,
+        ];
+        if ($is_shop) {
+            $where['is_open'] = 1;
+        }
+        $data = M('region')->where($where)->select();
         $html = '';
         if($data){
             foreach($data as $h){
@@ -36,7 +43,7 @@ class ApiController extends Controller {
         }
         echo $html;
     }
-    
+
 
     public function getTwon(){
     	$parent_id = I('get.parent_id');
@@ -53,21 +60,21 @@ class ApiController extends Controller {
     		echo $html;
     	}
     }
-    
+
     /*
      * 获取商品分类
      */
     public function get_category(){
-        $parent_id = I('get.parent_id','0'); // 商品分类 父id  
+        $parent_id = I('get.parent_id','0'); // 商品分类 父id
         empty($parent_id) && exit('');
-        $list = M('goods_category')->where(array('parent_id'=>$parent_id))->select();        
+        $list = M('goods_category')->where(array('parent_id'=>$parent_id))->select();
         foreach($list as $k => $v)
-        {             
+        {
             $html .= "<option value='{$v['id']}' rel='{$v['commission']}'>{$v['name']}</option>";
-        }            
+        }
         exit($html);
     }
-    
+
      public function get_cates(){
      	$parent_id = I('get.parent_id','0'); // 商品分类 父id
      	empty($parent_id) && exit('');
@@ -77,7 +84,7 @@ class ApiController extends Controller {
      		$html .= "<input type='checkbox' name='subcate[]' rel='{$v['commission']}' data-name='{$v['name']}' value='{$v['id']}'>".$v['name'];
      	}
      	exit($html);
-     }    
+     }
     /*
      * 获取店铺内分类
      */
@@ -85,27 +92,27 @@ class ApiController extends Controller {
         // 店铺id
         $store_id = session('store_id');
         $store_id = $store_id ? $store_id : 0;
-        $parent_id = I('get.parent_id',0); // 商品分类 父id  
-        
-        ($parent_id == 0) && exit(''); 
-        
-        $list = M('store_goods_class')->where("parent_id = $parent_id and store_id = $store_id")->select();        
+        $parent_id = I('get.parent_id',0); // 商品分类 父id
+
+        ($parent_id == 0) && exit('');
+
+        $list = M('store_goods_class')->where("parent_id = $parent_id and store_id = $store_id")->select();
         foreach($list as $k => $v)
-            $html .= "<option value='{$v['cat_id']}'>{$v['cat_name']}</option>";        
+            $html .= "<option value='{$v['cat_id']}'>{$v['cat_name']}</option>";
         exit($html);
-    }   
-    
+    }
+
     /**
      * 检测手机号是否已经存在
      */
     public function issetMobile()
     {
-      $mobile = I("mobile",'0');  
+      $mobile = I("mobile",'0');
       $users = M('users')->where("mobile = '$mobile'")->find();
       if($users)
           exit ('1');
-      else 
-          exit ('0');      
-    }     
-    
+      else
+          exit ('0');
+    }
+
 }

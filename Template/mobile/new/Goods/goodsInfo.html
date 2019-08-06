@@ -170,7 +170,7 @@ var t2=new TouchSlider({id:'sliderlist', speed:600, timeout:6000, before:functio
                   <div class="shop-list">
                       <foreach name="shops" item="shop">
                           <div class="shop-item">
-                              <span class="shop-location-img"><i class=" icon icon-dingwei1"></i></span>
+                              <a href="{:U('Map/byStore', ['shop_id' => $shop[id]])}"><span class="shop-location-img"><i class=" icon icon-dingwei1"></i></span></a>
                               <div class="shop-des">
                                   <span class="shop-name">{$shop.title}</span>
                                   <p class="shop-address">{:getShopPosition($shop)}</p>

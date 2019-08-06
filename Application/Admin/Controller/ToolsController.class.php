@@ -8,8 +8,8 @@
  * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用 .
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ============================================================================
- * Author: 当燃      
- * 
+ * Author: 当燃
+ *
  * Date: 2016-03-09
  */
 
@@ -29,7 +29,7 @@ class ToolsController extends BaseController {
         $this->assign('tableNum', count($dbtables));
         $this->display();
     }
-    
+
     public function backup(){
         $M = M();
         //防止备份数据过程超时
@@ -49,8 +49,8 @@ class ToolsController extends BaseController {
         $pre = "# -----------------------------------------------------------\n";
         //取得表结构信息
         //1，表示表名和字段名会用``包着的,0 则不用``
-     
-        M()->execute("SET SQL_QUOTE_SHOW_CREATE = 1"); 
+
+        M()->execute("SET SQL_QUOTE_SHOW_CREATE = 1");
         $outstr = '';
         foreach ($tables as $table) {
             $outstr.="# 表的结构 {$table} \n";
@@ -58,7 +58,7 @@ class ToolsController extends BaseController {
             $tmp = $M->query("SHOW CREATE TABLE {$table}");
             $outstr .= $tmp[0]['create table'] . " ;\n\n";
         }
-        
+
         $sqlTable = $outstr;
         $outstr = "";
         $file_n = 1;
@@ -95,11 +95,11 @@ class ToolsController extends BaseController {
                     if (strlen($pre) + strlen($sqlNo) + strlen($sqlTable) + strlen($outstr) + strlen($temSql) > C("CFG_SQL_FILESIZE")) {
                         $file = $path . "_" . $file_n . ".sql";
                         $outstr = $file_n == 1 ? $pre . $sqlNo . $sqlTable . $outstr : $pre . $sqlNo . $outstr;
-                       
+
                         if (!file_put_contents($file, $outstr, FILE_APPEND)) {
                             $this->error("备份文件写入失败！", U('Tools/index'));
                         }
-    
+
                         $sqlTable = $outstr = "";
                         $backedTable = array();
                         $backedTable[] = $table;
@@ -129,11 +129,11 @@ class ToolsController extends BaseController {
             }
             $file_n++;
         }
-        
+
         $time = time() - $time;
         exit(json_encode(array('stat'=>'ok','msg'=>"成功备份数据表，本次备份共生成了" . ($file_n-1) . "个SQL文件。耗时：{$time} 秒")));
     }
-    
+
     public function restore(){
     	$size = 0;
     	$pattern = "*.sql";
@@ -156,16 +156,16 @@ class ToolsController extends BaseController {
     			);
     		}
     	}
-    	
+
     	if(empty($fileArray)) $fileArray = array();
-    	krsort($fileArray); //按备份时间倒序排列    	
+    	krsort($fileArray); //按备份时间倒序排列
     	$this->assign('vlist', $fileArray);
     	$this->assign('total', format_bytes($size));
     	$this->assign('filenum', count($fileArray));
     	$this->display();
     }
-    
-    
+
+
     /**
      * 读取要导入的sql文件列表并排序后插入SESSION中
      */
@@ -179,7 +179,7 @@ class ToolsController extends BaseController {
     	if (empty($sqlFiles)) {
     		$this->error('不存在对应的SQL文件！');
     	}
-    
+
     	//将要还原的sql文件按顺序组成数组，防止先导入不带表结构的sql文件
     	$files = array();
     	foreach ($sqlFiles as $sqlFile) {
@@ -191,7 +191,7 @@ class ToolsController extends BaseController {
     	ksort($files);
     	return $files;
     }
-    
+
     /**
      * 执行还原数据库操作
      */
@@ -209,7 +209,7 @@ class ToolsController extends BaseController {
     		unset($_SESSION['cacheRestore']);
     		$this->error('不存在对应的SQL文件');
     	}
-    
+
     	//取得上次文件导入到sql的句柄位置
     	$position = isset($_SESSION['cacheRestore']['position']) ? $_SESSION['cacheRestore']['position'] : 0;
     	$execute = 0;
@@ -227,7 +227,7 @@ class ToolsController extends BaseController {
     				continue;
     			//统计一行字符串的长度
     			$end = (int) (strlen($tem) - 1);
-    			//检测一行字符串最后有个字符是否是分号，是分号则一条sql语句结束，否则sql还有一部分在下一行中  
+    			//检测一行字符串最后有个字符是否是分号，是分号则一条sql语句结束，否则sql还有一部分在下一行中
 	    	   if ($tem[$end] == ";") {
 	    	   $sql .= $tem;
 	    	   M()->execute($sql);
@@ -255,7 +255,7 @@ class ToolsController extends BaseController {
     	unset($_SESSION['cacheRestore']);
     	$this->success("导入成功，耗时：{$time} 秒钟", U('Tools/restore'));
     }
-        
+
     /**
      * 优化
      */
@@ -267,19 +267,19 @@ class ToolsController extends BaseController {
     	}else {
     		$table[] = I('tablename' , '');
     	}
-    
+
     	if (empty($table)) {
     		$this->error('请选择要优化的表');
     	}
-    
+
     	$strTable = implode(',', $table);
     	if (!M()->query("OPTIMIZE TABLE {$strTable} ")) {
     		$strTable = '';
     	}
     	$this->success("优化表成功" . $strTable, U('Tools/index'));
-    
+
     }
-    
+
     /**
      * 修复
      */
@@ -291,21 +291,21 @@ class ToolsController extends BaseController {
     	}else {
     		$table[] = I('tablename' , '');
     	}
-    
+
     	if (empty($table)) {
     		$this->error('请选择修复的表');
     	}
-    
+
     	$strTable = implode(',', $table);
     	if (!M()->query("REPAIR TABLE {$strTable} ")) {
     		$strTable = '';
     	}
-    
+
     	$this->success("修复表成功" . $strTable, U('Tools/index'));
-  
+
     }
-    
-    
+
+
     public function restoreUpload()
     {
     	$config = array(
@@ -314,8 +314,8 @@ class ToolsController extends BaseController {
     			"exts" => array('sql'),
     			"subName" => array(),
     	);
-    	
-    	$upload = new Upload($config);   	
+
+    	$upload = new Upload($config);
     	$info = $upload->upload();
     	if (!$info) { // 上传错误提示错误信息
     		$this->error($upload->getError());
@@ -324,12 +324,12 @@ class ToolsController extends BaseController {
     		if (file_exists($file_path_full)) {
     			$this->success("上传成功", U('Tools/restore'));
     		} else {
-    			$this->error('文件不存在');   
+    			$this->error('文件不存在');
     		}
     	}
-    
+
     }
-    
+
     /**
      * 下载
      */
@@ -348,7 +348,7 @@ class ToolsController extends BaseController {
     	header("Content-Length: " . filesize($filePath));
     	readfile($filePath);
     }
-    
+
 
     /**
      * 删除sql文件
@@ -364,7 +364,7 @@ class ToolsController extends BaseController {
     	if (empty($files)) {
     		$this->error('请选择要删除的sql文件');
     	}
-    
+
     	foreach ($files as $file) {
     		$a = unlink(UPLOAD_PATH."sqldata". '/' . $file.".sql");
     	}
@@ -372,9 +372,9 @@ class ToolsController extends BaseController {
     		$this->success("已删除：" . implode(",", $files), U('Tools/restore'));
     	}else{
     		$this->error("删除失败：" . implode(",", $files), U('Tools/restore'));
-    	}	
+    	}
     }
-    
+
     public function region(){
     	$parent_id = I('parent_id',0);
     	if($parent_id == 0){
@@ -387,7 +387,18 @@ class ToolsController extends BaseController {
     	$this->assign('region',$region);
     	$this->display();
     }
-    
+
+    public function openRegion()
+    {
+        $region_id = I('id', 0);
+        $region = M('region')->where(['id' => $region_id])->find();
+        if ($region) {
+            $region['is_open'] = !$region['is_open'];
+            M('region')->where(['id' => $region_id])->save($region);
+        }
+        $this->ajaxReturn(['status' => 1, 'message' => '操作成功']);
+    }
+
     public function regionHandle(){
     	$data = I('post.');
     	$id = I('id');

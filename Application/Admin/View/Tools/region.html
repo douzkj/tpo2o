@@ -6,7 +6,7 @@
        		<div class="col-xs-12">
 	       		<div class="box">
 	             <div class="box-header">
-	               	<nav class="navbar navbar-default">	     
+	               	<nav class="navbar navbar-default">
 				        <div class="collapse navbar-collapse">
 				          <form class="navbar-form form-inline" action="{:U('Tools/regionHandle')}" method="post">
 				            <div class="form-group">
@@ -22,7 +22,7 @@
 				            <div class="form-group pull-right">
 					            <a href="{:U('Tools/region',array('parent_id'=>$parent[parent_id]))}" class="btn btn-primary pull-right"><i class="fa fa-reply"></i> 返回上一级</a>
 				            </div>
-				            </if>		          
+				            </if>
 				          </form>
 				      	</div>
 	    			</nav>
@@ -32,9 +32,9 @@
 	            	<div class="col-sm-12">
 		              <table id="list-table" class="table table-bordered table-striped dataTable">
 						<tbody>
-						 <tr role="row" align="center">    
+						 <tr role="row" align="center">
                           <foreach name="region" item="vo" key="k" >
-                            <if condition="$k%3 eq 0">  
+                            <if condition="$k%3 eq 0">
       							</tr><tr>
       						</if>
       						<td>
@@ -43,6 +43,11 @@
       							<a href="{:U('Tools/region',array('parent_id'=>$vo[id]))}" class="btn btn-info" role="button">管理</a>
       							&nbsp;&nbsp;
       							</if>
+								<if condition="$vo[is_open] eq 0">
+									<a class="btn btn-warning" href="javascript:void(0)" onclick="openRegion('{$vo.id}', '开通')">开通此站点</a>
+								<else />
+									<a class="btn btn-danger " href="javascript:void(0)" onclick="openRegion('{$vo.id}', '关闭')">关闭此站点</a>
+								</if>
       							<a href="javascript:void(0);" data-url="{:U('Tools/regionHandle',array('id'=>$vo[id]))}" onclick="delRegion(this)" class="btn btn-default" role="button">删除</a>
       						</td>
 		                  </foreach>
@@ -58,6 +63,25 @@
    </section>
 </div>
 <script type="text/javascript">
+	function openRegion(id, opt) {
+		layer.confirm('确定' +opt+'此区域？', {icon: 3, title:'站点操作'}, function(index){
+			$.ajax({
+				url: "{:U('openRegion')}",
+				data: {id : id},
+				method: 'post',
+				success: function (data) {
+					if (data.status == 1) {
+						layer.close(index);
+						window.location.reload();
+					}
+					layer.msg(data.message);
+
+				}
+			})
+		});
+
+	}
+
 function delRegion(obj){
 	layer.confirm('确定删除此地区？', {icon: 3, title:'提示删除'}, function(index){
 	   layer.close(index);
@@ -66,4 +90,4 @@ function delRegion(obj){
 }
 </script>
 </body>
-</html>   
+</html>
