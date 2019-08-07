@@ -22,10 +22,6 @@ class ActivityController extends MobileBaseController {
         C('TOKEN_ON',true);
         $goodsLogic = new \Home\Logic\GoodsLogic();
         $goods_id = I("get.id");
-        $ref_id = I('get.ref_id');
-        if ($ref_id) {
-            session('');
-        }
         $goods = M('Goods')->where("goods_id = $goods_id")->find();
         if(empty($goods)){
             $this->tp404('此商品不存在或者已下架');
@@ -88,7 +84,7 @@ class ActivityController extends MobileBaseController {
         $group_buy_info = M('GroupBuy')->where("goods_id = $goods_id and ".time()." >= start_time and ".time()." <= end_time ")->find(); // 找出这个商品
         if(empty($group_buy_info))
         {
-            //$this->error("此商品没有团购活动",U('Home/Goods/goodsInfo',array('id'=>$goods_id)));
+            $this->error("此商品的拼团活动已结束",U('Mobile/Goods/goodsInfo',array('id'=>$goods_id)));
         }
 
         $goods = M('Goods')->where("goods_id = $goods_id")->find();
@@ -118,6 +114,18 @@ class ActivityController extends MobileBaseController {
         $spec_goods_price  = M('spec_goods_price')->where("goods_id = $goods_id")->getField("key,price,store_count"); // 规格 对应 价格 库存表
         M('Goods')->where("goods_id=$goods_id")->save(array('click_count'=>$goods['click_count']+1 )); // 统计点击数
         $commentStatistics = $goodsLogic->commentStatistics($goods_id);// 获取某个商品的评论统计
+        $shop_ids = M('goods_shop')->where(['goods_id' => $goods_id])->getField('shop_id', true);
+        if ($shop_ids) {
+            $shops = M('store_shops')
+                ->where(['id' => ['in', $shop_ids], 'store_id' => $goods['store_id']])
+                ->order('sort desc, created_at desc')
+                ->select();
+        }
+        $this->assign('shops', $shops);
+        if($goods['store_id']>0){
+            $store = M('store')->where(array('store_id'=>$goods['store_id']))->find();
+            $this->assign('store',$store);
+        }
         $this->assign('group_buy_info',$group_buy_info);
         $this->assign('spec_goods_price', json_encode($spec_goods_price,true)); // 规格 对应 价格 库存表
         $this->assign('commentStatistics',$commentStatistics);
