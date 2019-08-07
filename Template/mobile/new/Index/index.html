@@ -130,172 +130,84 @@
 		autoPage:true,//自动分页
 		autoPlay:true //自动播放
 	});
-</script>
-<!--<div class="entry-list clearfix">-->
-	<!--<nav>-->
-		<!--<ul>-->
-			<!--<li>-->
-				<!--<a href="{:U('Goods/categoryList')}">-->
-					<!--<img alt="全部分类" src="__STATIC__/images/1440437165699930301.png" />-->
-					<!--<span>全部商品</span>-->
-				<!--</a>-->
-			<!--</li>-->
-			<!--&lt;!&ndash;<li>&ndash;&gt;-->
-				<!--&lt;!&ndash;<a href="{:U('Index/street')}">&ndash;&gt;-->
-					<!--&lt;!&ndash;<img alt="店铺街" src="__STATIC__/images/1440439257667525408.png">&ndash;&gt;-->
-					<!--&lt;!&ndash;<span>店铺街</span>&ndash;&gt;-->
-				<!--&lt;!&ndash;</a>&ndash;&gt;-->
-			<!--&lt;!&ndash;</li>&ndash;&gt;-->
-			<!--&lt;!&ndash;<li>&ndash;&gt;-->
-				<!--&lt;!&ndash;<a href="{:U('Index/brand')}">&ndash;&gt;-->
-					<!--&lt;!&ndash;<img alt="品牌街" src="__STATIC__/images/1440439281976779943.png">&ndash;&gt;-->
-					<!--&lt;!&ndash;<span>品牌街</span>&ndash;&gt;-->
-				<!--&lt;!&ndash;</a>&ndash;&gt;-->
-			<!--&lt;!&ndash;</li>&ndash;&gt;-->
-			<!--&lt;!&ndash;<li>&ndash;&gt;-->
-				<!--&lt;!&ndash;<a href="{:U('Activity/discount_list')}">&ndash;&gt;-->
-					<!--&lt;!&ndash;<img alt="优惠活动" src="__STATIC__/images/1440439952487090605.png">&ndash;&gt;-->
-					<!--&lt;!&ndash;<span>优惠活动</span>&ndash;&gt;-->
-				<!--&lt;!&ndash;</a>&ndash;&gt;-->
-			<!--&lt;!&ndash;</li>&ndash;&gt;-->
-			<!--<li>-->
-				<!--<a href="{:U('Activity/group_list')}">-->
-					<!--<img alt="我的订单" src="__STATIC__/images/1440439318451279676.png" />-->
-					<!--<span>促销</span>-->
-				<!--</a>-->
-			<!--</li>-->
-			<!--<li>-->
-				<!--<a href="{:U('User/order_list')}">-->
-					<!--<img alt="积分商城" src="__STATIC__/images/1440439335793850371.png">-->
-					<!--<span>我的订单</span>-->
-				<!--</a>-->
-			<!--</li>-->
-			<!--<li>-->
-				<!--<a href="{:U('Cart/cart')}">-->
-					<!--<img alt="购物车" src="__STATIC__/images/1440439353048484531.png" />-->
-					<!--<span>购物车</span>-->
-				<!--</a>-->
-			<!--</li>-->
-			<!--<li>-->
-				<!--<a href="{:U('User/index')}">-->
-					<!--<img alt="个人中心" src="__STATIC__/images/1440439367001464442.png" />-->
-					<!--<span>个人中心</span>-->
-				<!--</a>-->
-			<!--</li>-->
-		<!--</ul>-->
-	<!--</nav>-->
-<!--</div>-->
-
-<script>
-/*
-var Tday = new Array();
-var daysms = 24 * 60 * 60 * 1000
-var hoursms = 60 * 60 * 1000
-var Secondms = 60 * 1000
-var microsecond = 1000
-var DifferHour = -1
-var DifferMinute = -1
-var DifferSecond = -1
-function clock(key)
-{
-   var time = new Date()
-   var hour = time.getHours()
-   var minute = time.getMinutes()
-   var second = time.getSeconds()
-   var timevalue = ""+((hour > 12) ? hour-12:hour)
-   timevalue +=((minute < 10) ? ":0":":")+minute
-   timevalue +=((second < 10) ? ":0":":")+second
-   timevalue +=((hour >12 ) ? " PM":" AM")
-   var convertHour = DifferHour
-   var convertMinute = DifferMinute
-   var convertSecond = DifferSecond
-   var Diffms = Tday[key].getTime() - time.getTime()
-   DifferHour = Math.floor(Diffms / daysms)
-   Diffms -= DifferHour * daysms
-   DifferMinute = Math.floor(Diffms / hoursms)
-   Diffms -= DifferMinute * hoursms
-   DifferSecond = Math.floor(Diffms / Secondms)
-   Diffms -= DifferSecond * Secondms
-   var dSecs = Math.floor(Diffms / microsecond)
-
-   if(convertHour != DifferHour) a=DifferHour+":";
-   if(convertMinute != DifferMinute) b=DifferMinute+":";
-   if(convertSecond != DifferSecond) c=DifferSecond+"分"
-     d=dSecs
-     if (DifferHour>0) {a=a}
-     else {a=''}
-   document.getElementById("jstimerBox"+key).innerHTML = a + b + c ; //显示倒计时信息
-}
-*/
-
-
-	// 倒计时
-	function GetRTime2(){
-		//var text = GetRTime('2016/02/27 17:34:00');
-	   <tpshop sql="select * from __PREFIX__goods as g inner join __PREFIX__flash_sale as f on g.goods_id = f.goods_id and g.is_on_sale = 1 and g.goods_state =1 limit 3" key="k" item='v'>
-		var text{$v[goods_id]} = GetRTime('{$v.end_time|date="Y/m/d H:i:s",###}');
-
-		if (typeof(text{$v[goods_id]}) == "undefined")
-				$("#surplus_text{$v[goods_id]}").text('活动已结束');
-		else
-				$("#surplus_text{$v[goods_id]}").text(text{$v[goods_id]});
-
-	   </tpshop>
-	}
-	setInterval(GetRTime2,1000);
-</script>
-   <!--即将上架/即将下架-->
+</script><!--即将上架/即将下架-->
   <div class="shelf-obtained">
-      <div id="shelf" class="shelf-wrapper active-tab" onclick="getShelf()">即将上架</div>
-      <div id="obtained" class="obtained-wrapper" onclick="getObtained()">即将下架</div>
+      <div id="shelf" class="shelf-wrapper active-tab" onclick="getShelf()">最新抢购</div>
+      <div id="obtained" class="obtained-wrapper" onclick="getObtained()">即将结束</div>
   </div>
 
-  <div class="shelf-obtained-products-list">
-      <div class="shelf-obtained-products-item">
-          <div class="products-img"></div>
-          <div class="products-des">
-              <p class="products-end-time">距离结束还有10天</p>
-              <p class="products-tips">主城区九区包邮【七夕葡萄酒鲜花套餐 礼盒一】套餐内容： 礼盒一： 森林干红葡萄酒+鲜花+皮盒</p>
-              <span class="products-sale-num-wrapper">
+  <div class="shelf-obtained-products-list" data-attr="shelf">
+      <foreach name="new_flash_goods" item="new_flash_good">
+          <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$new_flash_good[goods_id]))}">
+          <div class="shelf-obtained-products-item">
+              <div class="products-img"><img src="{$new_flash_good.goods_id|goods_thum_images=400,400}" style="width: 100%;height: 100%"></div>
+              <div class="products-des">
+                  <p class="products-end-time">距离结束还有{$new_flash_good['end_time']|get_delay_day}天</p>
+                  <p class="products-tips">{$new_flash_good.goods_name}</p>
+                  <span class="products-sale-num-wrapper">
                   <span class="products-num">原价
-                      <i class="de-price">¥99.99</i>
+                      <i class="de-price">¥{$new_flash_good.shop_price}</i>
                   </span>
-                  <span class="products-sale">销量:999</span>
+                  <span class="products-sale">销量:{$new_flash_good['sales_sum'] + $new_flash_good['virtual_num']}</span>
               </span>
-              <div class="price-buy-wrapper">
-                  <span class="products-price">¥88.88</span>
-                  <span class="buy-btn">购买</span>
+                  <div class="price-buy-wrapper">
+                      <span class="products-price">¥{$new_flash_good.price}</span>
+                      <span class="buy-btn">购买</span>
+                  </div>
               </div>
           </div>
-      </div>
+          </a>
+      </foreach>
   </div>
+    <div class="shelf-obtained-products-list" data-attr="obtained" style="display: none">
+        <foreach name="last_flash_goods" item="last_flash_good">
+            <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$last_flash_good[goods_id]))}">
+                <div class="shelf-obtained-products-item">
+                    <div class="products-img"><img src="{last_flash_good.goods_id|goods_thum_images=400,400}" style="width: 100%;height: 100%"></div>
+                    <div class="products-des">
+                        <p class="products-end-time">距离结束还有{$new_flash_good['end_time']|get_delay_day}天</p>
+                        <p class="products-tips">{last_flash_good.goods_name}</p>
+                        <span class="products-sale-num-wrapper">
+                  <span class="products-num">原价
+                      <i class="de-price">¥{last_flash_good.shop_price}</i>
+                  </span>
+                  <span class="products-sale">销量:{last_flash_good['sales_sum'] + last_flash_good['virtual_num']}</span>
+              </span>
+                        <div class="price-buy-wrapper">
+                            <span class="products-price">¥{last_flash_good.price}</span>
+                            <span class="buy-btn">购买</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </foreach>
+    </div>
   <div class="floor_body2" >
     <h2>————&nbsp;热销商品&nbsp;————</h2>
 
      <ul class="product single_item info">
-        <assign name="fl" value="1"/>
-         <tpshop sql="select * from __PREFIX__goods where is_hot=1 and is_on_sale = 1 and goods_state = 1 order by sort desc limit 20" item="v" key="k">
-          <li>
-            <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" title="{$v.goods_name}">
-             <div class="index_pro">
-                  <div class="dic-num"><span class="text">{:getDiscount($v[shop_price], $v[market_price])}折</span></div>
-                  <div class="products_kuang">
-	                <img src="{$v.goods_id|goods_thum_images=400,400}"></div>
-	              <div class="goods_name">{$v.goods_name}</div>
-	              <div class="price">
-	                 <!--<a href="javascript:AjaxAddCart({$v[goods_id]},1,0);" class="btns">-->
-                      <!--<img src="__STATIC__/images/index_flow.png">-->
-                      <!--</a>-->
-                      <div class="price-wrapper">
-                          <span href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" class="price_pro">￥{$v.shop_price}</span>
-                          <span class="dic-price">￥{$v.market_price}</span>
-                      </div>
-                     <span class="buy-num">已销999</span>
-	              </div>
-              </div>
-            </a>
-           </li>
-           </tpshop>
+         <foreach name="hot_goods" item="v">
+             <li>
+                 <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" title="{$v.goods_name}">
+                     <div class="index_pro">
+                         <div class="dic-num"><span class="text">{:getDiscount($v[shop_price], $v[market_price])}折</span></div>
+                         <div class="products_kuang">
+                             <img src="{$v.goods_id|goods_thum_images=400,400}"></div>
+                         <div class="goods_name">{$v.goods_name}</div>
+                         <div class="price">
+                             <!--<a href="javascript:AjaxAddCart({$v[goods_id]},1,0);" class="btns">-->
+                             <!--<img src="__STATIC__/images/index_flow.png">-->
+                             <!--</a>-->
+                             <div class="price-wrapper">
+                                 <span href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" class="price_pro">￥{$v.shop_price}</span>
+                                 <span class="dic-price">￥{$v.market_price}</span>
+                             </div>
+                             <span class="buy-num">已销{$v[sales_sum] + $v[virtual_num]}</span>
+                         </div>
+                     </div>
+                 </a>
+             </li>
+         </foreach>
           </ul>
     </div>
 <script type="text/javascript">
@@ -312,10 +224,14 @@ function clock(key)
     function getShelf() {
         shelf.classList.add('active-tab');
         obtained.classList.remove('active-tab');
+        $("div.shelf-obtained-products-list[data-attr='shelf']").show();
+        $("div.shelf-obtained-products-list[data-attr='obtained']").hide();
     }
     function getObtained() {
         shelf.classList.remove('active-tab');
         obtained.classList.add('active-tab');
+        $("div.shelf-obtained-products-list[data-attr='shelf']").hide();
+        $("div.shelf-obtained-products-list[data-attr='obtained']").show();
     }
 
 
@@ -383,8 +299,7 @@ function getGoodsList(){
             <h2>————&nbsp;爆款推荐&nbsp;————</h2>
 
             <ul class="product single_item info">
-                <assign name="fl" value="1"/>
-                <tpshop sql="select * from __PREFIX__goods where is_recommend=1 and is_on_sale = 1 and goods_state = 1 order by sort desc limit 20" item="v" key="k">
+                <foreach name="favourite_goods" item="v">
                     <li>
                         <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" title="{$v.goods_name}">
                             <div class="index_pro">
@@ -402,7 +317,7 @@ function getGoodsList(){
                             </div>
                         </a>
                     </li>
-                </tpshop>
+                </foreach>
             </ul>
         </div>
 <include file="Public/footer"/>

@@ -26,6 +26,7 @@ function sellerLog($log_info){
     $add['log_seller_ip'] = getIP();
     $add['log_store_id'] = $seller['store_id'];
     $add['log_url'] = __ACTION__;
+    $add['log_state'] = 1;
     M('seller_log')->add($add);
 }
 
@@ -137,9 +138,9 @@ function getMenuList() {
 			)),
 			'promotion' => array('name' => '促销管理', 'icon'=>'fa-bell', 'child' => array(
 					array('name' => '抢购管理', 'act'=>'flash_sale', 'op'=>'Promotion'),
-					array('name' => '团购管理', 'act'=>'group_buy_list', 'op'=>'Promotion'),
-					array('name' => '商品促销', 'act'=>'prom_goods_list', 'op'=>'Promotion'),
-					array('name' => '订单促销', 'act'=>'prom_order_list', 'op'=>'Promotion'),
+					array('name' => '拼团管理', 'act'=>'group_buy_list', 'op'=>'Promotion'),
+//					array('name' => '商品促销', 'act'=>'prom_goods_list', 'op'=>'Promotion'),
+//					array('name' => '订单促销', 'act'=>'prom_order_list', 'op'=>'Promotion'),
 					array('name' => '代金券管理','act'=>'index', 'op'=>'Coupon'),
 					//array('name' => '分销管理', 'act'=>'store_activity', 'op'=>'promotion'),
 			)),

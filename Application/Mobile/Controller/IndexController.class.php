@@ -35,6 +35,25 @@ class IndexController extends MobileBaseController {
         $this->assign('favourite_goods',$favourite_goods);
         $provinces = M('region')->where(['is_open' => 1, 'parent_id' => 0])->select();
 
+        //获取最新闪购和即将下架闪购
+        $thread =48 * 60 * 60;
+        $new_flash_goods = M('flash_sale')
+            ->join('__GOODS__ on __GOODS__.prom_id = __FLASH_SALE__.id')
+            ->where('__GOODS__.is_on_sale=1 and __GOODS__.prom_type =2')
+            ->where(time()." >= start_time and ".time()." <= start_time + {$thread} ")
+            ->limit(15)
+            ->cache(true,TPSHOP_CACHE_TIME)
+            ->select();
+        $this->assign('new_flash_goods', $new_flash_goods);
+        $last_flash_goods = M('flash_sale')
+            ->join('__GOODS__ on __GOODS__.prom_id = __FLASH_SALE__.id')
+            ->where('__GOODS__.is_on_sale=1 and __GOODS__.prom_type =2')
+            ->where(time()." <= end_time and ".time()." >= end_time - {$thread} ")
+            ->limit(15)
+            ->cache(true,TPSHOP_CACHE_TIME)
+            ->select();
+        $this->assign('last_flash_goods', $last_flash_goods);
+
         //获取区县
         $now_region = M('region')->where(['id' => PROVINCE_ID, 'is_open' => 1])->find();
         $areas = [];

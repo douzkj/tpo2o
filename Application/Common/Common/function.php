@@ -662,7 +662,7 @@ function getPageFromCache(){
 
 function getDiscount($shop_price, $market_price)
 {
-    return round($shop_price/$market_price,2)*10;
+    return $market_price == 0 ? 0: round($shop_price/$market_price,2)*10;
 }
 
 

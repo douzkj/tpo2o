@@ -30,7 +30,7 @@ var process_request = "正在处理您的请求...";
       <div class="h-left"><a class="sb-back" href="javascript:history.back(-1)" title="返回"></a></div>
       <div class="h-mid">
         <ul>
-          <li><a href="javascript:;" class="tab_head on"   id="goods_ka1" onClick="setGoodsTab('goods_ka',1,3)">商品</a></li>
+          <li><a href="javascript:;" class="tab_head on" id="goods_ka1" onClick="setGoodsTab('goods_ka',1,3)">商品</a></li>
           <li><a href="javascript:;" class="tab_head" id="goods_ka2" onClick="setGoodsTab('goods_ka',2,3)">详情</a></li>
           <li><a href="javascript:;" class="tab_head" id="goods_ka3" onClick="setGoodsTab('goods_ka',3,3)">评价</a></li>
         </ul>
@@ -60,7 +60,10 @@ var process_request = "正在处理您的请求...";
       <div class="timerBox">
           <div class="clearfix">
               <dfn class="f14">¥</dfn>
-              <span class="f24" style="margin-right:8px;">{$goods.shop_price}</span><del class="op8">¥</del><del class="op8">{$goods.market_price}</del>
+              <span class="f24" style="margin-right:8px;">{$goods['flash_sale'] ? $goods['flash_sale']['price'] : $goods['shop_price']}</span>
+              <del class="op8">¥</del>
+              <del class="op8">{$goods['flash_sale'] ? $goods['shop_price'] : $goods['market_price']}
+              </del>
               <i class="i_tjms i_icon" ></i>
 
           </div>
@@ -96,27 +99,35 @@ var t2=new TouchSlider({id:'sliderlist', speed:600, timeout:6000, before:functio
         </div>
 
 
-          <div class="timer-wrapper">
-              <span class="des">距离限时购结束</span>
-              <div class="timer" id="jstimerBox{$v[goods_id]}">
 
-                  <!--<span class="day">11</span>天-->
-                  <!--<span class="hour">11</span>小时-->
-                  <!--<span class="min">11</span>分-->
-                  <!--<span class="sec">11</span>秒-->
-              </div>
+          <if condition="!empty($goods['flash_sale'])">
+          <div class="timer-wrapper">
+
+                  <if condition="$goods['flash_sale']['is_end'] eq 1">
+                      <span class="des">限时抢购已结束</span>
+                  <else />
+                      <span class="des">距离限时购结束</span>
+                      <div class="timer" id="jstimerBox{$goods[goods_id]}">
+
+                          <!--<span class="day">11</span>天-->
+                          <!--<span class="hour">11</span>小时-->
+                          <!--<span class="min">11</span>分-->
+                          <!--<span class="sec">11</span>秒-->
+                      </div>
+                  </if>
           </div>
+          </if>
 
 
           <div>
               <div class="mbody progress-bar">
                   <php>
-                      $buy_num = $goods['sale_num'];
+                      $buy_num = $goods['sale_num'] + $goods['virtual_num'];
                       $remain = $goods['store_count'];
-                      $percent = floor(($goods['sale_num'] / ($goods['store_count'] + $goods['sale_num'])) * 100)?:($goods['sale_num']==0?0:1) ;
+                      $percent = floor(($buy_num / ($goods['store_count'] + $buy_num)) * 100)?:($buy_num==0?0:1) ;
                   </php>
                   <div class="hd"><span class="text-middle">已抢购</span><span
-                          class="text-middle text-red">{$goods.sale_num}</span><span class="text-right"><span
+                          class="text-middle text-red">{$buy_num}</span><span class="text-right"><span
                           class="text-middle">仅剩</span><span
                           class="text-middle text-red">{$remain}</span><span
                           class="text-middle">人</span></span></div>
@@ -250,9 +261,9 @@ var t2=new TouchSlider({id:'sliderlist', speed:600, timeout:6000, before:functio
 
           </script>
           <script>
-              Tday['{$v[goods]}'] = new Date('{$v.end_time|date="Y/m/d H:i:s",###}');
+              Tday['{$goods[goods_id]}'] = new Date('{$flash_sale.end_time|date="Y/m/d H:i:s",###}');
               window.setInterval(function()
-              {clock11('{$v[goods_id]}');}, 1000);
+              {clock11('{$goods[goods_id]}');}, 1000);
           </script>
 
 

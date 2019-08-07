@@ -14,19 +14,19 @@
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-list"></i> 添加团购活动</h3>
                 </div>
-                <div class="panel-body ">   
+                <div class="panel-body ">
                     <!--表单数据-->
-                    <form method="post" id="handleposition" action="{:U('Promotion/groupbuyHandle')}">                    
+                    <form method="post" id="handleposition" action="{:U('Promotion/groupbuyHandle')}">
                         <!--通用信息-->
-                    <div class="tab-content col-md-10">                 	  
-                        <div class="tab-pane active" id="tab_tongyong">                           
+                    <div class="tab-content col-md-10">
+                        <div class="tab-pane active" id="tab_tongyong">
                             <table class="table table-bordered">
                                 <tbody>
                                 <tr>
                                     <td class="col-sm-2">团购标题：</td>
                                     <td class="col-sm-6">
                                         <input type="text" class="form-control" name="title" id="title" value="{$info.title}" >
-                                        <span id="err_attr_name" style="color:#F00; display:none;"></span>                                        
+                                        <span id="err_attr_name" style="color:#F00; display:none;"></span>
                                     </td>
                                     <td class="col-sm-4">请填写团购标题</td>
                                 </tr>
@@ -36,15 +36,15 @@
                                			<input type="text" class="form-control" id="start_time" name="start_time" value="{$info.start_time}">
                                     </td>
                                     <td class="col-sm-4">团购开始时间</td>
-                                </tr>                                
+                                </tr>
                                 <tr>
                                     <td>结束时间：</td>
                                     <td>
-                      					<input type="text" class="form-control" id="end_time" name="end_time" value="{$info.end_time}">   
+                      					<input type="text" class="form-control" id="end_time" name="end_time" value="{$info.end_time}">
                                     </td>
                                     <td class="col-sm-4">团购结束时间</td>
                                 </tr>
-                                  
+
                                 <tr>
                                     <td>设置团购商品：</td>
                                     <td>
@@ -70,18 +70,25 @@
                                     <td class="col-sm-4">商品团购价格</td>
                                 </tr>
                                 <tr>
+                                    <td>成团人数：</td>
+                                    <td>
+                                        <input type="text" class="form-control" id="group_num" name="group_num" value="{$info.group_num}"  onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" />
+                                    </td>
+                                    <td class="col-sm-4">几人成团(3人团 5人团)</td>
+                                </tr>
+                                <tr>
+                                    <td>限购：</td>
+                                    <td>
+                                        <input type="text" class="form-control" id="buy_limit" name="buy_limit" value="{$info['buy_limit']?:1}"  onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" />
+                                    </td>
+                                    <td class="col-sm-4">单人限购件数</td>
+                                </tr>
+                                <tr>
                                     <td>参团数量：</td>
                                     <td>
                       					<input type="text" class="form-control" id="goods_num" name="goods_num" value="{$info.goods_num}"  onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" />
                                     </td>
-                                    <td class="col-sm-4">请填写自然数，参与团购的商品数量</td>
-                                </tr> 
-                                <tr>
-                                    <td>虚拟购买数：</td>
-                                    <td>
-                      					<input type="text" class="form-control" name="virtual_num" value="{$info.virtual_num}"  onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')"/>
-                                    </td>
-                                    <td class="col-sm-4">虚拟已购买参团人数</td>
+                                    <td class="col-sm-4">请填写自然数，参与团购的商品数量((成团人数 x 限购)的倍数 )</td>
                                 </tr>
                                 <tr>
                                     <td>团购介绍：</td>
@@ -89,8 +96,8 @@
                                     	<textarea class="form-control" rows="4" placeholder="请输入团购介绍" name="intro">{$info.intro}</textarea>
                                     </td>
                                     <td class="col-sm-4">团购描述介绍</td>
-                                </tr>                                
-                                </tbody> 
+                                </tr>
+                                </tbody>
                                 <tfoot>
                                 	<tr>
                                 	<td><input class="btn btn-default" type="reset" value="重置">
@@ -99,10 +106,10 @@
                                 	</td>
                                 	<td class="col-sm-4"></td>
                                 	<td class="text-right"><input class="btn btn-primary" type="button" onclick="adsubmit()" value="保存"></td></tr>
-                                </tfoot>                               
+                                </tfoot>
                                 </table>
-                        </div>                           
-                    </div>              
+                        </div>
+                    </div>
 			    	</form><!--表单数据-->
                 </div>
             </div>
@@ -119,8 +126,19 @@ function adsubmit(){
 		layer.msg('团购价格不能为空');return;
 	}
 	if($('#group_num').val() ==''){
-		layer.msg('限购数量不能为空');return;
+		layer.msg('成团人数不能为空');return;
 	}
+    if($('#goods_num').val() ==''){
+        layer.msg('参团库存不能为空');return;
+    }
+    if($('#buy_limit').val() ==''){
+        layer.msg('限购不能为空');return;
+    }
+    var group = parseInt($('#buy_limit').val()) * parseInt($('#group_num').val());
+    var goods_num = parseInt($('#goods_num').val());
+    if (goods_num % group != 0) {
+        layer.msg('参团库存应为(成团人数 x 限购)的倍数');return;
+    }
 	$('#handleposition').submit();
 }
 
@@ -132,10 +150,10 @@ $(document).ready(function() {
 		minDate:'{$min_date}',
 		maxDate:'2030-01-01',
 		startDate:'{$min_date}',
-		timePicker : true, //是否显示小时和分钟  
+		timePicker : true, //是否显示小时和分钟
                 timePickerIncrement:1,//time选择递增数
-		timePicker12Hour : false, //是否使用12小时制来显示时间 		
-                
+		timePicker12Hour : false, //是否使用12小时制来显示时间
+
 	    locale : {
             applyLabel : '确定',
             cancelLabel : '取消',
@@ -147,7 +165,7 @@ $(document).ready(function() {
             firstDay : 1
         }
 	});
-	
+
 	$('#end_time').daterangepicker({
 		format:"YYYY-MM-DD HH:mm:ss",
 		singleDatePicker: true,
@@ -155,10 +173,10 @@ $(document).ready(function() {
 		minDate:'{$min_date}',
 		maxDate:'2030-01-01',
 		startDate:'{$min_date}',
-		timePicker : true, //是否显示小时和分钟  
+		timePicker : true, //是否显示小时和分钟
                 timePickerIncrement:1,//time选择递增数
-		timePicker12Hour : false, //是否使用12小时制来显示时间 		
-                
+		timePicker12Hour : false, //是否使用12小时制来显示时间
+
 	    locale : {
             applyLabel : '确定',
             cancelLabel : '取消',
@@ -181,14 +199,15 @@ function selectGoods(){
         shadeClose: true,
         shade: 0.2,
         area: ['75%', '75%'],
-        content: url, 
+        content: url,
     });
 }
 
-function call_back(goods_id,goods_name,store_count){
+function call_back(goods_id,goods_name,store_count, goods_price){
 	$('#goods_id').val(goods_id);
 	$('#goods_name').val(goods_name);
-	$('#group_num').val(store_count);
+	$('#goods_num').val(store_count);
+	$('#goods_price').val(goods_price);
 	layer.closeAll('iframe');
 }
 </script>

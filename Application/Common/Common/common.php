@@ -1347,4 +1347,15 @@ function get_goods_category_tree(){
 	return $result;
 }
 
+function get_delay_day($time)
+{
+    $delay = $time - time();
+    if ($delay > 0) {
+        $day = floor($delay / (24 * 60 * 60)) ;
+        return $day == 0 ? 1 : $day;
+    } else {
+        return 0;
+    }
+}
+
 

@@ -43,7 +43,7 @@
 
 			<dl style="border-bottom:1px solid #eeeeee;">
 			<dt class="dingdan_3"></dt>
-			<dd><h3>收货人姓名&nbsp;:&nbsp;{$order_info.consignee}<em>{$order_info.mobile}</em></h3>
+			<dd><h3>姓名&nbsp;:&nbsp;{$order_info.consignee}<em>{$order_info.mobile}</em></h3>
 				<!--<div class="adss">详细地址&nbsp;:&nbsp;{$regionLits[$order_info['province']]},{$regionLits[$order_info['city']]},{$regionLits[$order_info['district']]},{$order_info.address}</div>-->
 			</dd>
 			</dl>
@@ -86,23 +86,19 @@
 			</ul>
 		</div>
         <!--二维码-->
-		<div class="QRcode-wrapper-list">
-			<foreach name="codes" item="code">
-				<div class="QRcode-item">
-					<div class="QRcode <if condition='$code[is_checked] eq 1'>QRcode-consume</if>">
-						<img src="{$code|order_qrcode}" class="order-qrcode" data-code="{$code.code}"  alt="">
+		<if condition="$order_info.pay_btn neq 1">
+			<div class="QRcode-wrapper-list">
+				<foreach name="codes" item="code">
+					<div class="QRcode-item">
+						<div class="QRcode <if condition='$code[is_checked] eq 1'>QRcode-consume</if>">
+							<img src="{$code|order_qrcode}" class="order-qrcode" data-code="{$code.code}"  alt="">
+						</div>
+						<span class="QRcode-number"><i class="tip">兑换码：</i><i class="code">{$code.code}</i></span>
 					</div>
-					<span class="QRcode-number"><i class="tip">兑换码：</i><i class="code">{$code.code}</i></span>
-				</div>
-			</foreach>
+				</foreach>
+			</div>
+		</if>
 
-			<!--<div class="QRcode-item">-->
-				<!--<div class="QRcode QRcode-consume">-->
-					<!--<img src="/Public/upload/goods/thumb/79/goods_thumb_79_100_100.jpeg" alt="">-->
-				<!--</div>-->
-				<!--<span class="QRcode-number"><i class="tip consume">兑换码：</i><i class="code consume">4563 0863</i></span>-->
-			<!--</div>-->
-		</div>
 		</div>
 
 		<div class="ord_list1">

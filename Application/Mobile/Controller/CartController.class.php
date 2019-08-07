@@ -42,11 +42,15 @@ class CartController extends MobileBaseController {
     public function confirmOrder()
     {
         $goods_id = I('goods_id');
-        $goods_num = I('goods_num');
-        $consignee = trim(I('consignee'));
-        $mobile = trim(I('mobile'));
         $goods = M('goods')->where(['goods_id' => $goods_id])->find();
+        C('TOKEN_ON',true);
+        if(empty($goods)){
+            $this->tp404('此商品不存在或者已下架');
+        }
         if (IS_POST) {
+            $goods_num = I('goods_num');
+            $consignee = trim(I('consignee'));
+            $mobile = trim(I('mobile'));
             $this->cartLogic->flushCart($this->user_id);
             $result = $this->cartLogic->addCart($goods_id, $goods_num, '',$this->session_id,$this->user_id); // 将商品加入购物车
             if ($result['status'] != 1) {
@@ -78,7 +82,15 @@ class CartController extends MobileBaseController {
 
             $result = $this->cartLogic->newAddOrder($this->user_id,$consignee, $mobile, $car_price); // 添加订单
             exit(json_encode($result));
+        }
 
+        $goods['sale_num'] = M('order_goods')->where("goods_id=$goods_id and is_send=1")->count();
+        //商品促销
+        if($goods['prom_type'] == 1)
+        {
+            $goods['flash_sale'] = get_goods_promotion($goods['goods_id'], $this->user_id);
+            $flash_sale = M('flash_sale')->where("id = {$goods['prom_id']}")->find();
+            $this->assign('flash_sale',$flash_sale);
         }
         $this->assign('goods', $goods);
         $this->display();

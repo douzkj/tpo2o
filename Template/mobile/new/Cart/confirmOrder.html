@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="__STATIC__/css/public.css">
     <link rel="stylesheet" href="__STATIC__/css/flow.css">
     <link rel="stylesheet" href="__STATIC__/css/style_jm.css">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/css/layer.css" />
     <script type="text/javascript" src="__STATIC__/js/jquery.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/layer.js"></script>
     <script src="__PUBLIC__/js/global.js"></script>
     <script src="__PUBLIC__/js/mobile_common.js"></script>
     <script src="__STATIC__/js/common.js"></script>
@@ -51,7 +53,7 @@
         <span class="pay-price-text">活动价</span>
         <span class="pay-price-one">
             <em>¥</em>
-            <strong id="goods_price">{$goods.shop_price}</strong>
+            <strong id="goods_price">{$goods['flash_sale'] ? $goods['flash_sale']['price'] : $goods.shop_price}</strong>
             <i>/件</i>
         </span>
     </div>
@@ -73,7 +75,7 @@
     </div>
     <div class="pay-price-input-tips">
         <i class="tips-icon"></i>
-        已登录账号【18482175910】，下单后您可在个人中心查看订单详情
+        已登录账号【{$user.mobile}】，下单后您可在个人中心查看订单详情
     </div>
 </div>
 

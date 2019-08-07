@@ -14,19 +14,19 @@
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-list"></i> 编辑抢购活动</h3>
                 </div>
-                <div class="panel-body ">   
+                <div class="panel-body ">
                     <!--表单数据-->
-                    <form method="post" id="handleposition" action="">                    
+                    <form method="post" id="handleposition" action="">
                         <!--通用信息-->
-                    <div class="tab-content col-md-10">                 	  
-                        <div class="tab-pane active" id="tab_tongyong">                           
+                    <div class="tab-content col-md-10">
+                        <div class="tab-pane active" id="tab_tongyong">
                             <table class="table table-bordered">
                                 <tbody>
                                 <tr>
                                     <td class="col-sm-2">抢购标题：</td>
                                     <td class="col-sm-6">
                                         <input type="text" class="form-control" name="title" id="title" value="{$info.title}" >
-                                        <span id="err_attr_name" style="color:#F00; display:none;"></span>                                        
+                                        <span id="err_attr_name" style="color:#F00; display:none;"></span>
                                     </td>
                                     <td class="col-sm-4">请填写抢购标题</td>
                                 </tr>
@@ -63,18 +63,18 @@
                       					<input type="text" class="form-control" id="buy_limit" name="buy_limit" value="{$info.buy_limit}" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" />
                                     </td>
                                     <td class="col-sm-4">限时抢购每个人能购买的数量！</td>
-                                </tr> 
+                                </tr>
                                 <tr>
                                     <td>开始时间：</td>
                                     <td>
                                			<input type="text" class="form-control" id="start_time" name="start_time" value="{$info.start_time}">
                                     </td>
                                     <td class="col-sm-4">抢购开始时间</td>
-                                </tr>                                
+                                </tr>
                                 <tr>
                                     <td>结束时间：</td>
                                     <td>
-                      					<input type="text" class="form-control" id="end_time" name="end_time" value="{$info.end_time}">   
+                      					<input type="text" class="form-control" id="end_time" name="end_time" value="{$info.end_time}">
                                     </td>
                                     <td class="col-sm-4">抢购结束时间</td>
                                 </tr>
@@ -84,8 +84,8 @@
                                     	<textarea class="form-control" rows="4" placeholder="请输入活动介绍" name="description">{$info.description}</textarea>
                                     </td>
                                     <td class="col-sm-4">抢购描述介绍</td>
-                                </tr>                                
-                                </tbody> 
+                                </tr>
+                                </tbody>
                                 <tfoot>
                                 	<tr>
                                 	<td><input class="btn btn-default" type="reset" value="重置">
@@ -93,10 +93,10 @@
                                 	</td>
                                 	<td class="col-sm-4"></td>
                                 	<td class="text-right"><input class="btn btn-primary" type="button" onclick="adsubmit()" value="保存"></td></tr>
-                                </tfoot>                               
+                                </tfoot>
                                 </table>
-                        </div>                           
-                    </div>              
+                        </div>
+                    </div>
 			    	</form><!--表单数据-->
                 </div>
             </div>
@@ -129,9 +129,9 @@ $(document).ready(function() {
 		minDate:'{$min_date}',
 		maxDate:'2030-01-01',
 		startDate:'{$min_date}',
-		timePicker : true, //是否显示小时和分钟  
+		timePicker : true, //是否显示小时和分钟
         timePickerIncrement:1,//time选择递增数
-		timePicker12Hour : false, //是否使用12小时制来显示时间 		
+		timePicker12Hour : false, //是否使用12小时制来显示时间
 	    locale : {
             applyLabel : '确定',
             cancelLabel : '取消',
@@ -143,7 +143,7 @@ $(document).ready(function() {
             firstDay : 1
         }
 	});
-	
+
 	$('#end_time').daterangepicker({
 		format:"YYYY-MM-DD HH:mm:ss",
 		singleDatePicker: true,
@@ -151,9 +151,9 @@ $(document).ready(function() {
 		minDate:'{$min_date}',
 		maxDate:'2030-01-01',
 		startDate:'{$min_date}',
-		timePicker : true, //是否显示小时和分钟  
+		timePicker : true, //是否显示小时和分钟
         timePickerIncrement:1,//time选择递增数
-		timePicker12Hour : false, //是否使用12小时制来显示时间 
+		timePicker12Hour : false, //是否使用12小时制来显示时间
 	    locale : {
             applyLabel : '确定',
             cancelLabel : '取消',
@@ -176,14 +176,14 @@ function selectGoods(){
         shadeClose: true,
         shade: 0.2,
         area: ['75%', '75%'],
-        content: url, 
+        content: url,
     });
 }
 
 function call_back(goods_id,goods_name,store_count){
 	$('#goods_id').val(goods_id);
 	$('#goods_name').val(goods_name);
-	$('#group_num').val(store_count);
+	$('#goods_num').val(store_count);
 	layer.closeAll('iframe');
 }
 </script>

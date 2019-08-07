@@ -8,7 +8,7 @@
  * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用 .
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ============================================================================
- * Author: 当燃      
+ * Author: 当燃
  * 专题管理
  * Date: 2016-03-09
  */
@@ -22,13 +22,13 @@ class PromotionController extends BaseController {
     public function index(){
         $this->display();
     }
-    
+
         /**
          * 商品活动列表
          */
 	public function prom_goods_list()
 	{
-		$parse_type = array('0'=>'直接打折','1'=>'减价优惠','2'=>'固定金额出售','3'=>'买就赠优惠券');                               
+		$parse_type = array('0'=>'直接打折','1'=>'减价优惠','2'=>'固定金额出售','3'=>'买就赠优惠券');
 		$level = M('user_level')->select();
 		if($level){
 			foreach ($level as $v){
@@ -36,11 +36,11 @@ class PromotionController extends BaseController {
 			}
 		}
 		$this->assign("parse_type",$parse_type);
-                
+
         $count = M('prom_goods')->count();
-        $Page  = new \Think\Page($count,10);    	 
-        $show = $Page->show();                      
-		$res = M('prom_goods')->limit($Page->firstRow.','.$Page->listRows)->select();    
+        $Page  = new \Think\Page($count,10);
+        $show = $Page->show();
+		$res = M('prom_goods')->limit($Page->firstRow.','.$Page->listRows)->select();
 		if($res){
 			foreach ($res as $val){
 				if(!empty($val['group']) && !empty($lv)){
@@ -60,7 +60,7 @@ class PromotionController extends BaseController {
 		$this->assign('prom_list',$prom_list);
 		$this->display();
 	}
-	
+
 	public function prom_goods_info()
 	{
 		$this->assign('min_date',date('Y-m-d'));
@@ -81,7 +81,7 @@ class PromotionController extends BaseController {
 		$this->initEditor();
 		$this->display();
 	}
-	
+
 	public function prom_goods_save()
 	{
 		$prom_id = I('id');
@@ -97,7 +97,7 @@ class PromotionController extends BaseController {
 			$last_id = M('prom_goods')->add($data);
 			adminLog("管理员添加了商品促销 ".I('name'));
 		}
-		
+
 		if(is_array($data['goods_id'])){
 			$goods_id = implode(',', $data['goods_id']);
 			if($prom_id>0){
@@ -107,28 +107,28 @@ class PromotionController extends BaseController {
 		}
 		$this->success('编辑促销活动成功',U('Promotion/prom_goods_list'));
 	}
-	
+
 	public function prom_goods_del()
 	{
-		$prom_id = I('id');                
+		$prom_id = I('id');
                 $order_goods = M('order_goods')->where("prom_type = 3 and prom_id = $prom_id")->find();
                 if(!empty($order_goods))
                 {
-                    $this->error("该活动有订单参与不能删除!");    
-                }                
+                    $this->error("该活动有订单参与不能删除!");
+                }
 		M("goods")->where("prom_id=$prom_id and prom_type=3")->save(array('prom_id'=>0,'prom_type'=>0));
 		M('prom_goods')->where("id=$prom_id")->delete();
 		$this->success('删除活动成功',U('Promotion/prom_goods_list'));
 	}
-    
 
-    
+
+
         /**
          * 活动列表
          */
 	public function prom_order_list()
 	{
-		$parse_type = array('0'=>'满额打折','1'=>'满额优惠金额','2'=>'满额送积分','3'=>'满额送优惠券');		
+		$parse_type = array('0'=>'满额打折','1'=>'满额优惠金额','2'=>'满额送积分','3'=>'满额送优惠券');
 		$level = M('user_level')->select();
 		if($level){
 			foreach ($level as $v){
@@ -136,8 +136,8 @@ class PromotionController extends BaseController {
 			}
 		}
         $count = M('prom_order')->count();
-        $Page  = new \Think\Page($count,10);    	 
-        $show = $Page->show();               
+        $Page  = new \Think\Page($count,10);
+        $show = $Page->show();
 		$res = M('prom_order')->limit($Page->firstRow.','.$Page->listRows)->select();
 		if($res){
 			foreach ($res as $val){
@@ -154,12 +154,12 @@ class PromotionController extends BaseController {
 				$prom_list[] = $val;
 			}
 		}
-        $this->assign('page',$show);// 赋值分页输出                  
+        $this->assign('page',$show);// 赋值分页输出
         $this->assign("parse_type",$parse_type);
 		$this->assign('prom_list',$prom_list);
 		$this->display();
 	}
-	
+
 	public function prom_order_info(){
 		$this->assign('min_date',date('Y-m-d'));
 		$level = M('user_level')->select();
@@ -177,7 +177,7 @@ class PromotionController extends BaseController {
 		$this->initEditor();
 		$this->display();
 	}
-	
+
 	public function prom_order_save(){
 		$prom_id = I('id');
 		$data = I('post.');
@@ -193,26 +193,26 @@ class PromotionController extends BaseController {
 		}
 		$this->success('编辑促销活动成功',U('Promotion/prom_order_list'));
 	}
-	
+
 	public function prom_order_del()
 	{
-		$prom_id = I('id');                                
+		$prom_id = I('id');
                 $order = M('order')->where("order_prom_id = $prom_id")->find();
                 if(!empty($order))
                 {
-                    $this->error("该活动有订单参与不能删除!");    
+                    $this->error("该活动有订单参与不能删除!");
                 }
-                                
+
 		M('prom_order')->where("id=$prom_id")->delete();
 		$this->success('删除活动成功',U('Promotion/prom_order_list'));
 	}
-	
+
     public function group_buy_list(){
     	$Ad =  M('group_buy');
     	$p = I('p',1);
-        
+
     	$count = $Ad->count();
-    	$Page = new \Think\Page($count,10);        
+    	$Page = new \Think\Page($count,10);
     	$res = $Ad->order('id desc')->limit($Page->firstRow.','.$Page->listRows)->select();
     	if($res){
     		foreach ($res as $val){
@@ -227,7 +227,7 @@ class PromotionController extends BaseController {
     	$this->assign('page',$show);
     	$this->display();
     }
-    
+
     public function group_buy(){
     	$act = I('GET.act','add');
     	$groupbuy_id = I('get.id');
@@ -245,23 +245,23 @@ class PromotionController extends BaseController {
     	$this->assign('act',$act);
     	$this->display();
     }
-    
+
     public function groupbuyHandle(){
     	$data = I('post.');
     	if($data['act'] == 'del'){
-    		$r = M('group_buy')->where(array('id'=>$data['id']))->delete();
-    		M('goods')->where(array('prom_type'=>2,'prom_id'=>$data['id']))->save(array('prom_id'=>0,'prom_type'=>0));
+    		$r = M('group_buy')->where(array('id'=>$data['del_id']))->delete();
+    		M('goods')->where(array('prom_type'=>2,'prom_id'=>$data['del_id']))->save(array('prom_id'=>0,'prom_type'=>0));
     		if($r){
     			exit(json_encode(1));
     		}else{
     			exit(json_encode('删除失败'));
     		}
     	}
-    	
+
     	$data['groupbuy_intro'] = htmlspecialchars(stripslashes($_POST['groupbuy_intro']));
     	$data['start_time'] = strtotime($data['start_time']);
     	$data['end_time'] = strtotime($data['end_time']);
-    	
+
     	if($data['act'] == 'add'){
     		$r = M('group_buy')->add($data);
     		M('goods')->where("goods_id=".$data['goods_id'])->save(array('prom_id'=>$r,'prom_type'=>2));
@@ -277,25 +277,25 @@ class PromotionController extends BaseController {
     		$this->error("操作失败",U('Admin/Promotion/group_buy_list'));
     	}
     }
-    
+
     public function get_goods(){
     	$prom_id = I('id');
-    	$count = M('goods')->where("prom_id=$prom_id and prom_type=3")->count(); 
+    	$count = M('goods')->where("prom_id=$prom_id and prom_type=3")->count();
     	$Page  = new \Think\Page($count,10);
     	$goodsList = M('goods')->where("prom_id=$prom_id and prom_type=3")->order('goods_id DESC')->limit($Page->firstRow.','.$Page->listRows)->select();
     	$show = $Page->show();
     	$this->assign('page',$show);
     	$this->assign('goodsList',$goodsList);
-    	$this->display(); 
-    }   
-    
+    	$this->display();
+    }
+
     public function search_goods(){
     	$GoodsLogic = new \Admin\Logic\GoodsLogic;
     	$brandList = $GoodsLogic->getSortBrands();
     	$this->assign('brandList',$brandList);
     	$categoryList = $GoodsLogic->getSortCategory();
     	$this->assign('categoryList',$categoryList);
-    	
+
     	$goods_id = I('goods_id');
     	$where = ' is_on_sale = 1 and prom_type=0 and store_count>0 ';//搜索条件
     	if(!empty($goods_id)){
@@ -325,13 +325,13 @@ class PromotionController extends BaseController {
     	$tpl = I('get.tpl','search_goods');
     	$this->display($tpl);
     }
-    
+
     //限时抢购
     public function flash_sale(){
     	$condition = array();
     	$model = M('flash_sale');
     	$count = $model->where($condition)->count();
-    	$Page  = new \Think\Page($count,10);    	 
+    	$Page  = new \Think\Page($count,10);
     	$show = $Page->show();
     	$prom_list = $model->where($condition)->order("id desc")->limit($Page->firstRow.','.$Page->listRows)->select();
     	$this->assign('state',array('审核中','正常','未通过','管理员关闭'));
@@ -339,7 +339,7 @@ class PromotionController extends BaseController {
     	$this->assign('page',$show);// 赋值分页输出
     	$this->display();
     }
-    
+
     public function flash_sale_info(){
     	if(IS_POST){
     		$data = I('post.');
@@ -373,7 +373,7 @@ class PromotionController extends BaseController {
     	$this->assign('min_date',date('Y-m-d'));
     	$this->display();
     }
-    
+
     public function flash_sale_del(){
     	$id = I('del_id');
     	if($id){
@@ -384,7 +384,7 @@ class PromotionController extends BaseController {
     		 exit(json_encode(0));
     	}
     }
-    
+
     public function activity_handle(){
     	$tab = I('tab');
     	$id = I('id');
@@ -393,9 +393,9 @@ class PromotionController extends BaseController {
     		exit(json_encode(1));
     	}else{
     		exit(json_encode(0));
-    	} 
+    	}
     }
-    
+
     private function initEditor()
     {
     	$this->assign("URL_upload", U('Admin/Ueditor/imageUp',array('savepath'=>'promotion')));
@@ -407,5 +407,5 @@ class PromotionController extends BaseController {
     	$this->assign("URL_getMovie", U('Admin/Ueditor/getMovie',array('savepath'=>'promotion')));
     	$this->assign("URL_Home", "");
     }
-    
+
 }
