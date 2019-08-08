@@ -980,7 +980,7 @@ function order_give($order)
  * @param goods_id 商品ID
  */
 
-function get_goods_promotion($goods_id,$user_id=0){
+function get_goods_promotion($goods_id,$user_id=0, $is_group = 0){
 	$now = time();
 	$goods = M('goods')->where("goods_id=$goods_id")->find();
 	$where = "end_time>$now and start_time<$now and id=".$goods['prom_id'];
@@ -988,11 +988,13 @@ function get_goods_promotion($goods_id,$user_id=0){
 	$prom['price'] = $goods['shop_price'];
 	$prom['prom_type'] = $goods['prom_type'];
 	$prom['prom_id'] = $goods['prom_id'];
+	$prom['buy_limit'] = 10;
 	$prom['is_end'] = 0;
 
 	if($goods['prom_type'] == 1){//抢购
 		$prominfo = M('flash_sale')->where($where)->find();
 		if(!empty($prominfo)){
+            $prom['buy_limit'] = $prominfo['buy_limit'];
 			if($prominfo['goods_num'] == $prominfo['buy_num']){
 				$prom['is_end'] = 2;//已售馨
 			}else{
@@ -1013,7 +1015,8 @@ function get_goods_promotion($goods_id,$user_id=0){
 
 	if($goods['prom_type']==2){//团购
 		$prominfo = M('group_buy')->where($where)->find();
-		if(!empty($prominfo)){
+		if(!empty($prominfo) && $is_group == 1){
+            $prom['buy_limit'] = $prominfo['buy_limit'];
 			if($prominfo['goods_num'] == $prominfo['buy_num']){
 				$prom['is_end'] = 2;//已售馨
 			}else{
@@ -1044,7 +1047,7 @@ function get_goods_promotion($goods_id,$user_id=0){
 		$prom['is_end'] = 1;//已结束
 	}
 
-	if($prom['prom_id'] == 0){
+	if($prom['prom_id'] == 0 && $is_group != 1){
 		M('goods')->where("goods_id=$goods_id")->save($prom);
 	}
 	return $prom;

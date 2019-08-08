@@ -53,7 +53,7 @@
         <span class="pay-price-text">活动价</span>
         <span class="pay-price-one">
             <em>¥</em>
-            <strong id="goods_price">{$goods['flash_sale'] ? $goods['flash_sale']['price'] : $goods.shop_price}</strong>
+            <strong id="goods_price">{$goods['prom'] ? $goods['prom']['price'] : $goods['shop_price']}</strong>
             <i>/件</i>
         </span>
     </div>
@@ -90,6 +90,7 @@
         </span>
     </div>
     <input type="hidden" name="goods_id" id="goods_id" value="{$goods.goods_id}">
+    <input type="hidden" name="is_group"  id="is_group" value="{$is_group}">
     <div class="pay-price" onclick="addToCart()">立即付款</div>
 </div>
 
@@ -103,7 +104,8 @@
                 goods_id:$('#goods_id').val(),
                 goods_num:$('#goods_num').val(),
                 consignee: $('#consignee').val(),
-                mobile: $('#mobile').val()
+                mobile: $('#mobile').val(),
+                is_group: $('#is_group').val()
             } ,
             dataType:'json',
             success: function(data){

@@ -399,14 +399,14 @@ function changeAtt1(t) {
 			<dd class="css-nobuy" style="width: 100%;">商品已售罄</dd>
 			<else />
 			<dd class="goumai ping-btn-wrapper" style=" width: 100%; display: flex; align-items: center;">
-				<div class="ping-btn">
-					<span>单独购买</span>
-					<span>¥{$group_buy_info['goods_price']}</span>
-				</div>
-				<div class="ping-btn">
-					<span>拼团购买</span>
-					<span>¥{$group_buy_info['price']}</span>
-				</div>
+					<div class="ping-btn" onclick="javascript:window.location.href='{:U('Cart/confirmOrder', ['goods_id' => $goods[goods_id]])}'">
+						<span>单独购买</span>
+						<span>¥{$group_buy_info['goods_price']}</span>
+					</div>
+					<div class="ping-btn" onclick="javascript:window.location.href='{:U('Cart/confirmOrder', ['goods_id' => $goods[goods_id], 'is_group' => 1])}'">
+						<span>拼团购买</span>
+						<span>¥{$group_buy_info['price']}</span>
+					</div>
 			</dd>
 		</if>
 	</dl>
@@ -416,6 +416,12 @@ function changeAtt1(t) {
 		// 更新商品价格
 		get_goods_price();
 	});
+
+
+	function toPay(goods_id, is_group) {
+		window.location.href = "{:U('Cart/confirmOrder', ['goods_id' => $goods[goods_id]])}";
+
+	}
 
 
 	function switch_spec(spec)

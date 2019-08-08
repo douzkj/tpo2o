@@ -148,31 +148,6 @@ var t2=new TouchSlider({id:'sliderlist', speed:600, timeout:6000, before:functio
               <li style=" text-align:right">{$goods.sale_num}人已付款</li>
           </ul>
       </div>
-<if condition="($prom_goods neq null) OR ($prom_order neq null)">
-      <section id="search_ka" class="huodong">
-	      <div class="subNav">
-	        <div class="att_title"> <span>惠</span>
-	          <p>促销活动</p>
-	        </div>
-	      </div>
-	      <div class="navContent">
-          <if condition="$prom_goods neq null">
-              <ul class="youhui_list1">
-                <li>
-                <a href="javascript:void(0);" title="{$prom_goods[name]}"><img src="__STATIC__/images/hui.png"></a>
-                <a href="javascript:void(0);" >{$prom_goods[name]}&nbsp;&nbsp;(活动时间：{$prom_goods[start_time]|date="m月d日",###} - {$prom_goods[end_time]|date="m月d日",###})</a>
-                </li>
-              </ul>
-          </if>
-		<tpshop sql="select * from `__PREFIX__prom_order` order by  id desc limit 5" item="v" key="k" >
-	      <ul class="youhui_list1" style="margin-top:0px;">
-	      	<li><img src="__STATIC__/images/hui.png">{$v['name']}&nbsp;&nbsp;(活动时间：{$v[start_time]|date="m月d日",###} - {$v[end_time]|date="m月d日",###})</li>
-	      </ul>
-		</tpshop>
-	      <div class="blank10"></div>
-	      </div>
-      </section>
-</if>
 
           <div style="height: 8px;background: #eeeeee;"></div>
           <div class="subNavBox">

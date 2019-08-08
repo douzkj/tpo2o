@@ -191,7 +191,7 @@ class CartLogic extends RelationModel
      * @param type $goods_spec  选择规格
      * @param type $user_id 用户id
      */
-    function addCart($goods_id,$goods_num,$goods_spec,$session_id,$user_id = 0)
+    function addCart($goods_id,$goods_num,$goods_spec,$session_id,$user_id = 0, $is_group = 0)
     {
 
         $goods = M('Goods')->where("goods_id = $goods_id")->find(); // 找出这个商品
@@ -257,10 +257,12 @@ class CartLogic extends RelationModel
         // 商品参与促销
         if($goods['prom_type'] > 0)
         {
-            $prom = get_goods_promotion($goods_id,$user_id);
-            $price = $prom['price'];
-            $goods['prom_type'] = $prom['prom_type'];
-            $goods['prom_id']   = $prom['prom_id'];
+            $prom = get_goods_promotion($goods_id,$user_id, $is_group);
+            if (!($goods['prom_type'] == 2 && $is_group == 0)) {
+                $price = $prom['price'];
+                $goods['prom_type'] = $prom['prom_type'];
+                $goods['prom_id']   = $prom['prom_id'];
+            }
         }
 
         $data = array(
