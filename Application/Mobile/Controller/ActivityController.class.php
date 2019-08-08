@@ -17,63 +17,8 @@ class ActivityController extends MobileBaseController {
         $this->display();
     }
 
-
-    public function pintuan() {
-        C('TOKEN_ON',true);
-        $goodsLogic = new \Home\Logic\GoodsLogic();
-        $goods_id = I("get.id");
-        $goods = M('Goods')->where("goods_id = $goods_id")->find();
-        if(empty($goods)){
-            $this->tp404('此商品不存在或者已下架');
-        }
-        if($goods['brand_id']){
-            $brnad = M('brand')->where("id =".$goods['brand_id'])->find();
-            $goods['brand_name'] = $brnad['name'];
-        }
-        $goods_images_list = M('GoodsImages')->where("goods_id = $goods_id")->select(); // 商品 图册
-        $goods_attribute = M('GoodsAttribute')->getField('attr_id,attr_name'); // 查询属性
-        $goods_attr_list = M('GoodsAttr')->where("goods_id = $goods_id")->select(); // 查询商品属性表
-        $filter_spec = $goodsLogic->get_spec($goods_id);
-
-        $spec_goods_price  = M('spec_goods_price')->where("goods_id = $goods_id")->getField("key,price,store_count"); // 规格 对应 价格 库存表
-        //M('Goods')->where("goods_id=$goods_id")->save(array('click_count'=>$goods['click_count']+1 )); //统计点击数
-        $commentStatistics = $goodsLogic->commentStatistics($goods_id);// 获取某个商品的评论统计
-        $this->assign('spec_goods_price', json_encode($spec_goods_price,true)); // 规格 对应 价格 库存表
-        $goods['sale_num'] = M('order_goods')->where("goods_id=$goods_id and is_send=1")->count();
-        //商品促销
-        if($goods['prom_type'] == 1)
-        {
-            $prom_goods = M('prom_goods')->where("id = {$goods['prom_id']} ")->find();
-            $this->assign('prom_goods',$prom_goods);// 商品促销
-
-            $goods['flash_sale'] = get_goods_promotion($goods['goods_id']);
-            $flash_sale = M('flash_sale')->where("id = {$goods['prom_id']}")->find();
-            $this->assign('flash_sale',$flash_sale);
-        }
-
-        $this->assign('commentStatistics',$commentStatistics);//评论概览
-        $this->assign('goods_attribute',$goods_attribute);//属性值
-        $this->assign('goods_attr_list',$goods_attr_list);//属性列表
-        $this->assign('filter_spec',$filter_spec);//规格参数
-        $this->assign('goods_images_list',$goods_images_list);//商品缩略图
-        $goods['discount'] = round($goods['shop_price']/$goods['market_price'],2)*10;
-        $this->assign('goods',$goods);
-        $shop_ids = M('goods_shop')->where(['goods_id' => $goods_id])->getField('shop_id', true);
-        if ($shop_ids) {
-            $shops = M('store_shops')
-                ->where(['id' => ['in', $shop_ids], 'store_id' => $goods['store_id']])
-                ->order('sort desc, created_at desc')
-                ->select();
-        }
-        $this->assign('shops', $shops);
-        if($goods['store_id']>0){
-            $store = M('store')->where(array('store_id'=>$goods['store_id']))->find();
-            $this->assign('store',$store);
-        }
-        $this->display();
-    }
    /**
-    * 商品详情页
+    * 拼团详情页
     */
     public function group(){
         //form表单提交
@@ -84,7 +29,7 @@ class ActivityController extends MobileBaseController {
         $group_buy_info = M('GroupBuy')->where("goods_id = $goods_id and ".time()." >= start_time and ".time()." <= end_time ")->find(); // 找出这个商品
         if(empty($group_buy_info))
         {
-            $this->error("此商品的拼团活动已结束",U('Mobile/Goods/goodsInfo',array('id'=>$goods_id)));
+            $this->error("此商品的拼团活动不存在或已结束",U('Mobile/Goods/goodsInfo',array('id'=>$goods_id)));
         }
 
         $goods = M('Goods')->where("goods_id = $goods_id")->find();
