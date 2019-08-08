@@ -1,13 +1,14 @@
 <div class="com_top">
 	<h2><a href="{:U('Mobile/User/userinfo')}">设置</a></h2>
-	<p class="tuij_cas">
+	<p class="tuij_cas" style="line-height: 1;">
 	        {$user['nickname']}
             <if condition="$first_nickname neq ''">
             	<br />
             	<span>由( {$first_nickname} )推荐</span>
             </if>
     </p>
-	<dl>
+	<p style="margin:0 10%; text-overflow: ellipsis;white-space: nowrap;overflow: hidden; line-height: 1;font-size: 16px;color: #ffffff;text-align: center;margin-top: 2px;">微信号: 18883273127</p>
+	<dl style="margin-top: 22px;">
 		<dt>
 		<img src="{$user['head_pic']|default=" __STATIC__/images/user68.jpg"}">
         
