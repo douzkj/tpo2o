@@ -17,7 +17,7 @@ return array(
     'USER_AUTH_ON'              => true,
     'USER_AUTH_TYPE'            => 1,         // 默认认证类型 1 登录认证 2 实时认证
     'USER_AUTH_KEY'             => 'authId',  // 用户认证SESSION标记
-    'ADMIN_AUTH_KEY'            => 'administrator', 
+    'ADMIN_AUTH_KEY'            => 'administrator',
     'USER_AUTH_MODEL'           => 'User',    // 默认验证数据表模型
     'AUTH_PWD_ENCODER'          => 'md5',     // 用户认证密码加密方式
     'USER_AUTH_GATEWAY'         => '/Public/login',// 默认认证网关
@@ -35,12 +35,12 @@ return array(
     'SHOW_PAGE_TRACE'           =>0,         //显示调试信息
     //'RBAC_ERROR_PAGE'         => '/Public/tp404.html',
     //'ERROR_PAGE'=>'/Index/Index/error_page.html',
-    'ERROR_PAGE'=>'/index.php/Home/Tperror/tp404.html',    
+    'ERROR_PAGE'=>'/index.php/Home/Tperror/tp404.html',
     // 表单令牌验证相关的配置参数
     'TOKEN_ON'      =>    true,  // 是否开启令牌验证 默认关闭
     'TOKEN_NAME'    =>    '__hash__',    // 令牌验证的表单隐藏字段名称，默认为__hash__
     'TOKEN_TYPE'    =>    'md5',  //令牌哈希验证规则 默认为MD5
-    'TOKEN_RESET'   =>    true,  //令牌验证出错后是否重置令牌 默认为true 
+    'TOKEN_RESET'   =>    true,  //令牌验证出错后是否重置令牌 默认为true
     'TAGLIB_LOAD'   => true,
     'APP_AUTOLOAD_PATH'  =>'@.TagLib',
     'TAGLIB_BUILD_IN'  =>  'cx,tpshop', // tpshop 为自定义标签类名称
@@ -51,14 +51,14 @@ return array(
         0 => '待确认',
         1 => '已确认',
         2 => '已收货',
-        3 => '已取消',                
+        3 => '已取消',
         4 => '已完成',//评价完
         5 => '已作废',
     ),
     'SHIPPING_STATUS' => array(
         0 => '未发货',
         1 => '已发货',
-    	2 => '部分发货'	        
+    	2 => '部分发货'
     ),
     'PAY_STATUS' => array(
         0 => '未支付',
@@ -71,46 +71,48 @@ return array(
     ),
     'COUPON_TYPE' => array(
     	0 => '面额模板',
-        1 => '按用户发放',   		
+        1 => '按用户发放',
         2 => '注册发放',
         3 => '邀请发放',
-    	4 => '线下发放'	
+    	4 => '线下发放'
     ),
 	'PROM_TYPE' => array(
 		0 => '默认',
 		1 => '抢购',
-		2 => '团购',
-		3 => '优惠'			
+		2 => '拼团',
+		3 => '优惠'
 	),
     // 订单用户端显示状态
     'WAITPAY'=>' AND pay_status = 0 AND order_status = 0 AND pay_code !="cod" ', //订单查询状态 待支付
     'WAITSEND'=>' AND (pay_status=1 OR pay_code="cod") AND shipping_status !=1 AND order_status in(0,1) ', //订单查询状态 待发货
-    'WAITRECEIVE'=>' AND shipping_status=1 AND order_status = 1 ', //订单查询状态 待收货    
-    'WAITCCOMMENT'=> ' AND order_status=2 ', // 待评价 确认收货     //'FINISHED'=>'  AND order_status=1 ', //订单查询状态 已完成 
+    'WAITUSE'=>' AND (pay_status=1 OR pay_code="cod") AND is_used !=1 AND order_status in(0,1) ', //订单查询状态 待使用
+    'WAITRECEIVE'=>' AND shipping_status=1 AND order_status = 1 ', //订单查询状态 待收货
+    'WAITCCOMMENT'=> ' AND order_status=2 ', // 待评价 确认收货     //'FINISHED'=>'  AND order_status=1 ', //订单查询状态 已完成
     'FINISH'=> ' AND order_status = 4 ', // 已完成
     'CANCEL'=> ' AND order_status = 3 ', // 已取消
 	'CANCELLED'=> 'AND order_status = 5 ',//已作废
-    
+
     'ORDER_STATUS_DESC' => array(
         'WAITPAY' => '待支付',
         'WAITSEND'=>'待发货',
+        'WAITUSE'=>'待使用',
         'WAITRECEIVE'=>'待收货',
         'WAITCCOMMENT'=> '待评价',
         'CANCEL'=> '已取消',
-        'FINISH'=> '已完成', // 
+        'FINISH'=> '已完成', //
     	'CANCELLED'=> '已作废'
     ),
-    
+
     /**
-     *  订单用户端显示按钮     
+     *  订单用户端显示按钮
         去支付     AND pay_status=0 AND order_status=0 AND pay_code ! ="cod"
-        取消按钮  AND pay_status=0 AND shipping_status=0 AND order_status=0 
-        确认收货  AND shipping_status=1 AND order_status=0 
-        评价      AND order_status=1 
-        查看物流  if(!empty(物流单号))   
+        取消按钮  AND pay_status=0 AND shipping_status=0 AND order_status=0
+        确认收货  AND shipping_status=1 AND order_status=0
+        评价      AND order_status=1
+        查看物流  if(!empty(物流单号))
         退货按钮（联系客服）  所有退换货操作， 都需要人工介入   不支持在线退换货
      */
-    
+
     'DEFAULT_MODULE'        =>  'Home',  // 默认模块
     'DEFAULT_CONTROLLER'    =>  'Index', // 默认控制器名称
     'DEFAULT_ACTION'        =>  'index', // 默认操作名称
@@ -121,9 +123,9 @@ return array(
         '2'=>'审核失败',
         '3'=>'违规下架'
     ),
-    
+
     'DEFAULT_FILTER'        => 'strip_sql,htmlspecialchars',   // 系统默认的变量过滤机制
-	
+
     /**
      * coreseek/sphinx全文检索引擎配置
      */

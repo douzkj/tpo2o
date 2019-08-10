@@ -774,7 +774,8 @@ function orderBtn($order_id = 0, $order = array())
         'receive_btn' => 0, // 确认收货
         'comment_btn' => 0, // 评价按钮
         'shipping_btn' => 0, // 查看物流
-        'return_btn' => 0, // 退货按钮 (联系客服)
+        'return_btn' => 0, // 退货按钮 (联系客服),
+        'use_btn' => 0 //待使用按钮
     );
 
 

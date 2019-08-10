@@ -41,12 +41,17 @@ class CartController extends MobileBaseController {
 
     public function confirmOrder()
     {
+        if (!$this->user_id) {
+            header("location:" . U('Mobile/User/login'));
+            exit;
+        }
         $goods_id = I('goods_id');
         $goods = M('goods')->where(['goods_id' => $goods_id])->find();
         C('TOKEN_ON',true);
         if(empty($goods)){
             $this->tp404('此商品不存在或者已下架');
         }
+        //是否是发起拼团
         $is_group = I('is_group', 0);
         if (IS_POST) {
             $goods_num = I('goods_num');

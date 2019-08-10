@@ -7,18 +7,18 @@
  * layer弹窗插件请参考http://layer.layui.com/mobile/
  */
 function AjaxAddCart(goods_id,num,to_catr)
-{                                            
-	
+{
+
     //如果有商品规格 说明是商品详情页提交
-    if($("#buy_goods_form").length > 0){        
+    if($("#buy_goods_form").length > 0){
         $.ajax({
             type : "POST",
             url:"/index.php?m=Home&c=Cart&a=ajaxAddCart",
-            data : $('#buy_goods_form').serialize(),// 你的formid 搜索表单 序列化提交                        
+            data : $('#buy_goods_form').serialize(),// 你的formid 搜索表单 序列化提交
 			dataType:'json',
-            success: function(data){	
+            success: function(data){
 				// 加入购物车后再跳转到 购物车页面
-            	
+
 			    if(data.status < 0)
 				{
 					layer.open({content: data.msg,time: 1});
@@ -37,7 +37,7 @@ function AjaxAddCart(goods_id,num,to_catr)
 			        }
 			    });
             }
-        });     
+        });
     }else{ //否则可能是商品列表页 、收藏页商品点击加入购物车
         $.ajax({
             type : "POST",
@@ -45,19 +45,19 @@ function AjaxAddCart(goods_id,num,to_catr)
             data :{goods_id:goods_id,goods_num:num} ,
 			dataType:'json',
             success: function(data){
-				  
+
 				   if(data.status == -1)
 				   {
 					    //layer.open({content: data.msg,time: 2});
-						location.href = "/index.php?m=Mobile&c=Goods&a=goodsInfo&id="+goods_id;   
+						location.href = "/index.php?m=Mobile&c=Goods&a=goodsInfo&id="+goods_id;
 				   }
 				   else
-				   {  
+				   {
 				    	layer.open({content: data.msg,time: 1});
 						return false;
-				   }							   							   
+				   }
             }
-        });            
+        });
     }
 }
 
@@ -96,7 +96,7 @@ function get_city(t){
             return;
         },
         success: function(v) {
-            v = '<option value="0">选择城市</option>'+ v;          
+            v = '<option value="0">选择城市</option>'+ v;
             $('#city').empty().html(v);
         }
     });
@@ -164,6 +164,16 @@ function GetRTime(end_time){
        var h=Math.floor(t/1000/60/60%24);
        var m=Math.floor(t/1000/60%60);
        var s=Math.floor(t/1000%60);
-	   if(s >= 0)	
+	   if(s >= 0)
        return d + "天 " + h + "时 " + m + "分 " +s + "秒";
+   }
+
+   function isWechatBrower() {
+       var ua = navigator.userAgent.toLowerCase();
+       var isWeixin = ua.indexOf('micromessenger') != -1;
+       if (isWeixin) {
+           return true;
+       }else{
+           return false;
+       }
    }

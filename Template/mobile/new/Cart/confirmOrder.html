@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="__STATIC__/css/public.css">
     <link rel="stylesheet" href="__STATIC__/css/flow.css">
     <link rel="stylesheet" href="__STATIC__/css/style_jm.css">
+    <link rel="stylesheet" href="__STATIC__/css/layer.css">
     <link rel="stylesheet" type="text/css" href="__STATIC__/css/layer.css" />
     <script type="text/javascript" src="__STATIC__/js/jquery.js"></script>
     <script type="text/javascript" src="__STATIC__/js/layer.js"></script>
@@ -138,7 +139,7 @@
      * 减小商品数
      */
     function removeProductNum() {
-        if(input.value == 0){
+        if(input.value == 1){
           return
         }
         input.value = parseInt(input.value) - 1;
@@ -148,6 +149,15 @@
      * 增加商品数
      */
     function addProductNum() {
+        var max = {$goods['prom'] ? $goods['prom']['buy_limit'] : 10};
+        if (input.value == max)  {
+            layer.open({
+                content: '物品限购' + max + "件"
+                ,skin: 'msg'
+                ,time: 2 //2秒后自动关闭
+            });
+            return ;
+        }
         input.value = parseInt(input.value) + 1;
         total.textContent = (parseInt(input.value) * parseFloat(price.textContent)).toFixed(2);
     }

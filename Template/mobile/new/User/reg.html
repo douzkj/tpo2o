@@ -15,6 +15,11 @@
 <script type="text/javascript" src="__STATIC__/js/layer.js" ></script>
 <script src="__PUBLIC__/js/global.js"></script>
 <script src="__PUBLIC__/js/mobile_common.js"></script>
+	<script type="text/javascript" src="__STATIC__/js/common.js"></script>
+
+	<link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.0.1/weui.min.css">
+	<script type="text/javascript" src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
+
 </head>
 <body>
 <header id="header" class='header'>
@@ -65,7 +70,9 @@
                                </div>
 						</div>
 						<input type="submit" id="btn_submit" name="Submit" class="btn_big1" value="注 册" />
-			</form>
+					<button id="wx-login" class="weui-btn weui-btn_block weui-btn_primary" style="width: 100%;display: none" onclick="javascript:window.location.href='{:U('LoginApi/login',array('oauth'=>'weixin'))}'">微信登录</button>
+
+				</form>
 			</div>
 
 		</div>
@@ -74,6 +81,11 @@
 </div>
 <script type="text/javascript">
 
+	$(function () {
+		if (isWechatBrower()) {
+			$('#wx-login').show();
+		}
+	});
 setCurrentForm($("#mobileForm"));
 var flag = false;
 

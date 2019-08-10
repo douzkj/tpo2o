@@ -34,7 +34,7 @@ class LoginApiController extends MobileBaseController {
 
     public function login(){
         if(!$this->oauth)
-            $this->error('非法操作',U('Home/User/login'));
+            $this->error('非法操作',U('Mobile/User/login'));
         include_once  "plugins/login/{$this->oauth}/{$this->oauth}.class.php";
         $this->class_obj->login();
     }
@@ -46,7 +46,7 @@ class LoginApiController extends MobileBaseController {
         if($data['status'] != 1)
             $this->error($data['msg']);
         session('user',$data['result']);
-        // 登录后将购物车的商品的 user_id 改为当前登录的id            
+        // 登录后将购物车的商品的 user_id 改为当前登录的id
         M('cart')->where("session_id = '{$this->session_id}'")->save(array('user_id'=>$data['result']['user_id']));
         $this->success('登陆成功',U('Mobile/User/index'));
     }

@@ -246,7 +246,7 @@ class UserController extends MobileBaseController
         $where = ' user_id=' . $this->user_id;
         //条件搜索
         if (in_array(strtoupper(I('type')), array('WAITCCOMMENT', 'COMMENTED'))) {
-            $where .= " AND order_status in(1,4) "; //代评价 和 已评价
+            $where .= " AND order_status in(1,4) "; //待评价 和 已评价
         } elseif (I('type')) {
             $where .= C(strtoupper(I('type')));
         }
@@ -1221,9 +1221,11 @@ class UserController extends MobileBaseController
     {
         $token = I('get.token');
         $code_id = I('get.code_id');
-        $code = M('order_codes')->where(['token' => $token, 'code_id' => $code_id, ''])->find();
+        $code = M('order_codes')->where(['token' => $token, 'code_id' => $code_id, 'is_checked' => 0])->find();
         if ($code) {
-
+            //找出对应的wx_ser
+        } else {
+            $this->error('此二维码无效或已被核销', U('Mobile/User/login'));
         }
     }
 }

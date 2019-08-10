@@ -51,7 +51,9 @@ class AdminController extends BaseController {
     		$this->assign('info',$info);
     	}
     	$role = D('seller_group')->where('1=1')->select();
+    	$shops = M('store_shops')->where(['store_id' => STORE_ID])->select();
     	$this->assign('role',$role);
+    	$this->assign('shops',$shops);
     	$this->display();
     }
 
@@ -73,15 +75,25 @@ class AdminController extends BaseController {
     	if($data['seller_id']>0){
     		$seller = session('seller');//修改密码
     		if($data['seller_id'] == $seller['seller_id']){
-    			if($data['password'] == $data['password2']){
-    				$this->error("两次密码一致",U('admin/admin_info',array('seller_id'=>$seller['seller_id'])));
-    			}else{
-    				if(M('users')->where(array('user_id'=>$seller['user_id'],'password'=>encrypt($data['password'])))->count()>0){
-    					$r = M('users')->where(array('user_id'=>$seller['user_id']))->save(array('password'=>encrypt($data['password2'])));
-    				}else{
-    					$this->error("原密码错误",U('admin/admin_info',array('seller_id'=>$seller['seller_id'])));
-    				}
-    			}
+    		    if (!empty($data['password'] && !empty($data['password2']))) {
+                    if($data['password'] == $data['password2']){
+                        $this->error("两次密码一致",U('admin/admin_info',array('seller_id'=>$seller['seller_id'])));
+                    }else{
+                        if(M('users')->where(array('user_id'=>$seller['user_id'],'password'=>encrypt($data['password'])))->count()>0){
+                            $r = M('users')->where(array('user_id'=>$seller['user_id']))->save(array('password'=>encrypt($data['password2'])));
+                        }else{
+                            $this->error("原密码错误",U('admin/admin_info',array('seller_id'=>$seller['seller_id'])));
+                        }
+                    }
+                } else {
+    		        M('seller')->where(['seller_id' => $data['seller_id']])->save([
+    		            'shop_id' => $data['shop_id'],
+                        'group_id' => $data['group_id'],
+                        'enable' => $data['enable']
+                    ]);
+                    $this->success("操作成功",U('Admin/index'));
+                }
+
     		}else{
     			$this->error("非法操作",U('Index/welcome'));//只能修改自己的密码
     		}

@@ -14,6 +14,7 @@
 
 namespace Home\Logic;
 
+use Think\Exception;
 use Think\Model\RelationModel;
 /**
  * 购物车 逻辑定义
@@ -35,13 +36,14 @@ class CartLogic extends RelationModel
      * @param $user_id
      * @param $consignee
      * @param $mobile
-     * @param int $coupon_id
      * @param $car_price
+     * @param int $coupon_id
+     * @param string $group_order_sn 拼团订单号
      * @return array
      */
-    public function newAddOrder($user_id, $consignee, $mobile,$car_price, $coupon_id = 0)
+    public function newAddOrder($user_id, $consignee, $mobile,$car_price, $coupon_id = 0, $group_order_sn = '')
     {
-        // 仿制灌水 1天只能下 50 单  // select * from `tp_order` where user_id = 1  and order_sn like '20151217%'
+        // 仿制灌水 1天只能下 50 单
         $order_count = M('Order')->where("user_id= $user_id and order_sn like '".date('Ymd')."%'")->count(); // 查找购物车商品总数量
         if($order_count >= 50)
             return array('status'=>-9,'msg'=>'一天只能下50个订单','result'=>'');
@@ -57,77 +59,116 @@ class CartLogic extends RelationModel
             $car_price['store_balance'][$k] = $car_price['store_balance'][$k] ? $car_price['store_balance'][$k] : 0;
             // 用户使用积分
             $car_price['store_point_count'][$k] = $car_price['store_point_count'][$k] ? $car_price['store_point_count'][$k] : 0;
-            $data = array(
-                'order_sn'         =>$order_sn, // 订单编号
-                'master_order_sn'  =>$master_order_sn, // 主订单号
-                'user_id'          =>$user_id, // 用户id
-                'consignee'        =>$consignee, // 收货人
+            M()->startTrans();
+            try {
+                $data = array(
+                    'order_sn'         =>$order_sn, // 订单编号
+                    'master_order_sn'  =>$master_order_sn, // 主订单号
+                    'user_id'          =>$user_id, // 用户id
+                    'consignee'        =>$consignee, // 收货人
 //                'province'         =>$address['province'],//'省份id',
 //                'city'             =>$address['city'],//'城市id',
 //                'district'         =>$address['district'],//'县',
 //                'twon'             =>$address['twon'],// '街道',
 //                'address'          =>$address['address'],//'详细地址',
-                'mobile'           => $mobile,//'手机',
+                    'mobile'           => $mobile,//'手机',
 //                'zipcode'          =>$address['zipcode'],//'邮编',
 //                'email'            =>$address['email'],//'邮箱',
 //                'shipping_code'    =>$shipping['code'],//'物流编号',
 //                'shipping_name'    =>$shipping['name'], //'物流名称',
-                'invoice_title'    =>"", //'发票抬头',
-                'user_note'        => "", //'给卖家留言',
-                'goods_price'      =>$car_price['store_goods_price'][$k],//每个店铺的商品价格',
-                'shipping_price'   =>0,//'物流价格',
-                'user_money'       =>$car_price['store_balance'][$k], // 当前订单使用的余额数量
-                'coupon_price'     =>$car_price['store_coupon_price'][$k]?:0,//'使用优惠券',
-                'integral'         =>$car_price['store_point_count'][$k], // 使用的积分数量
-                'integral_money'   =>($car_price['store_point_count'][$k] / tpCache('shopping.point_rate')),//'使用积分抵多少钱',
-                'total_amount'     =>($car_price['store_goods_price'][$k] + $car_price['store_shipping_price'][$k]),// 订单总额 = 商品总价 + 物流费
-                'order_amount'     =>$car_price['store_order_amount'][$k],//'应付款金额',
-                'add_time'         =>time(), // 下单时间
-                'order_prom_id'    =>$car_price['store_order_prom_id'][$k],//'订单优惠活动id',
-                'order_prom_amount'=>$car_price['store_order_prom_amount'][$k],//'订单优惠活动优惠了多少钱',
-                'store_id'         =>$k,  // 店铺id
-            );
-            $order_id = M("Order")->data($data)->add();
-            // 记录订单操作日志
-            logOrder($order_id,'您提交了订单，请等待系统确认','提交订单',$user_id,2);
+                    'invoice_title'    =>"", //'发票抬头',
+                    'user_note'        => "", //'给卖家留言',
+                    'goods_price'      =>$car_price['store_goods_price'][$k],//每个店铺的商品价格',
+                    'shipping_price'   =>0,//'物流价格',
+                    'user_money'       =>$car_price['store_balance'][$k], // 当前订单使用的余额数量
+                    'coupon_price'     =>$car_price['store_coupon_price'][$k]?:0,//'使用优惠券',
+                    'integral'         =>$car_price['store_point_count'][$k], // 使用的积分数量
+                    'integral_money'   =>($car_price['store_point_count'][$k] / tpCache('shopping.point_rate')),//'使用积分抵多少钱',
+                    'total_amount'     =>($car_price['store_goods_price'][$k] + $car_price['store_shipping_price'][$k]),// 订单总额 = 商品总价 + 物流费
+                    'order_amount'     =>$car_price['store_order_amount'][$k],//'应付款金额',
+                    'add_time'         =>time(), // 下单时间
+                    'order_prom_id'    =>$car_price['store_order_prom_id'][$k],//'订单优惠活动id',
+                    'order_prom_amount'=>$car_price['store_order_prom_amount'][$k],//'订单优惠活动优惠了多少钱',
+                    'store_id'         =>$k,  // 店铺id
+                );
+                $order_id = M("Order")->data($data)->add();
+                // 记录订单操作日志
+                logOrder($order_id,'您提交了订单，请等待系统确认','提交订单',$user_id,2);
 
-            // 1插入order_goods 表
-            $cartList = M('Cart')->where("store_id = $k and user_id = $user_id and selected = 1")->select();
-            foreach($cartList as $key => $val)
-            {
-                $goods = M('goods')->where("goods_id = {$val['goods_id']} ")->find();
-                $data2['order_id']           = $order_id; // 订单id
-                $data2['goods_id']           = $val['goods_id']; // 商品id
-                $data2['goods_name']         = $val['goods_name']; // 商品名称
-                $data2['goods_sn']           = $val['goods_sn']; // 商品货号
-                $data2['goods_num']          = $val['goods_num']; // 购买数量
-                $data2['market_price']       = $val['market_price']; // 市场价
-                $data2['goods_price']        = $val['goods_price']; // 商品价
-                $data2['spec_key']           = $val['spec_key']; // 商品规格
-                $data2['spec_key_name']      = $val['spec_key_name']; // 商品规格名称
-                $data2['sku']                = $val['sku']; // 商品条码
-                $data2['member_goods_price'] = $val['member_goods_price']; // 会员折扣价
-                $data2['cost_price']         = $goods['cost_price']; // 成本价
-                $data2['give_integral']      = $goods['give_integral']; // 购买商品赠送积分
-                $data2['prom_type']          = $val['prom_type']; // 0 普通订单,1 限时抢购, 2 团购 , 3 促销优惠
-                $data2['prom_id']            = $val['prom_id']; // 活动id
-                $data2['store_id']           = $val['store_id']; // 店铺id
-                $data2['distribut']          = $goods['distribut']; // 三级分销金额
-                $data2['commission']         = M('goods_category')->where("id = {$goods['cat_id3']}")->getField('commission'); // 商品抽成比例
-                $order_goods_id              = M("OrderGoods")->data($data2)->add();
-                //系统生成兑换码
-                for ($i = 0 ; $i < $val['goods_num']; $i ++ ){
-                    $get_code = generateRedemptionCode();
-                    $code = [
-                        'order_id' => $order_id,
-                        'code' => $get_code,
-                        'token' => md5($get_code . $order_id . time())
-                    ];
-                    M('OrderCodes')->data($code)->add();
+                // 1插入order_goods 表
+                $cartList = M('Cart')->where("store_id = $k and user_id = $user_id and selected = 1")->select();
+                foreach($cartList as $key => $val)
+                {
+                    $goods = M('goods')->where("goods_id = {$val['goods_id']} ")->find();
+                    $data2['order_id']           = $order_id; // 订单id
+                    $data2['goods_id']           = $val['goods_id']; // 商品id
+                    $data2['goods_name']         = $val['goods_name']; // 商品名称
+                    $data2['goods_sn']           = $val['goods_sn']; // 商品货号
+                    $data2['goods_num']          = $val['goods_num']; // 购买数量
+                    $data2['market_price']       = $val['market_price']; // 市场价
+                    $data2['goods_price']        = $val['goods_price']; // 商品价
+                    $data2['spec_key']           = $val['spec_key']; // 商品规格
+                    $data2['spec_key_name']      = $val['spec_key_name']; // 商品规格名称
+                    $data2['sku']                = $val['sku']; // 商品条码
+                    $data2['member_goods_price'] = $val['member_goods_price']; // 会员折扣价
+                    $data2['cost_price']         = $goods['cost_price']; // 成本价
+                    $data2['give_integral']      = $goods['give_integral']; // 购买商品赠送积分
+                    $data2['prom_type']          = $val['prom_type']; // 0 普通订单,1 限时抢购, 2拼团 , 3 促销优惠
+                    $data2['prom_id']            = $val['prom_id']; // 活动id
+                    $data2['store_id']           = $val['store_id']; // 店铺id
+                    $data2['distribut']          = $goods['distribut']; // 三级分销金额
+                    $data2['commission']         = M('goods_category')->where("id = {$goods['cat_id3']}")->getField('commission'); // 商品抽成比例
+                    $order_goods_id              = M("OrderGoods")->data($data2)->add();
+                    //系统生成兑换码
+                    for ($i = 0 ; $i < $val['goods_num']; $i ++ ){
+                        $get_code = generateRedemptionCode();
+                        $code = [
+                            'order_id' => $order_id,
+                            'code' => $get_code,
+                            'token' => md5($get_code . $order_id . time())
+                        ];
+                        M('OrderCodes')->data($code)->add();
+                    }
+                    //若为拼团订单，则加入拼团订单关联
+                    if ($val['prom_type'] == 2 && $val['prom_id']) {
+                        $group = M('group_buy')->where(['id' => $val['prom_id']])->find();
+                        if ($group) {
+                            $group_orders = M('group_order')->where(['group_id' => $group['id'], 'group_status' => ['between', [1, 2]]])->count();
+                            $buy_num = $group_orders * $group['buy_limit']* $group['group_num'];
+                            //判断当前的数量能否成团
+                            $remain = $group['goods_num'] - $buy_num;
+                            $can_group = floor($remain / ($group['buy_limit']* $group['group_num']));
+                            if ($can_group > 0) {
+                                //大于0表示剩余人数可成团
+                                $group_order = [
+                                    'group_order_sn' => $this->get_group_order_sn(),
+                                    'group_id' => $group['id'],
+                                    'user_id' => $user_id,
+                                    'created_at' => time(),
+                                    'group_num' => $group['group_num'],
+                                    'grouped_num' => 1,
+                                    'goods_id' => $val['goods_id'],
+                                    'close_at' => time() + 10 * 60
+                                ];
+                                $group_order_id = M('group_order')->data($group_order)->add();
+                                M('group_order_relation')->data([
+                                    'group_order_id' => $group_order_id,
+                                    'order_id' => $order_id
+                                ])->add();
+                            } else {
+                                throw new Exception('剩余库存不能开团');
+                            }
+                        }
+                    }
+                    // 扣除商品库存  扣除库存移到 付完款后扣除
+                    //M('Goods')->where("goods_id = ".$val['goods_id'])->setDec('store_count',$val['goods_num']); // 商品减少库存
                 }
-                // 扣除商品库存  扣除库存移到 付完款后扣除
-                //M('Goods')->where("goods_id = ".$val['goods_id'])->setDec('store_count',$val['goods_num']); // 商品减少库存
+                M()->commit();
+            } catch (\Exception $exception) {
+                M()->rollback();
+                return array('status'=>-9,'msg'=>$exception->getMessage(),'result'=>'');
             }
+
 
             // 如果应付金额为0  可能是余额支付 + 积分 + 优惠券 这里订单支付状态直接变成已支付
             if($data['order_amount'] == 0)
@@ -258,10 +299,13 @@ class CartLogic extends RelationModel
         if($goods['prom_type'] > 0)
         {
             $prom = get_goods_promotion($goods_id,$user_id, $is_group);
-            if (!($goods['prom_type'] == 2 && $is_group == 0)) {
-                $price = $prom['price'];
-                $goods['prom_type'] = $prom['prom_type'];
-                $goods['prom_id']   = $prom['prom_id'];
+            $price = $prom['price'];
+            $goods['prom_type'] = $prom['prom_type'];
+            $goods['prom_id']   = $prom['prom_id'];
+            //如果是拼团活动
+            if ($goods['prom_type'] == 2 && $is_group == 0) {
+                $goods['prom_type'] = 0;
+                $goods['prom_id'] = 0;
             }
         }
 
@@ -612,6 +656,18 @@ function cart_freight2($shipping_code,$province,$city,$district,$weight,$store_i
                 break;
         }
         return $order_sn;
+   }
+
+   public function get_group_order_sn()
+   {
+       // 保证不会有重复订单号存在
+       while(true){
+           $order_sn = "G" . date('YmdHis').rand(1000,9999); // 订单编号
+           $order_sn_count = M('group_order')->where("group_order_sn = '$order_sn'")->count();
+           if($order_sn_count == 0)
+               break;
+       }
+       return $order_sn;
    }
     /**
      * 查看购物车的商品数量

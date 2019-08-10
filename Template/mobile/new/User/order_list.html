@@ -22,9 +22,11 @@
             <ul>
               <li><a href="{:U('/Mobile/User/order_list')}" class="tab_head <if condition="$_GET[type] eq ''">on</if>"  >全部</a></li>
               <li><a href="{:U('/Mobile/User/order_list',array('type'=>'WAITPAY'))}"      class="tab_head <if condition="$_GET[type] eq 'WAITPAY'">on</if>">待付款</a></li>
-              <li><a href="{:U('/Mobile/User/order_list',array('type'=>'WAITSEND'))}"     class="tab_head <if condition="$_GET[type] eq 'WAITSEND'">on</if>">待发货</a></li>
-              <li><a href="{:U('/Mobile/User/order_list',array('type'=>'WAITRECEIVE'))}"  class="tab_head <if condition="$_GET[type] eq 'WAITRECEIVE'">on</if>">待收货</a></li>
+              <!--<li><a href="{:U('/Mobile/User/order_list',array('type'=>'WAITSEND'))}"     class="tab_head <if condition="$_GET[type] eq 'WAITSEND'">on</if>">待发货</a></li>-->
+              <li><a href="{:U('/Mobile/User/order_list',array('type'=>'WAITUSE'))}"     class="tab_head <if condition="$_GET[type] eq 'WAITUSE'">on</if>">待使用</a></li>
+              <!--<li><a href="{:U('/Mobile/User/order_list',array('type'=>'WAITRECEIVE'))}"  class="tab_head <if condition="$_GET[type] eq 'WAITRECEIVE'">on</if>">待收货</a></li>-->
               <li><a href="{:U('/Mobile/User/order_list',array('type'=>'WAITCCOMMENT'))}" class="tab_head <if condition="$_GET[type] eq 'WAITCCOMMENT'">on</if>">已完成</a></li>
+              <li><a href="{:U('/Mobile/User/order_list',array('type'=>'CANCEL'))}" class="tab_head <if condition="$_GET[type] eq 'CANCEL'">on</if>">已取消</a></li>
             </ul>
       </div>
 
@@ -62,8 +64,8 @@
                 <if condition="$list.pay_btn eq 1"><a href="{:U('Mobile/Cart/cart4',array('order_id'=>$list['order_id']))}">立即付款</a></if>
                 <if condition="$list.receive_btn eq 1"><a href="{:U('Mobile/User/order_confirm',array('id'=>$list['order_id']))}">收货确认</a></if>
                 <if condition="$list.comment_btn eq 1"><a href="{:U('/Mobile/User/order_detail',array('id'=>$list['order_id']))}">评价</a></if>
-                <if condition="$list.shipping_btn eq 1"><a href="http://www.kuaidi100.com/" target="_blank">查看物流</a></if>
-                <if condition="$list.return_btn eq 1"><a href="mqqwpa://im/chat?chat_type=wpa&uin={$storeList[$list['store_id']]['store_qq']}&version=1&src_type=web&web_src=oicqzone.com" target="_blank">联系客服</a></if>
+                <!--<if condition="$list.shipping_btn eq 1"><a href="http://www.kuaidi100.com/" target="_blank">查看物流</a></if>-->
+                <!--<if condition="$list.return_btn eq 1"><a href="mqqwpa://im/chat?chat_type=wpa&uin={$storeList[$list['store_id']]['store_qq']}&version=1&src_type=web&web_src=oicqzone.com" target="_blank">联系客服</a></if>-->
           </div>
        </div>
 		</volist>
