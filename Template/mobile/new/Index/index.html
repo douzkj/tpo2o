@@ -49,7 +49,7 @@
         line-height: 32px;
     }
     .search-left-text {
-        font-size: 16px;
+        font-size: 14px;
         display: inline-block;
     }
 
@@ -427,7 +427,11 @@ $('#searchtype').val($(this).attr('0'));
             document.querySelector('.hidden-area-btn').style.display = 'none';
         }
         $(function () {
-            $("#select_region").text($(".pop-inner div.area-item.selected").text());
+            var region = $(".pop-inner div.area-item.selected").text();
+            if (region == '') {
+                region = '定位失败';
+            }
+            $("#select_region").text(region);
         })
 
     </script>
