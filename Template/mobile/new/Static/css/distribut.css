@@ -1,0 +1,124 @@
+html,body {
+    margin: 0px;
+    padding: 0px;
+    background: #e8e8f0;
+}
+a {  text-decoration:none;display: inline-block;color: #7f7f7f;}
+.dis-price-detail {
+    padding: 20px 20px 25px 20px;
+    width: 100%;
+    height: 135px;
+    box-sizing: border-box;
+    font-size: 0px;
+    background: white;
+}
+.dis-price-detail .tit_withdrawals {
+    width: 100%;
+    height: 13px;
+    line-height: 1;
+}
+.dis-price-detail .tit_withdrawals .mi_cutout {
+    margin-left: 2px;
+    font-size: 13px;
+    vertical-align: top;
+    line-height: 13px;
+    color: #7f7f7f;
+    display: inline-block;
+}
+.dis-price-detail .tit_withdrawals i:nth-child(1) {
+    width: 15px;
+    height: 13px;
+    background: red;
+    display: inline-block;
+}
+.dis-price-detail .tit_withdrawals i:nth-child(3) {
+    margin-left: 5px;
+    width: 12px;
+    height: 13px;
+    display: inline-block;
+    background: red;
+}
+.dis-price-detail .cashleri {
+    width: 100%;
+    height: 39px;
+    display: flex;
+    justify-content: space-between;
+    line-height: 1;
+}
+.dis-price-detail .cashleri .sum_money_le span{
+    font-size: 17px;
+    color: red;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.dis-price-detail .cashleri .sum_money_le {
+    display: flex;
+    align-items: flex-end;
+}
+.dis-price-detail .cashleri .detail_money_ri {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.dis-price-detail .cashleri .sum_money_le,.dis-price-detail .cashleri .detail_money_ri{
+   width: 50%;
+}
+.dis-price-detail .cashleri .detail_money_ri p {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.dis-price-detail .cashleri .detail_money_ri p .tit{
+    font-size: 13px;
+    color: #7f7f7f;
+    padding: 10px 0px;
+}
+.dis-price-detail .cashleri .detail_money_ri p .cont {
+    font-size: 14px;
+    color: #333333;
+    margin-left: 5px;
+}
+.dis-price-detail .all_comm {
+    margin-top: 25px;
+    line-height: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.dis-price-detail .all_comm .tit {
+    font-size: 13px;
+    color: #7f7f7f;
+}
+.dis-price-detail .all_comm .cont {
+    font-size: 14px;
+    color: #333333;
+    margin-left: 5px;
+}
+.mynav_link_list {
+    padding: 5px 0px;
+    display: flex;
+    line-height: 1;
+}
+.mynav_link_list .mynav_link_item  {
+    width: 100%;
+    padding: 15px 0px;
+    font-size: 0px;
+    background: white;
+    text-align: center;
+}
+.mynav_link_list .mynav_link_item .mynav_link_item-img {
+    width: 26px;
+    height: 26px;
+    background: red;
+    margin: auto;
+    margin: auto;
+}
+.mynav_link_list .mynav_link_item .mynav_link_item-tip {
+    font-size: 13px;
+    margin-top: 10px;
+    display:inline-block;
+}
