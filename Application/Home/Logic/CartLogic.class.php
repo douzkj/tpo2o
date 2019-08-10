@@ -155,6 +155,9 @@ class CartLogic extends RelationModel
                                     'group_order_id' => $group_order_id,
                                     'order_id' => $order_id
                                 ])->add();
+                                M('order')->where(['order_id' => $order_id])->save([
+                                    'group_order_id' => $group_order_id
+                                ]);
                             } else {
                                 throw new Exception('剩余库存不能开团');
                             }

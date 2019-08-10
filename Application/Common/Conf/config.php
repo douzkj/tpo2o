@@ -89,6 +89,7 @@ return array(
     'WAITRECEIVE'=>' AND shipping_status=1 AND order_status = 1 ', //订单查询状态 待收货
     'WAITCCOMMENT'=> ' AND order_status=2 ', // 待评价 确认收货     //'FINISHED'=>'  AND order_status=1 ', //订单查询状态 已完成
     'FINISH'=> ' AND order_status = 4 ', // 已完成
+    'GROUPING'=> ' AND group_order_id <> 0 ', // 已完成
     'CANCEL'=> ' AND order_status = 3 ', // 已取消
 	'CANCELLED'=> 'AND order_status = 5 ',//已作废
 
@@ -97,6 +98,7 @@ return array(
         'WAITSEND'=>'待发货',
         'WAITUSE'=>'待使用',
         'WAITRECEIVE'=>'待收货',
+        'GROUPING'=>'拼团中',
         'WAITCCOMMENT'=> '待评价',
         'CANCEL'=> '已取消',
         'FINISH'=> '已完成', //
