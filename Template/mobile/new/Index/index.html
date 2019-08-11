@@ -18,6 +18,7 @@
 <script type="text/javascript" src="__STATIC__/js/layer.js" ></script>
 <script src="__PUBLIC__/js/global.js"></script>
 <script src="__PUBLIC__/js/mobile_common.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
 </head>
 <style>
     .search {
@@ -332,30 +333,17 @@ function goTop(){
 
 </div>
 <include file="Public/footer_nav"/>
+
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=YtPYQ0XMmcmGnPaLFImTl3719X8oz3p8"></script>
 
     <script type="text/javascript">
-        wx.getLocation({
-            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-            success: function (res) {
-                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
-                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-                var speed = res.speed; // 速度，以米/每秒计
-                var accuracy = res.accuracy; // 位置精度
-                getCurrentCity(latitude, longitude);
-            }
-        });
-
         function getCurrentCity(longitude,latitude) {
             var point = new BMap.Point(longitude, latitude);
             var gc = new BMap.Geocoder();
 
             gc.getLocation(point, function (rs) {
-                console.log(rs);
-
                 let addComp = rs.addressComponents;
-                //详细地址为省，市，行政区，街道，街道地址
-                address = addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber;
+                console.log(addComp);
             });
         }
     </script>

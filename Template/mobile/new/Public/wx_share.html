@@ -24,7 +24,7 @@ if(parseInt(is_distribut) == 1 && parseInt(user_id) > 0)
 
 // 微信配置
 wx.config({
-    debug: false,
+    debug: true,
     appId: "{$signPackage['appId']}",
     timestamp: '{$signPackage["timestamp"]}',
     nonceStr: '{$signPackage["nonceStr"]}',
@@ -79,6 +79,25 @@ wx.ready(function(){
         link:ShareLink,
         imgUrl:ShareImgUrl // 分享图标
 	});
+
+	if (!getCookie('longitude') && !getCookie('latitude')) {
+        wx.getLocation({
+            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+            success: function (res) {
+                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                var speed = res.speed; // 速度，以米/每秒计
+                var accuracy = res.accuracy; // 位置精度
+                setCookies('longitude', longitude);
+                setCookies('latitude', latitude);
+
+                getCurrentCity(longitude, latitude);
+            }
+        });
+    } else {
+        getCurrentCity(getCookie('longitude'), getCookie('latitude'));
+    }
+
 
    <if condition="CONTROLLER_NAME eq 'User'">
 	wx.hideOptionMenu();  // 用户中心 隐藏微信菜单

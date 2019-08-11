@@ -108,7 +108,11 @@ class UserController extends MobileBaseController
                     exit(json_encode($check_code));
                 $c = M('users')->where("mobile = '{$post['mobile']}' and user_id != {$this->user_id}")->count();
                 $c && $this->error("手机已被绑定");
-                if (!$userLogic->update_info($this->user_id, ['mobile' => $post['mobile'], 'is_distribut' => 1]))
+                if (!$userLogic->update_info($this->user_id, [
+                    'mobile' => $post['mobile'],
+                    'is_distribut' => 1,
+                    'mobile_validated' => 1
+                ]))
                     $this->error("保存失败");
                 $this->success("操作成功");
             } else {

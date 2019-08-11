@@ -148,7 +148,6 @@ class CartLogic extends RelationModel
                                     'group_num' => $group['group_num'],
                                     'grouped_num' => 1,
                                     'goods_id' => $val['goods_id'],
-                                    'close_at' => time() + 10 * 60
                                 ];
                                 $group_order_id = M('group_order')->data($group_order)->add();
                                 M('group_order_relation')->data([
