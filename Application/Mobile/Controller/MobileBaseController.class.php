@@ -33,7 +33,7 @@ class MobileBaseController extends Controller {
         else
             cookie('is_mobile','0',3600);
         //微信浏览器
-        if(strstr($_SERVER['HTTP_USER_AGENT'],'MicroMessenger') && empty($_SESSION['openid'])){
+        if(strstr($_SERVER['HTTP_USER_AGENT'],'MicroMessenger')){
             $this->weixin_config = M('wx_user')->find(); //获取微信配置
             $this->assign('wechat_config', $this->weixin_config);
             if(is_array($this->weixin_config) && $this->weixin_config['wait_access'] == 1){

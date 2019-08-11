@@ -24,7 +24,7 @@ use Think\Model\RelationModel;
  */
 class Jssdk extends RelationModel
 {
- 
+
   private $appId;
   private $appSecret;
 
@@ -44,8 +44,20 @@ class Jssdk extends RelationModel
     $nonceStr = $this->createNonceStr();
 
     // 这里参数的顺序要按照 key 值 ASCII 码升序排序
-    $string = "jsapi_ticket=$jsapiTicket&noncestr=$nonceStr&timestamp=$timestamp&url=$url";
+//    $string = "jsapi_ticket=$jsapiTicket&noncestr=$nonceStr&timestamp=$timestamp&url=$url";
 
+    $signParams = [
+        'jsapi_ticket' => $jsapiTicket,
+        'noncestr' => $nonceStr,
+        'timestamp' => $timestamp,
+        'url' => $url
+    ];
+    $string = '';
+    ksort($signParams);
+    foreach ($signParams as $jkey => $param) {
+        $string .= $jkey .'=' . $param .'&';
+    }
+    $string = substr($string, 0, -1);
     $signature = sha1($string);
 
     $signPackage = array(
@@ -55,9 +67,9 @@ class Jssdk extends RelationModel
       "url"       => $url,
       "rawString" => $string,
       "signature" => $signature
-      
+
     );
-    return $signPackage; 
+    return $signPackage;
   }
 // 随机字符串
   private function createNonceStr($length = 16) {
@@ -74,21 +86,21 @@ class Jssdk extends RelationModel
      * 根据 access_token 获取 icket
      * @return type
      */
-    public function getJsApiTicket(){        
-        
+    public function getJsApiTicket(){
+
         $ticket = S('ticket');
         if(!empty($ticket))
             return $ticket;
-        
+
         $access_token = $this->get_access_token();
         $url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={$access_token}&type=jsapi";
         $return = httpRequest($url,'GET');
-        $return = json_decode($return,1);        
+        $return = json_decode($return,1);
         S('ticket',$return['ticket'],7000);
         return $return['ticket'];
-    }     
-      
-  
+    }
+
+
     /**
      * 获取 网页授权登录access token
      * @return type
@@ -98,20 +110,20 @@ class Jssdk extends RelationModel
         $access_token = S('access_token');
         if(!empty($access_token))
             return $access_token;
-        
+
         $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$this->appId}&secret={$this->appSecret}";
         $return = httpRequest($url,'GET');
         $return = json_decode($return,1);
-        S('access_token',$return['access_token'],7000);        
+        S('access_token',$return['access_token'],7000);
         return $return['access_token'];
-    }    
-    
+    }
+
     // 获取一般的 access_token
     public function get_access_token(){
         //判断是否过了缓存期
         $wechat = M('wx_user')->find();
         $expire_time = $wechat['web_expires'];
-        if($expire_time > time()){
+        if($expire_time > time() && !empty($wechat['web_access_token'])){
            return $wechat['web_access_token'];
         }
         $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$wechat['appid']}&secret={$wechat['appsecret']}";
@@ -120,14 +132,14 @@ class Jssdk extends RelationModel
         $web_expires = time() + 7000; // 提前200秒过期
         M('wx_user')->where(array('id'=>$wechat['id']))->save(array('web_access_token'=>$return['access_token'],'web_expires'=>$web_expires));
         return $return['access_token'];
-    }   
-    
+    }
+
     /*
      * 向用户推送消息
      */
     public function push_msg($openid,$content){
         $access_token = $this->get_access_token();
-        $url ="https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={$access_token}";        
+        $url ="https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token={$access_token}";
         $post_arr = array(
                         'touser'=>$openid,
                         'msgtype'=>'text',
@@ -135,9 +147,9 @@ class Jssdk extends RelationModel
                                 'content'=>$content,
                             )
                         );
-        $post_str = json_encode($post_arr,JSON_UNESCAPED_UNICODE);        
+        $post_str = json_encode($post_arr,JSON_UNESCAPED_UNICODE);
         $return = httpRequest($url,'POST',$post_str);
-        $return = json_decode($return,true);        
+        $return = json_decode($return,true);
     }
- 
+
 }

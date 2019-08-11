@@ -202,7 +202,7 @@ var  page = 1;
                 <span class="mix_submit" onClick="if($.trim($('#q').val()) != '') $('#sourch_form').submit();"></span>
                 <a href="javascript:void(0)" class="clear_input" id="clear_input" style="display: block;"></a>
             </div>
-               <input type="button" onClick="if($.trim($('#q').val()) != '') $('#sourch_form').submit(); else alert('输入搜索词');" value="搜索" class="mix_filtrate">
+               <input type="button" onClick="clickSearch()" value="搜索" class="mix_filtrate">
         </form>
     </section>
     <section class="mix_search_list"></section>
@@ -219,6 +219,16 @@ var  page = 1;
 <script type="text/javascript" src="__STATIC__/js/zepto.min.js"></script>
 <script type="text/javascript" src="__STATIC__/js/filter.min.js"></script>
 <script>
+	function clickSearch() {
+		if($.trim($('#q').val()) != '') {
+			//$('#sourch_form').submit();
+			$("#mix_search_div").hide();
+			$("._pre").show();
+		} else {
+			alert('输入搜索词');
+		}
+	}
+
 $(document).ready(function(){
         //筛选浮层显示控制
         var filtrate = $(".filtrate"), submit = $(".submit,.back,.reset");
@@ -234,6 +244,7 @@ $(document).ready(function(){
         //初始化筛选浮层
         bizFilter.init();
 });
+
 
 function goods_cut($val){
 	var num_val=document.getElementById('number_'+$val);
