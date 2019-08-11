@@ -20,7 +20,16 @@
 	<a href="{:U('Mobile/User/coupon')}"><em class="Icon Icon3"></em><dl class="b"><dt>我的优惠券</dt><dd>&nbsp;</dd></dl></a>
 	<a href="{:U('Mobile/User/comment')}"><em class="Icon Icon4"></em><dl class="b"><dt>我的评价</dt><dd>查看评价</dd></dl></a>
 	<!--<a href="{:U('Mobile/User/collect_list')}"><em class="Icon Icon10"></em><dl><dt class="b">我的收藏</dt><dd>&nbsp;</dd></dl></a>-->
-	<a href="{:U('Mobile/Distribut/index')}"><em class="Icon Icon10"></em><dl><dt class="b">我的分销</dt><dd>&nbsp;</dd></dl></a>
+	<if condition="$user['is_distribut'] eq 1">
+	<a href="{:U('Mobile/Distribut/index')}"><em class="Icon Icon10"></em><dl><dt class="b">
+			我的分销
+	</dt><dd>&nbsp;</dd></dl></a>
+		<else />
+		<a href="{:U('Mobile/User/distribute')}"><em class="Icon Icon10"></em><dl><dt class="b">
+			成为分销代理
+		</dt><dd>&nbsp;</dd></dl></a>
+	</if>
+
 	<a href="{:U('Mobile/User/withdrawals')}"><em class="Icon Icon1"></em><dl><dt class="b">申请提现</dt><dd>&nbsp;</dd></dl></a>
 </div>
 <div class="Wallet">

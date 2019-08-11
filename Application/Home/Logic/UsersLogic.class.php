@@ -143,7 +143,11 @@ class UsersLogic extends RelationModel
             // 成为分销商条件
             //$distribut_condition = tpCache('distribut.condition');
             //if($distribut_condition == 0)  // 直接成为分销商, 每个人都可以做分销
-            $map['is_distribut']  = 1;
+            if (isset($map['mobile']) && !empty($map['mobile'])) {
+                $map['is_distribut']  = 1;
+            } else {
+                $map['is_distribut'] = 0;
+            }
 
             $row_id = M('users')->add($map);
 			// 会员注册送优惠券

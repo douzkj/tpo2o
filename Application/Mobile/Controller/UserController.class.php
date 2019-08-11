@@ -88,6 +88,37 @@ class UserController extends MobileBaseController
         header("Location:" . U('Mobile/Index/index'));
     }
 
+    public function distribute()
+    {
+        $userLogic = new UsersLogic();
+        $user_info = $userLogic->get_info($this->user_id); // 获取用户信息
+        if ($user_info['is_distribut']) {
+            $this->success('已经成为分销代理', U('Mobile/User/index'));
+            exit;
+        }
+        if (IS_POST) {
+            $post = $_POST;
+            $mobile = $post['mobile'];
+            $code = $post['mobile_code'];
+            if (!empty($mobile)) {
+                if (!$code)
+                    $this->error('请输入验证码');
+                $check_code = $userLogic->check_validate_code($code, $mobile);
+                if ($check_code['status'] != 1)
+                    exit(json_encode($check_code));
+                $c = M('users')->where("mobile = '{$post['mobile']}' and user_id != {$this->user_id}")->count();
+                $c && $this->error("手机已被绑定");
+                if (!$userLogic->update_info($this->user_id, ['mobile' => $post['mobile'], 'is_distribut' => 1]))
+                    $this->error("保存失败");
+                $this->success("操作成功");
+            } else {
+                $this->error('请输入手机号');
+            }
+        } else {
+            $this->display();
+        }
+    }
+
     /*
      * 账户资金
      */
@@ -679,11 +710,11 @@ class UserController extends MobileBaseController
             if (!empty($mobile)) {
                 $c = M('users')->where("mobile = '{$post['mobile']}' and user_id != {$this->user_id}")->count();
                 $c && $this->error("手机已被使用");
-//                if (!$code)
-//                    $this->error('请输入验证码');
-//                $check_code = $userLogic->sms_code_verify($mobile, $code, $this->session_id);
-//                if ($check_code['status'] != 1)
-//                    $this->error($check_code['msg']);
+                if (!$code)
+                    $this->error('请输入验证码');
+                $check_code = $userLogic->sms_code_verify($mobile, $code, $this->session_id);
+                if ($check_code['status'] != 1)
+                    $this->error($check_code['msg']);
             }
 
             if (!$userLogic->update_info($this->user_id, $post))
@@ -979,6 +1010,12 @@ class UserController extends MobileBaseController
     {
         $type = I('type');
         $send = I('send');
+        $check_exist = I('check_exist');
+        if ($check_exist) {
+            if (M('users')->where(['mobile' => $send])->count()) {
+                $this->ajaxReturn(['status' => -1, 'msg' => '此手机号已存在']);
+            }
+        }
         $logic = new UsersLogic();
         $res = $logic->send_validate_code($send, $type);
         $this->ajaxReturn($res);

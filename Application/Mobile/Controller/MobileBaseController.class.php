@@ -37,26 +37,27 @@ class MobileBaseController extends Controller {
             $this->weixin_config = M('wx_user')->find(); //获取微信配置
             $this->assign('wechat_config', $this->weixin_config);
             if(is_array($this->weixin_config) && $this->weixin_config['wait_access'] == 1){
-                $wxuser = $this->GetOpenid(); //授权获取openid以及微信用户信息
-                session('subscribe', $wxuser['subscribe']);// 当前这个用户是否关注了微信公众号
-                //微信自动登录
-                $logic = new UsersLogic();
-                $data = $logic->thirdLogin($wxuser);
+                if (empty($_SESSION['openid'])) {
+                    $wxuser = $this->GetOpenid(); //授权获取openid以及微信用户信息
+                    session('subscribe', $wxuser['subscribe']);// 当前这个用户是否关注了微信公众号
+                    //微信自动登录
+                    $logic = new UsersLogic();
+                    $data = $logic->thirdLogin($wxuser);
 
-                if($data['status'] == 1){
-                    session('user',$data['result']);
-                    setcookie('user_id',$data['result']['user_id'],null,'/');
-                    setcookie('is_distribut',$data['result']['is_distribut'],null,'/');
-                    setcookie('uname',$data['result']['nickname'],null,'/');
-                    // 登录后将购物车的商品的 user_id 改为当前登录的id
-                    M('cart')->where("session_id = '{$this->session_id}'")->save(array('user_id'=>$data['result']['user_id']));
+                    if($data['status'] == 1){
+                        session('user',$data['result']);
+                        setcookie('user_id',$data['result']['user_id'],null,'/');
+                        setcookie('is_distribut',$data['result']['is_distribut'],null,'/');
+                        setcookie('uname',$data['result']['nickname'],null,'/');
+                        // 登录后将购物车的商品的 user_id 改为当前登录的id
+                        M('cart')->where("session_id = '{$this->session_id}'")->save(array('user_id'=>$data['result']['user_id']));
+                    }
                 }
+                // 微信Jssdk 操作类 用分享朋友圈 JS
+                $jssdk = new \Mobile\Logic\Jssdk($this->weixin_config['appid'], $this->weixin_config['appsecret']);
+                $signPackage = $jssdk->GetSignPackage();
+                $this->assign('signPackage', $signPackage);
             }
-
-            // 微信Jssdk 操作类 用分享朋友圈 JS
-            $jssdk = new \Mobile\Logic\Jssdk($this->weixin_config['appid'], $this->weixin_config['appsecret']);
-            $signPackage = $jssdk->GetSignPackage();
-            $this->assign('signPackage', $signPackage);
         }
 
         //通过定位设置地区
