@@ -92,12 +92,18 @@
     </div>
     <input type="hidden" name="goods_id" id="goods_id" value="{$goods.goods_id}">
     <input type="hidden" name="is_group"  id="is_group" value="{$is_group}">
-    <div class="pay-price" onclick="addToCart()">立即付款</div>
+    <div class="pay-price" id="pay">立即付款</div>
 </div>
 
 <script>
+    var getPay = false;
+    document.addEventListener('click',addToCart,false);
     //先调用此方法，加入购物车,再跳转到付款页面
     function addToCart() {
+        if(getPay){
+            return
+        }
+        getPay = true;
         $.ajax({
             type : "POST",
             url:"/index.php?m=Mobile&c=Cart&a=confirmOrder",
@@ -110,7 +116,7 @@
             } ,
             dataType:'json',
             success: function(data){
-
+                getPay = false;
                 if(data.status == 1)
                 {
                     //layer.open({content: data.msg,time: 2});
