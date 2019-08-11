@@ -123,6 +123,11 @@ class UserController extends MobileBaseController
         }
     }
 
+    public function merchant_enter()
+    {
+        $this->display();
+    }
+
     /*
      * 账户资金
      */
