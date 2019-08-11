@@ -123,7 +123,7 @@ class UserController extends MobileBaseController
         }
     }
 
-    public function merchant_enter()
+    public function menter()
     {
         $this->display();
     }
