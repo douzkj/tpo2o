@@ -93,9 +93,6 @@
             <div class="weui-cell__hd">
                 <label class="weui-label">所属区域</label>
             </div>
-            <!--<div class="weui-cell__bd">-->
-                <!--<input class="weui-input" type="text">-->
-            <!--</div>-->
             <div class="weui-btn weui-btn_default" id="picker3"></div>
             <input type="hidden" value="0" name="company_province">
             <input type="hidden" value="0" name="company_city">
@@ -120,16 +117,19 @@
     </div>
     <div style="background-color: #ededed;font-size: 12px;color: #999999;padding: 7px 0px 7px 15px;">店铺图标</div>
 
-    <div class="weui-uploader__hd">
-        <p class="weui-uploader__title">店铺图标(200x200)</p>
-    </div>
-    <div class="weui-uploader">
-        <div class="weui-uploader__bd">
-            <div class="weui-uploader__input-box">
-                <input id="uploaderInput2" class="weui-uploader__input" type="file" accept="image/*" multiple />
+    <div id="uploader1">
+        <div class="weui-uploader__hd">
+            <p class="weui-uploader__title">店铺图标(200x200)</p>
+        </div>
+        <div class="weui-uploader">
+            <div class="weui-uploader__bd">
+                <div class="weui-uploader__input-box">
+                    <input id="uploaderInput2" class="weui-uploader__input" type="file" accept="image/*" multiple />
+                </div>
             </div>
         </div>
     </div>
+
 
 
     <div class="weui-uploader__hd">
@@ -295,5 +295,6 @@
             id: 'picker3'
         });
     },false);
+
 </script>
 </body>
