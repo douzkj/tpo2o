@@ -52,7 +52,7 @@
                 <label class="weui-label">店铺名称</label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-input" type="text">
+                <input class="weui-input" type="text" name="company_name">
             </div>
         </div>
         <div class="weui-cell">
@@ -68,6 +68,7 @@
                 <label class="weui-label">行业分类</label>
             </div>
             <div class="weui-btn weui-btn_default" id="picker1"></div>
+            <input type="hidden" name="sc_id" value="0">
             <!--<div class="weui-cell__bd">-->
                 <!--<input class="weui-input" type="text">-->
             <!--</div>-->
@@ -76,7 +77,11 @@
             <div class="weui-cell__hd">
                 <label class="weui-label">营业时间</label>
             </div>
-            <div class="weui-btn weui-btn_default" id="picker2"></div>
+            <div class="weui-cell__bd">
+                <input type="text" name="start_time" class="chose-time" style="width: 200px" placeholder="选择开店时间">
+
+                <input type="text" name="end_time"  class="chose-time" style="width: 200px"  placeholder="选择关店时间">
+            </div>
             <!--<div class="weui-cell__bd">-->
                 <!--<input class="weui-input" type="text">-->
             </div>
@@ -92,20 +97,25 @@
                 <!--<input class="weui-input" type="text">-->
             <!--</div>-->
             <div class="weui-btn weui-btn_default" id="picker3"></div>
+            <input type="hidden" value="0" name="company_province">
+            <input type="hidden" value="0" name="company_city">
+            <input type="hidden" value="0" name="company_district">
+            <input type="hidden" value="0" name="longtitude">
+            <input type="hidden" value="0" name="latitude">
         </div>
         <div class="weui-cell">
             <div class="weui-cell__hd">
                 <label class="weui-label">店铺地址</label>
             </div>
             <div class="weui-cell__bd" style="display: flex;align-items: center;" type="text">
-                <input class="weui-input" style="padding-right: 10px;">
-                <div class="icon-box" >
+                <input class="weui-input" style="padding-right: 10px;" name="store_address">
+                <div class="icon-box" onclick="checkPoint()">
                     <i class="weui-icon-success weui-icon_msg" style="font-size: 19px;color: red"></i>
                 </div>
             </div>
         </div>
-        <div class="weui-cell">
-            <div class="map-div"></div>
+        <div class="weui-cell" >
+            <div class="map-div" id="l-map" style="display: none;"></div>
         </div>
     </div>
     <div style="background-color: #ededed;font-size: 12px;color: #999999;padding: 7px 0px 7px 15px;">店铺图标</div>
@@ -179,7 +189,7 @@
                 <label class="weui-label">联系人</label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-input" type="text">
+                <input class="weui-input" type="text" name="contacts_name">
             </div>
         </div>
         <div class="weui-cell">
@@ -187,7 +197,7 @@
                 <label class="weui-label">电话</label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-input" type="text">
+                <input class="weui-input" type="text" name="contacts_mobile">
             </div>
         </div>
     </div>
@@ -207,142 +217,69 @@
 </head>
 <body>
 
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=YtPYQ0XMmcmGnPaLFImTl3719X8oz3p8"></script>
+<script>
+
+    var map = new BMap.Map("l-map");
+    map.addEventListener("click", setPointInfo);
+
+    function checkPoint() {
+        $('#l-map').show();
+        var company_district = $('#picker3').text();
+        var position = $('input[name=store_address]').val();
+        map.centerAndZoom($('#picker3').text(), 16);
+        var local = new BMap.LocalSearch(map, {
+            renderOptions:{map: map}
+        });
+        local.search(company_district + position);
+    }
+
+    function setPointInfo(e)
+    {
+        var point = e.point;
+        if (point) {
+            $("input[name=longtitude]").val(point.lng);
+            $("input[name=latitude]").val(point.lat);
+        } else {
+            alert("地址未检索成功");
+        }
+    }
+</script>
+
 <script>
     document.getElementById('picker1').addEventListener('click',function () {
-        weui.picker([
-            {
-                label: '飞机票',
-                value: 0,
-                children: [
-                    {
-                        label: '经济舱',
-                        value: 1
-                    },
-                    {
-                        label: '商务舱',
-                        value: 2
-                    }
-                ]
-            },
-            {
-                label: '火车票',
-                value: 1,
-                children: [
-                    {
-                        label: '卧铺',
-                        value: 1,
-                        disabled: true // 不可用
-                    },
-                    {
-                        label: '坐票',
-                        value: 2
-                    },
-                    {
-                        label: '站票',
-                        value: 3
-                    }
-                ]
-            },
-            {
-                label: '汽车票',
-                value: 3,
-                children: [
-                    {
-                        label: '快班',
-                        value: 1
-                    },
-                    {
-                        label: '普通',
-                        value: 2
-                    }
-                ]
-            }
-        ], {
+        weui.picker({$class_option}, {
             className: 'custom-classname',
             container: 'body',
-            defaultValue: [1, 3],
             onChange: function (result) {
                 console.log(result)
             },
             onConfirm: function (result) {
-                console.log(result)
+                $('#picker1').text(result[0].label);
+                $('input[name=sc_id]').val(result[0].value);
             },
-            id: 'picker1'
+            id: 'picker1',
+            title: '选择行业分类'
         });
     },false);
 
-    document.getElementById('picker2').addEventListener('click',function () {
-// 多列picker
-        weui.picker([
-            {
-                label: '00',
-                value: '00'
-            }], [
-            {
-                label: '59',
-                value: '59'
-            }], {
-            defaultValue: ['00', '59'],
+    $(".chose-time").on('click',function () {
+        var _this = $(this);
+        // 多列picker
+        weui.picker({$h_option}, {$m_option}, {
+            defaultValue: ['00', '00'],
             onChange: function (result) {
                 console.log(result);
             },
             onConfirm: function (result) {
-                console.log(result);
+                _this.val(result[0].value  + ":" + result[1].value);
             },
-            id: 'picker2'
+            title: '选择时间'
         });
-    },false)
+    });
 
     document.getElementById('picker3').addEventListener('click',function () {
-        weui.picker([
-            {
-                label: '飞机票',
-                value: 0,
-                children: [
-                    {
-                        label: '经济舱',
-                        value: 1
-                    },
-                    {
-                        label: '商务舱',
-                        value: 2
-                    }
-                ]
-            },
-            {
-                label: '火车票',
-                value: 1,
-                children: [
-                    {
-                        label: '卧铺',
-                        value: 1,
-                        disabled: true // 不可用
-                    },
-                    {
-                        label: '坐票',
-                        value: 2
-                    },
-                    {
-                        label: '站票',
-                        value: 3
-                    }
-                ]
-            },
-            {
-                label: '汽车票',
-                value: 3,
-                children: [
-                    {
-                        label: '快班',
-                        value: 1
-                    },
-                    {
-                        label: '普通',
-                        value: 2
-                    }
-                ]
-            }
-        ], {
+        weui.picker({$region_option}, {
             className: 'custom-classname',
             container: 'body',
             defaultValue: [1, 3],
@@ -350,7 +287,10 @@
                 console.log(result)
             },
             onConfirm: function (result) {
-                console.log(result)
+                $('#picker3').text(result[0].label + result[1].label + result[2].label);
+                $("input[name=company_province]").val(result[0].value);
+                $("input[name=company_city]").val(result[1].value);
+                $("input[name=company_district]").val(result[2].value);
             },
             id: 'picker3'
         });

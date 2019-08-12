@@ -1363,4 +1363,22 @@ function get_delay_day($time)
     }
 }
 
+function getRecycleRegion($regions, $pid = 0, $max_level = 3)
+{
+    $lists = [];
+    foreach ($regions as $key => $region) {
+        if ($region['parent_id'] == $pid) {
+            $item = [
+                'label' => $region['name'],
+                'value' => $region['id']
+            ];
+            if ($region['level'] != $max_level) {
+                $item['children'] = getRecycleRegion($regions, $region['id']);
+            }
+            $lists[] = $item;
+        }
+    }
+    return $lists;
+}
+
 

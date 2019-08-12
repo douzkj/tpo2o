@@ -69,7 +69,9 @@ class UserController extends MobileBaseController
         $comment_count = M('comment')->where("user_id = {$this->user_id}")->count();//  我的评论数
         $coupon_count = M('coupon_list')->where("uid = {$this->user_id}")->count(); // 我的优惠券数量
         $level_name = M('user_level')->where("level_id = '{$this->user['level']}'")->getField('level_name'); // 等级名称
+        $m_enter = M('store')->where(['user_id' => $this->user_id])->count();
         $this->assign('level_name', $level_name);
+        $this->assign('m_enter', $m_enter);
         $this->assign('order_count', $order_count);
         $this->assign('goods_collect_count', $goods_collect_count);
         $this->assign('comment_count', $comment_count);
@@ -125,6 +127,35 @@ class UserController extends MobileBaseController
 
     public function menter()
     {
+        $store_class = M('store_class')->select();
+        $regions = M('region')->where('level <= 3 and is_open = 1')->cache(true)->select();
+        $region_json = getRecycleRegion($regions);
+        $class_option = [];
+        foreach ($store_class as $class) {
+            $class_option[] = [
+                'label' => $class['sc_name'],
+                'value' => $class['sc_id']
+            ];
+        }
+        $houre = range(0, 23);
+        $mins = range(0, 59);
+        $parseWeuiOption = function ($items) {
+            $json = [];
+            foreach ($items as $item) {
+                $item = str_pad($item, 2, "0", STR_PAD_LEFT);
+                $json[] = [
+                    'label' => $item,
+                    'value' => $item
+                ];
+            }
+            return $json;
+        };
+        $hore_json = $parseWeuiOption($houre);
+        $mins_josn = $parseWeuiOption($mins);
+        $this->assign('h_option', json_encode($hore_json));
+        $this->assign('m_option', json_encode($mins_josn));
+        $this->assign('region_option', json_encode($region_json));
+        $this->assign('class_option', json_encode($class_option));
         $this->display();
     }
 
