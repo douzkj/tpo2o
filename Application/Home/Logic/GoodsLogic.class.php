@@ -59,11 +59,11 @@ class GoodsLogic extends RelationModel
            if (!empty($good_ids)) {
                $goods = M('goods')->where(['goods_id' => ['in', $good_ids]])->limit(0, $limit)->select();
            } else {
-               $goods = M('goods')->where('is_hot=1 and is_on_sale=1')->order('sales_num desc')->limit(0, $limit)->select();
+               $goods = M('goods')->where('is_hot=1 and is_on_sale=1')->order('sales_sum desc')->limit(0, $limit)->select();
            }
            //若附近无在售,则取出爆款推荐商品
        } else {
-           $goods = M('goods')->where('is_hot=1 and is_on_sale=1')->order('sales_num desc')->limit(0, $limit)->select();
+           $goods = M('goods')->where('is_hot=1 and is_on_sale=1')->order('sales_sum desc')->limit(0, $limit)->select();
 
        }
         return $goods;
