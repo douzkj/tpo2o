@@ -175,21 +175,18 @@ var t2=new TouchSlider({id:'sliderlist', speed:600, timeout:6000, before:functio
                   <span class="text">附近在售爆品</span>
               </div>
               <div class="recommend-list">
-                  <div class="recommend-item">
-                      <img src="http://oss.cjhmai.com/8222433e11a386a17dce85393aea0168.jpg" alt="">
-                      <div class="desc">巴南区【新维度蹦床卡丁车主题公园】这两个项目一搭配，怎么玩都过瘾 29.9元一大一小玩转蹦床；19.9元玩嗨卡丁车！节假日通用免预约</div>
-                      <span class="price">¥23.90</span>
-                  </div>
-                  <div class="recommend-item">
-                      <img src="http://oss.cjhmai.com/8222433e11a386a17dce85393aea0168.jpg" alt="">
-                      <div class="desc">巴南区【新维度蹦床卡丁车主题公园】这两个项目一搭配，怎么玩都过瘾 29.9元一大一小玩转蹦床；19.9元玩嗨卡丁车！节假日通用免预约</div>
-                      <span class="price">¥23.90</span>
-                  </div>
-                  <div class="recommend-item">
-                      <img src="http://oss.cjhmai.com/8222433e11a386a17dce85393aea0168.jpg" alt="">
-                      <div class="desc">巴南区【新维度蹦床卡丁车主题公园】这两个项目一搭配，怎么玩都过瘾 29.9元一大一小玩转蹦床；19.9元玩嗨卡丁车！节假日通用免预约</div>
-                      <span class="price">¥23.90</span>
-                  </div>
+                  <foreach name="nearbyGoods" item="nearby">
+                          <div class="recommend-item">
+                              <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$nearby[goods_id]))}" title="{$nearby.goods_name}">
+
+                              <img src="{$nearby.goods_id|goods_thum_images=400,400}" alt="">
+                              <div class="desc">{$nearby.goods_name}</div>
+                              <span class="price">¥{$nearby.shop_price}</span>
+                              </a>
+
+                          </div>
+
+                  </foreach>
               </div>
           </div>
 

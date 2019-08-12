@@ -13,6 +13,12 @@ use Think\Image;
 class ApiController extends MobileBaseController {
     use ApiTrait;
 
+    public function setLngLat()
+    {
+        setcookie('longitude',$_REQUEST['longitude'],null,'/');
+        setcookie('latitude',$_REQUEST['latitude'],null,'/');
+    }
+
     public function upload()
     {
         if(IS_POST){

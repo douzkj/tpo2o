@@ -12,6 +12,7 @@
  */
 namespace Mobile\Controller;
 
+use Home\Logic\GoodsLogic;
 use Home\Logic\StoreLogic;
 use Home\Logic\UsersLogic;
 use Mobile\Logic\OrderGoodsLogic;
@@ -127,6 +128,8 @@ class UserController extends MobileBaseController
 
     public function menter()
     {
+        $logic = new GoodsLogic();
+        $logic->getShopNearby(20, 10);
         $store_class = M('store_class')->select();
         $regions = M('region')->where('level <= 3 and is_open = 1')->cache(true)->select();
         $region_json = getRecycleRegion($regions);

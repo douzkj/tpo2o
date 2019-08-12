@@ -203,6 +203,10 @@ class GoodsController extends MobileBaseController {
         	$store = M('store')->where(array('store_id'=>$goods['store_id']))->find();
         	$this->assign('store',$store);
         }
+        //获取附近在售
+        $nearbyGoods = $goodsLogic->getGoodsNearby(3);
+        $this->assign('nearbyGoods', $nearbyGoods);
+
         $this->display();
     }
 

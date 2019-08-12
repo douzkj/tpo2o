@@ -100,7 +100,7 @@
             <input type="hidden" value="0" name="company_province">
             <input type="hidden" value="0" name="company_city">
             <input type="hidden" value="0" name="company_district">
-            <input type="hidden" value="0" name="longtitude">
+            <input type="hidden" value="0" name="longitude">
             <input type="hidden" value="0" name="latitude">
         </div>
         <div class="weui-cell">
@@ -238,7 +238,7 @@
     {
         var point = e.point;
         if (point) {
-            $("input[name=longtitude]").val(point.lng);
+            $("input[name=longitude]").val(point.lng);
             $("input[name=latitude]").val(point.lat);
         } else {
             alert("地址未检索成功");
