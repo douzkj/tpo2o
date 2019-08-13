@@ -338,6 +338,9 @@ class UserController extends MobileBaseController
             //$order_list[$k]['total_fee'] = $v['goods_amount'] + $v['shipping_fee'] - $v['integral_money'] -$v['bonus'] - $v['discount']; //订单总额
             $data = $model->get_order_goods($v['order_id']);
             $order_list[$k]['goods_list'] = $data['result'];
+            if ($v['group_order_id']) {
+                $order_list[$k]['group_order'] = M('group_order')->where(['id' => $v['group_order_id']])->find();
+            }
         }
         $storeList = M('store')->getField('store_id,store_name,store_qq'); // 找出所有商品对应的店铺id
         $this->assign('storeList', $storeList); // 店铺列表
@@ -385,7 +388,11 @@ class UserController extends MobileBaseController
         $model = new UsersLogic();
         $data = $model->get_order_goods($order_info['order_id']);
         $order_info['goods_list'] = $data['result'];
-        $order_info['total_fee'] = $order_info['goods_price'] + $order_info['shipping_price'] - $order_info['integral_money'] - $order_info['coupon_price'] - $order_info['discount'];
+        $total = bcadd($order_info['goods_price'], $order_info['shipping_price'], 2);
+        $total = bcsub($total, $order_info['integral_money'], 2);
+        $total = bcsub($total, $order_info['coupon_price'], 2);
+        $total = bcsub($total, $order_info['discount'], 2);
+        $order_info['total_fee'] = $total;
         //$region_list = get_region_list();
         $store = M('store')->where("store_id = {$order_info['store_id']}")->find(); // 找出这个商家
         // 店铺地址id
@@ -400,6 +407,10 @@ class UserController extends MobileBaseController
         $order_info['invoice_no'] = implode(' , ', $invoice_no);
         //获取订单操作记录
         $order_action = M('order_action')->where(array('order_id' => $id))->select();
+        //若为拼团订单
+        if ($order_info['group_order_id']) {
+            $order_info['group_order'] = M('group_order')->where(['id' => $order_info['group_order_id']])->find();
+        }
         //获取订单的二维码清空
         $codes = M('order_codes')->where(['order_id' => $id])->select();
         $shops = M('store_shops')

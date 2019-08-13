@@ -148,12 +148,9 @@ class CartLogic extends RelationModel
                                     'group_num' => $group['group_num'],
                                     'grouped_num' => 1,
                                     'goods_id' => $val['goods_id'],
+                                    'close_at' => time() + (365 * 24 * 60 *60) //防止自动关闭拼团的任务失效
                                 ];
                                 $group_order_id = M('group_order')->data($group_order)->add();
-                                M('group_order_relation')->data([
-                                    'group_order_id' => $group_order_id,
-                                    'order_id' => $order_id
-                                ])->add();
                                 M('order')->where(['order_id' => $order_id])->save([
                                     'group_order_id' => $group_order_id
                                 ]);

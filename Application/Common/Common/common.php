@@ -736,6 +736,15 @@ function orderStatusDesc($order_id = 0, $order = array())
     {
         if($order['pay_status'] == 0 && $order['order_status'] == 0)
             return 'WAITPAY'; //'待支付',
+        if($order['pay_status'] == 1
+            &&  in_array($order['order_status'],array(0,1))
+            && ($order['group_order_id'] == 0 || ($order['group_status'] == 1 && $order['group_order_id'] != 0)))
+            return 'WAITUSE'; //'待使用',
+        if($order['pay_status'] == 1
+            &&  in_array($order['order_status'],array(0,1))
+            && $order['group_status'] == 0
+            && $order['group_order_id'] != 0)
+            return 'GROUPING'; //'拼团中',
         if($order['pay_status'] == 1 &&  in_array($order['order_status'],array(0,1)) && $order['shipping_status'] != 1)
             return 'WAITSEND'; //'待发货',
     }
@@ -775,7 +784,8 @@ function orderBtn($order_id = 0, $order = array())
         'comment_btn' => 0, // 评价按钮
         'shipping_btn' => 0, // 查看物流
         'return_btn' => 0, // 退货按钮 (联系客服),
-        'use_btn' => 0 //待使用按钮
+        'use_btn' => 0,  //待使用按钮,
+        'group_btn' => 0, //拼团分享按钮
     );
 
 
@@ -835,6 +845,7 @@ function set_btn_order_status($order)
 {
     $order_status_arr = C('ORDER_STATUS_DESC');
     $order['order_status_code'] = $order_status_code = orderStatusDesc(0, $order); // 订单状态显示给用户看的
+
     $order['order_status_desc'] = $order_status_arr[$order_status_code];
     $orderBtnArr = orderBtn(0, $order);
     return array_merge($order,$orderBtnArr); // 订单该显示的按钮
@@ -870,7 +881,39 @@ function update_pay_status($order_sn,$pay_status = 1)
 		// 找出对应的订单
 		$order = M('order')->where("order_sn = '$order_sn'")->find();
 		// 修改支付状态  已支付
-		M('order')->where("order_sn = '$order_sn'")->save(array('pay_status'=>1,'pay_time'=>time()));
+//		M('order')->where("order_sn = '$order_sn'")->save(array('pay_status'=>1,'pay_time'=>time()));
+        //默认已发货
+		M('order')->where("order_sn = '$order_sn'")->save(array(
+		    'pay_status'=>1,
+            'pay_time'=>time(),
+            'shipping_status' => 1));
+
+
+		//拼团订单修改
+        if ($order['group_order_id']) {
+            $group_order = M('group_order')
+                ->where("id = {$order['group_order_id']} and grouped_num < group_num")
+                ->find();
+            if ($group_order) {
+                if ($group_order['user_id'] == $order['user_id']) {
+                    //如果是团长的订单成功，则更新时间
+                    $group_buy = M('group_buy')->where(['id' => $group_order['group_id']])->find();
+                    M('group_order')->where(['id' => $order['group_order_id']])->save([
+                        'close_at' => time() + $group_buy['deadline'] * 60
+                    ]);
+                } else {
+                    $update['grouped_num'] = $group_order['grouped_num'] + 1;
+                    if ($group_order['grouped_num'] + 1 == $group_order['group_num']) {
+                        //说明拼团成功
+                        $update['done_at'] = time();
+                        $update['group_status'] = 1;
+                    }
+                    M('group_order')->where("id = {$group_order['id']}")->save($update);
+                }
+            }
+        }
+
+
 		// 减少对应商品的库存
 		minus_stock($order['order_id']);
 		// 给他升级, 根据order表查看消费记录 给他会员等级升级 修改他的折扣 和 总金额

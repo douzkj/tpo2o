@@ -86,7 +86,7 @@
 			</ul>
 		</div>
         <!--二维码-->
-		<if condition="$order_info.pay_btn neq 1">
+		<if condition="($order_info[order_status_code] eq 'WAITUSE' or $order_info[order_status_code] eq 'FINISH')">
 			<div class="QRcode-wrapper-list">
 				<foreach name="codes" item="code">
 					<div class="QRcode-item">
@@ -107,9 +107,12 @@
 	<!--商品列表-->
     <volist name="order_info.goods_list" id="good">
 			<div class="order_list">
-		        <a href="{:U('/Mobile/Goods/goodsInfo',array('id'=>$good['goods_id']))}">
 		          <dl>
-		          <dt><img src="{$good.goods_id|goods_thum_images=100,100}"></dt>
+					  <if condition="$order_info.group_order_id neq 0"> <a href="{:U('/Mobile/Activity/group',array('id'=>$good['goods_id']))}">
+						  <else /><a href="{:U('/Mobile/Goods/goodsInfo',array('id'=>$good['goods_id']))}">
+					  </if>
+
+					  <dt><img src="{$good.goods_id|goods_thum_images=100,100}"></dt>
 		          <dd class="name" class="pice" style=" width:55%;">
 	                  <strong>{$good.goods_name}</strong><span>{$good.spec_key_name}</span>
                    </dd>
@@ -122,8 +125,9 @@
                           </if>
                     </em>
                   </dd>
-                  </dl>
-		          </a>
+					  </a>
+
+				  </dl>
 		          <div class="pic" style=" border:0;"><span>小计：</span><strong>￥{$good['member_goods_price'] * $good['goods_num']}元</strong></div>
 		    </div>
 	</volist>

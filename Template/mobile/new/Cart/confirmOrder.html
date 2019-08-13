@@ -97,7 +97,7 @@
 
 <script>
     var getPay = false;
-    document.addEventListener('click',addToCart,false);
+    document.getElementById('pay').addEventListener('click',addToCart,false);
     //先调用此方法，加入购物车,再跳转到付款页面
     function addToCart() {
         if(getPay){
