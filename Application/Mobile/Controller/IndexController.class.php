@@ -27,18 +27,37 @@ class IndexController extends MobileBaseController {
             $signPackage = $jssdk->GetSignPackage();
             print_r($signPackage);
         */
-        $hot_goods = M('goods')->where("is_hot=1 and is_on_sale=1")->order('goods_id DESC')->limit(20)->cache(true,TPSHOP_CACHE_TIME)->select();//首页热卖商品
+        $goods_in = [];
+        if (AREA_ID) {
+            $shops = M('store_shops')->where(['district_id' => AREA_ID])->getField('id', true);
+            if (!empty($shops)) {
+                $goods_ids = M('goods_shop')->where(['shop_id' => ['in', $shops]])->getField('goods_id', true);
+                if (!empty($goods_ids)) {
+                    $goods_in = [
+                        'goods_id' => [
+                            'in' => $goods_ids
+                        ]
+                    ];
+                }
+            }
+        }
+        $hot_goods = M('goods')->where("is_hot=1 and is_on_sale=1")->where($goods_in)->order('goods_id DESC')->limit(20)->cache(true,TPSHOP_CACHE_TIME)->select();//首页热卖商品
         $thems = M('goods_category')->where('level=1')->order('sort_order')->limit(9)->cache(true,TPSHOP_CACHE_TIME)->select();
         $this->assign('thems',$thems);
         $this->assign('hot_goods',$hot_goods);
-        $favourite_goods = M('goods')->where("is_recommend=1 and is_on_sale=1")->order('goods_id DESC')->limit(20)->cache(true,TPSHOP_CACHE_TIME)->select();//首页推荐商品
+        $favourite_goods = M('goods')->where($goods_in)->where("is_recommend=1 and is_on_sale=1")->order('goods_id DESC')->limit(20)->cache(true,TPSHOP_CACHE_TIME)->select();//首页推荐商品
         $this->assign('favourite_goods',$favourite_goods);
         $provinces = M('region')->where(['is_open' => 1, 'parent_id' => 0])->select();
 
         //获取最新闪购和即将下架闪购
         $thread =48 * 60 * 60;
+        $goods_where = '';
+        if (isset($goods_ids)) {
+            $goods_where = "tp_goods.goods_id in (".implode(",", $goods_ids).")";
+        }
         $new_flash_goods = M('flash_sale')
             ->join('__GOODS__ on __GOODS__.prom_id = __FLASH_SALE__.id')
+            ->where($goods_where)
             ->where('__GOODS__.is_on_sale=1 and __GOODS__.prom_type =2')
             ->where(time()." >= start_time and ".time()." <= start_time + {$thread} ")
             ->limit(15)
@@ -47,6 +66,7 @@ class IndexController extends MobileBaseController {
         $this->assign('new_flash_goods', $new_flash_goods);
         $last_flash_goods = M('flash_sale')
             ->join('__GOODS__ on __GOODS__.prom_id = __FLASH_SALE__.id')
+            ->where($goods_where)
             ->where('__GOODS__.is_on_sale=1 and __GOODS__.prom_type =2')
             ->where(time()." <= end_time and ".time()." >= end_time - {$thread} ")
             ->limit(15)
