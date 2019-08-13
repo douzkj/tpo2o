@@ -27,9 +27,21 @@ class IndexController extends MobileBaseController {
             $signPackage = $jssdk->GetSignPackage();
             print_r($signPackage);
         */
-        $goods_in = [];
-        if (AREA_ID) {
-            $shops = M('store_shops')->where(['district_id' => AREA_ID])->getField('id', true);
+        $goods_in = [
+            'goods_id' => [
+                'in' => []
+            ]
+        ];
+
+        if (AREA_ID || PROVINCE_ID) {
+            $district_where = [];
+            if (PROVINCE_ID) {
+                $district_where['province_id'] = PROVINCE_ID;
+            }
+            if (AREA_ID) {
+                $district_where['district_id'] = AREA_ID;
+            }
+            $shops = M('store_shops')->where($district_where)->getField('id', true);
             if (!empty($shops)) {
                 $goods_ids = M('goods_shop')->where(['shop_id' => ['in', $shops]])->getField('goods_id', true);
                 if (!empty($goods_ids)) {
@@ -57,20 +69,16 @@ class IndexController extends MobileBaseController {
         }
         $new_flash_goods = M('flash_sale')
             ->join('__GOODS__ on __GOODS__.prom_id = __FLASH_SALE__.id')
-            ->where($goods_where)
-            ->where('__GOODS__.is_on_sale=1 and __GOODS__.prom_type =2')
+            ->where('__GOODS__.is_on_sale=1 and __GOODS__.prom_type =2 ' . $goods_where)
             ->where(time()." >= start_time and ".time()." <= start_time + {$thread} ")
             ->limit(15)
-            ->cache(true,TPSHOP_CACHE_TIME)
             ->select();
         $this->assign('new_flash_goods', $new_flash_goods);
         $last_flash_goods = M('flash_sale')
             ->join('__GOODS__ on __GOODS__.prom_id = __FLASH_SALE__.id')
-            ->where($goods_where)
-            ->where('__GOODS__.is_on_sale=1 and __GOODS__.prom_type =2')
+            ->where('__GOODS__.is_on_sale=1 and __GOODS__.prom_type =2'  . $goods_where)
             ->where(time()." <= end_time and ".time()." >= end_time - {$thread} ")
             ->limit(15)
-            ->cache(true,TPSHOP_CACHE_TIME)
             ->select();
         $this->assign('last_flash_goods', $last_flash_goods);
 
