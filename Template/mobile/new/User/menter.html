@@ -32,6 +32,9 @@
     .weui-uploader__input-box:active {
         border: 1px solid #ededed;
     }
+    .weui-uploader__file{
+        margin: 10px;
+    }
 </style>
 <head>
     <div class="tab_nav">
@@ -116,51 +119,24 @@
         </div>
     </div>
     <div style="background-color: #ededed;font-size: 12px;color: #999999;padding: 7px 0px 7px 15px;">店铺图标</div>
-
-    <div id="uploader1">
+    <div class="weui-gallery" id="gallery">
+        <span class="weui-gallery__img" id="galleryImg"></span>
+        <div class="weui-gallery__opr">
+            <a href="javascript:" class="weui-gallery__del">
+                <i class="weui-icon-delete weui-icon_gallery-delete"></i>
+            </a>
+        </div>
+    </div>
+    <div id="uploaderShop" style="padding-bottom: 10px;">
         <div class="weui-uploader__hd">
             <p class="weui-uploader__title">店铺图标(200x200)</p>
         </div>
         <div class="weui-uploader">
             <div class="weui-uploader__bd">
+                <ul class="weui-uploader__files" id="uploaderFilesShop"></ul>
                 <div class="weui-uploader__input-box">
-                    <input id="uploaderInput2" class="weui-uploader__input" type="file" accept="image/*" multiple />
+                    <input id="uploaderInputShop" class="weui-uploader__input" type="file" accept="image/*" multiple />
                 </div>
-            </div>
-        </div>
-    </div>
-
-
-
-    <div class="weui-uploader__hd">
-        <p class="weui-uploader__title">店铺幻灯片(720x300)</p>
-    </div>
-    <div class="weui-uploader">
-        <div class="weui-uploader__bd">
-            <div class="weui-uploader__input-box">
-                <input id="uploaderInput3" class="weui-uploader__input" type="file" accept="image/*" multiple />
-            </div>
-        </div>
-    </div>
-
-    <div class="weui-uploader__hd">
-        <p class="weui-uploader__title">店铺相册(320x320)</p>
-    </div>
-    <div class="weui-uploader">
-        <div class="weui-uploader__bd">
-            <div class="weui-uploader__input-box">
-                <input id="uploaderInput4" class="weui-uploader__input" type="file" accept="image/*" multiple />
-            </div>
-        </div>
-    </div>
-
-    <div class="weui-uploader__hd">
-        <p class="weui-uploader__title">商家微信(上传商家微信二维码))</p>
-    </div>
-    <div class="weui-uploader" style="padding-bottom: 10px;">
-        <div class="weui-uploader__bd">
-            <div class="weui-uploader__input-box">
-                <input id="uploaderInput1" class="weui-uploader__input" type="file" accept="image/*" multiple />
             </div>
         </div>
     </div>
@@ -173,15 +149,6 @@
             </div>
         </div>
     </div>
-
-    <div class="weui-uploader" style="padding-bottom: 10px;">
-        <div class="weui-uploader__bd">
-            <div class="weui-uploader__input-box">
-                <input id="uploaderInput5" class="weui-uploader__input" type="file" accept="image/*" multiple />
-            </div>
-        </div>
-    </div>
-
     <div style="background-color: #ededed;font-size: 12px;color: #999999;padding: 7px 0px 7px 15px;">店主信息</div>
     <div style=" margin-top: 0px" class="weui-cells weui-cells_form">
         <div class="weui-cell">
@@ -201,18 +168,30 @@
             </div>
         </div>
     </div>
-    <div class="weui-uploader__hd">
-        <p class="weui-uploader__title">审核资料(请根据要求上传商户资料)</p>
-    </div>
-    <div class="weui-uploader" style="padding-bottom: 10px;">
-        <div class="weui-uploader__bd">
-            <div class="weui-uploader__input-box">
-                <input id="uploaderInput6" class="weui-uploader__input" type="file" accept="image/*" multiple />
-            </div>
+
+
+    <div class="weui-gallery" id="galleryUser">
+        <span class="weui-gallery__img" id="galleryImgUser"></span>
+        <div class="weui-gallery__opr">
+            <a href="javascript:" class="weui-gallery__del">
+                <i class="weui-icon-delete weui-icon_gallery-delete"></i>
+            </a>
         </div>
     </div>
 
-
+    <div id="uploaderUser">
+        <div class="weui-uploader__hd">
+            <p class="weui-uploader__title">审核资料(请根据要求上传商户资料)</p>
+        </div>
+        <div class="weui-uploader" style="padding-bottom: 10px;">
+            <div class="weui-uploader__bd">
+                <ul class="weui-uploader__files" id="uploaderFilesUser"></ul>
+                <div class="weui-uploader__input-box">
+                    <input id="uploaderInputUser" class="weui-uploader__input" type="file" accept="image/*" multiple />
+                </div>
+            </div>
+        </div>
+    </div>
     <div style="margin: 10px;background: red;" class="weui-btn weui-btn_block weui-btn_primary">提交</div>
 </head>
 <body>
@@ -295,6 +274,138 @@
             id: 'picker3'
         });
     },false);
+
+    var $gallery = $("#gallery"),
+        $galleryImg = $("#galleryImg"),
+        $galleryUser = $("#galleryUser"),
+        $galleryImgUser = $("#galleryImgUser"),
+        $uploaderFilesShop = $("#uploaderFilesShop"),
+        $uploaderFilesUser = $("#uploaderFilesUser");
+    var uploadCount = 0,uploadCountUser = 0,uploadFiles =[],uploadFilesUser=[];
+    weui.uploader('#uploaderShop', {
+        url: "{:U('Api/upload')}",
+        auto: true,
+        type: 'file',
+        fileVal: 'fileVal',
+        compress: {
+            width: 1600,
+            height: 1600,
+            quality: .8
+        },
+        onBeforeQueued: function(files) {
+            // `this` 是轮询到的文件, `files` 是所有文件
+
+            if(["image/jpg", "image/jpeg", "image/png", "image/gif"].indexOf(this.type) < 0){
+                weui.alert('请上传图片');
+                return false; // 阻止文件添加
+            }
+            if(this.size > 10 * 1024 * 1024){
+                weui.alert('请上传不超过10M的图片');
+                return false;
+            }
+            if (files.length > 5) { // 防止一下子选择过多文件
+                weui.alert('最多只能上传5张图片，请重新选择');
+                return false;
+            }
+            if (uploadCount + 1 > 5) {
+                weui.alert('最多只能上传5张图片');
+                return false;
+            }
+            ++uploadCount;
+            // return true; // 阻止默认行为，不插入预览图的框架
+        },
+        onSuccess: function (ret) {
+            if(ret.code == 200){
+               uploadFiles.push(ret.data.fileVal)
+            } else {
+                var li = $uploaderFilesShop.find("li");
+                for(var i=0;i<li.length;i++){
+                    li[i]['data-id'] = this.id ? li[i].remove() : '';
+                }
+            }
+        },
+        onError: function(err){
+            var li = $uploaderFilesShop.find("li");
+                 for(var i=0;i<li.length;i++){
+                     li[i]['data-id'] = this.id ? li[i].remove() : '';
+                 }
+        }
+    });
+    weui.uploader('#uploaderUser', {
+        url: "{:U('Api/upload')}",
+        auto: true,
+        type: 'file',
+        fileVal: 'fileVal',
+        compress: {
+            width: 1600,
+            height: 1600,
+            quality: .8
+        },
+        onBeforeQueued: function(files) {
+            // `this` 是轮询到的文件, `files` 是所有文件
+
+            if(["image/jpg", "image/jpeg", "image/png", "image/gif"].indexOf(this.type) < 0){
+                weui.alert('请上传图片');
+                return false; // 阻止文件添加
+            }
+            if(this.size > 10 * 1024 * 1024){
+                weui.alert('请上传不超过10M的图片');
+                return false;
+            }
+            if (files.length > 5) { // 防止一下子选择过多文件
+                weui.alert('最多只能上传5张图片，请重新选择');
+                return false;
+            }
+            if (uploadCountUser + 1 > 5) {
+                weui.alert('最多只能上传5张图片');
+                return false;
+            }
+            ++uploadCountUser;
+        },
+        onSuccess: function (ret) {
+            if(ret.code == 200){
+                uploadFilesUser.push(ret.data.fileVal)
+            } else {
+                var li = $uploaderFilesUser.find("li");
+                for(var i=0;i<li.length;i++){
+                    li[i]['data-id'] = this.id ? li[i].remove() : '';
+                }
+            }
+        },
+        onError: function(err){
+            var li = $uploaderFilesUser.find("li");
+            for(var i=0;i<li.length;i++){
+                li[i]['data-id'] = this.id ? li[i].remove() : '';
+            }
+        }
+    });
+    $(function () {
+        var indexShop,indexUser; //第几张图片
+        $uploaderFilesShop.on("click", "li", function() {
+            indexShop = $(this).index();
+            $galleryImg.attr("style", this.getAttribute("style"));
+            $gallery.fadeIn(100);
+        });
+        $uploaderFilesUser.on("click", "li", function() {
+            indexUser = $(this).index();
+            $galleryImgUser.attr("style", this.getAttribute("style"));
+            $galleryUser.fadeIn(100);
+        });
+
+        $gallery.on("click", function() {
+            $gallery.fadeOut(100);
+        });
+        $galleryUser.on("click", function() {
+            $galleryUser.fadeOut(100);
+        });
+        //删除图片
+        $(".weui-gallery__del").click(function() {
+            $uploaderFilesShop.find("li").eq(indexShop).remove();
+        });
+        $(".weui-gallery__del").click(function() {
+            $uploaderFilesUser.find("li").eq(indexUser).remove();
+        });
+    })
 
 </script>
 </body>
