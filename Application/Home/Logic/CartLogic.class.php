@@ -133,6 +133,7 @@ class CartLogic extends RelationModel
                     if ($val['prom_type'] == 2 && $val['prom_id']) {
                         $group = M('group_buy')->where(['id' => $val['prom_id']])->find();
                         if ($group) {
+                            $update = [];
                             if ($group_order_sn == '') {
                                 //如果是新开团，判断此用户当前是否有拼团的订单
                                 if (M('group_order')->where(['user_id' => $user_id, 'group_status' => 0])->count()) {
@@ -157,8 +158,11 @@ class CartLogic extends RelationModel
                                         'goods_id' => $val['goods_id'],
                                         'close_at' => time() + (365 * 24 * 60 *60) //防止自动关闭拼团的任务失效
                                     ];
+                                    if ($group['group_num'] == 1) {
+                                        $group_order['group_status'] = 1;
+                                        $update['group_status'] = 1;
+                                    }
                                     $group_order_id = M('group_order')->data($group_order)->add();
-
                                 } else {
                                     throw new Exception('剩余库存不能开团');
                                 }
@@ -175,11 +179,15 @@ class CartLogic extends RelationModel
                                     throw new Exception('不能参与此拼团');
                                 }
                                 $group_order_id = $group_order['id'];
-                                M('group_order')->where(['id' => $group_order_id])->setInc('grouped_num', 1);
+                                $res = M('group_order')
+                                    ->where(['id' => $group_order_id, 'grouped_num' => $group_order['grouped_num']])
+                                    ->setInc('grouped_num', 1);
+                                if (!$res) {
+                                    throw new \Exception('拼团失败');
+                                }
                             }
-                            M('order')->where(['order_id' => $order_id])->save([
-                                'group_order_id' => $group_order_id
-                            ]);
+                            $update['group_order_id'] = $group_order_id;
+                            M('order')->where(['order_id' => $order_id])->save($update);
                         }
                     }
                     // 扣除商品库存  扣除库存移到 付完款后扣除
