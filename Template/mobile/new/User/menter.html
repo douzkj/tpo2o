@@ -1,5 +1,6 @@
 <include file="Public/header"/>
 <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.0.1/weui.min.css">
+<link rel="stylesheet" href="__STATIC__/iconfont/iconfont.css">
 <script type="text/javascript" src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
 <style>
     .weui-cells {
@@ -35,6 +36,9 @@
     .weui-uploader__file{
         margin: 10px;
     }
+    .weui-uploader__bd {
+        margin: 0px;
+    }
 </style>
 <head>
     <div class="tab_nav">
@@ -42,9 +46,9 @@
             <div class="h-left"><a class="sb-back" href="javascript:history.back(-1)" title="返回"></a></div>
             <div class="h-mid">商家入驻</div>
             <div class="h-right">
-                <aside class="top_bar">
-                    <div onClick="show_menu();$('#close_btn').addClass('hid');" id="show_more"><a href="javascript:;"></a> </div>
-                </aside>
+                <!--<aside class="top_bar">-->
+                    <!--<div onClick="show_menu();$('#close_btn').addClass('hid');" id="show_more"><a href="javascript:;"></a> </div>-->
+                <!--</aside>-->
             </div>
         </div>
     </div>
@@ -108,9 +112,9 @@
                 <label class="weui-label">店铺地址</label>
             </div>
             <div class="weui-cell__bd" style="display: flex;align-items: center;" type="text">
-                <input class="weui-input" style="padding-right: 10px;" name="store_address">
+                <input class="weui-input" style="padding-right: 15px;" name="store_address">
                 <div class="icon-box" onclick="checkPoint()">
-                    <i class="weui-icon-success weui-icon_msg" style="font-size: 19px;color: red"></i>
+                    <i class="iconfont icon-dingwei" style="font-size: 20px;color: red;position: absolute;top: 25%;right: 10px;"></i>
                 </div>
             </div>
         </div>
