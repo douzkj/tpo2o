@@ -12,10 +12,10 @@ class MapController extends MobileBaseController
         $shop = M('StoreShops')->where(['id' => $shop_id])->find();
 
         $this->assign('shop', $shop);
-        if ($this->signPackage) {
-            $this->display('wx');
-        } else {
+//        if ($this->signPackage) {
+//            $this->display('wx');
+//        } else {
             $this->display('index');
-        }
+//        }
     }
 }
