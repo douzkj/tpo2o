@@ -59,10 +59,7 @@ class IndexController extends MobileBaseController {
         $thems = M('goods_category')->where('level=1')->order('sort_order')->limit(9)->cache(true,TPSHOP_CACHE_TIME)->select();
         $this->assign('thems',$thems);
         $this->assign('hot_goods',$hot_goods);
-        $favourite_scope = [
-            'is_recommend' => 1,
-            'is_on_sale' => 1
-        ];
+
         $favourite_goods = M('goods')->where($favourite_scope)->order('goods_id DESC')->limit(20)->cache(true,TPSHOP_CACHE_TIME)->select();//首页推荐商品
         $this->assign('favourite_goods',$favourite_goods);
         $provinces = M('region')->where(['is_open' => 1, 'parent_id' => 0])->select();

@@ -165,17 +165,14 @@ class CartLogic extends RelationModel
                             } else {
                                 //找出当前拼团中的订单
                                 $group_order = M('group_order')
-                                    ->where([
-                                        'group_order_sn' => $group_order_sn,
-                                        'group_status' => 0,
-                                        'grouped_num' => ['lt', 'group_num'],
-                                        'close_at' => ['gt', time()]
-                                    ])->find();
-                                if ($group_order['user_id'] == $user_id) {
-                                    throw new Exception('不能参与此拼团');
-                                }
+                                    ->where(
+                                        "group_order_sn = '{$group_order_sn}' and group_status = 0 and grouped_num < group_num and close_at > " . time()
+                                    )->find();
                                 if ( ! $group_order) {
                                     throw new Exception('当前拼团订单已失效');
+                                }
+                                if ($group_order['user_id'] == $user_id) {
+                                    throw new Exception('不能参与此拼团');
                                 }
                                 $group_order_id = $group_order['id'];
                                 M('group_order')->where(['id' => $group_order_id])->setInc('grouped_num', 1);
