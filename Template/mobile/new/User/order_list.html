@@ -118,7 +118,7 @@
                    </div>
                </if>
                共{$list.goods_list|count}件商品<span>实付：</span><strong>￥{$list['order_amount']}元</strong></div>
-           <if condition="($list[order_status_code] eq 'GROUPING') OR (($list[pay_btn] eq 1) and ($list[group_order][user_id] neq $user[user_id]))">
+           <if condition="($list[order_status_code] eq 'GROUPING') OR (($list[pay_btn] eq 1) and $list[group_order] and ($list[group_order][user_id] neq $user[user_id]))">
                <div class="pic" style="text-align: left">
                    <span>拼团倒计时：</span>
                    <span class="sg_g_time last_g_time" id="jstimerBox{$list[order_id]}" style="color: red;"></span>
