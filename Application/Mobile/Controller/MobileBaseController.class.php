@@ -20,6 +20,7 @@ class MobileBaseController extends Controller {
     public $select_region = 0;
     public $select_area = 0;
     public $tp_config;
+    public $signPackage;
 
     /*
      * 初始化操作
@@ -56,6 +57,7 @@ class MobileBaseController extends Controller {
                 // 微信Jssdk 操作类 用分享朋友圈 JS
                 $jssdk = new \Mobile\Logic\Jssdk($this->weixin_config['appid'], $this->weixin_config['appsecret']);
                 $signPackage = $jssdk->GetSignPackage();
+                $this->signPackage = $signPackage;
                 $this->assign('signPackage', $signPackage);
             }
         }

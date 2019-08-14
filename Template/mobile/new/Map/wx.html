@@ -1,0 +1,44 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <meta name="Generator" content="tpshop" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>门店地图</title>
+    <meta http-equiv="keywords" content="{$tpshop_config['shop_info_store_keyword']}" />
+    <meta name="description" content="{$tpshop_config['shop_info_store_desc']}" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+</head>
+<body>
+
+<button onclick="openLocation()">打开地图</button>
+
+<script>
+    // 微信配置
+    wx.config({
+        debug: true,
+        appId: "{$signPackage['appId']}",
+        timestamp: '{$signPackage["timestamp"]}',
+        nonceStr: '{$signPackage["nonceStr"]}',
+        signature: '{$signPackage["signature"]}',
+        jsApiList: [
+            'openLocation',
+            'getLocation',
+        ] // 功能列表，我们要使用JS-SDK的什么功能
+    });
+
+    function openLocation()
+    {
+        wx.openLocation({
+            latitude: {$shop.latitude},
+            longitude : {$shop.longitude},
+            name: '{$shop.title}',
+            address: '{:getShopPosition($shop)}',
+            scale: 28,
+        })
+    }
+
+</script>
+</body>
+</html>
