@@ -128,7 +128,7 @@ class CartLogic extends RelationModel
                             if ($group_order_sn == '') {
                                 //如果是新开团，判断此用户当前是否有拼团的订单
                                 if (M('group_order')->where(['user_id' => $user_id, 'group_status' => ['in', [0, 1]]])->count()) {
-                                    throw new Exception('已有未完成拼团订单');
+                                    throw new Exception('已参与过拼团或有正在进行的拼团');
                                 }
                                 $group_orders = M('group_order')
                                     ->where(['group_id' => $group['id'], 'group_status' => ['between', [0, 1]]])
