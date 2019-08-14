@@ -133,33 +133,53 @@ class CartLogic extends RelationModel
                     if ($val['prom_type'] == 2 && $val['prom_id']) {
                         $group = M('group_buy')->where(['id' => $val['prom_id']])->find();
                         if ($group) {
-                            $group_orders = M('group_order')->where(['group_id' => $group['id'], 'group_status' => ['between', [1, 2]]])->count();
-                            $buy_num = $group_orders * $group['buy_limit']* $group['group_num'];
-                            //判断当前的数量能否成团
-                            $remain = $group['goods_num'] - $buy_num;
-                            $can_group = floor($remain / ($group['buy_limit']* $group['group_num']));
-                            if ($can_group > 0) {
-                                //大于0表示剩余人数可成团
-                                $group_order = [
-                                    'group_order_sn' => $this->get_group_order_sn(),
-                                    'group_id' => $group['id'],
-                                    'user_id' => $user_id,
-                                    'created_at' => time(),
-                                    'group_num' => $group['group_num'],
-                                    'grouped_num' => 1,
-                                    'goods_id' => $val['goods_id'],
-                                ];
-                                $group_order_id = M('group_order')->data($group_order)->add();
-                                M('group_order_relation')->data([
-                                    'group_order_id' => $group_order_id,
-                                    'order_id' => $order_id
-                                ])->add();
-                                M('order')->where(['order_id' => $order_id])->save([
-                                    'group_order_id' => $group_order_id
-                                ]);
+                            if ($group_order_sn == '') {
+                                //如果是新开团，判断此用户当前是否有拼团的订单
+                                if (M('group_order')->where(['user_id' => $user_id, 'group_status' => 0])->count()) {
+                                    throw new \Exception('已有未完成拼团订单');
+                                }
+                                $group_orders = M('group_order')
+                                    ->where(['group_id' => $group['id'], 'group_status' => ['between', [0, 1]]])
+                                    ->count();
+                                $buy_num = $group_orders * $group['buy_limit']* $group['group_num'];
+                                //判断当前的数量能否成团
+                                $remain = $group['goods_num'] - $buy_num;
+                                $can_group = floor($remain / ($group['buy_limit']* $group['group_num']));
+                                if ($can_group > 0) {
+                                    //大于0表示剩余人数可成团
+                                    $group_order = [
+                                        'group_order_sn' => $this->get_group_order_sn(),
+                                        'group_id' => $group['id'],
+                                        'user_id' => $user_id,
+                                        'created_at' => time(),
+                                        'group_num' => $group['group_num'],
+                                        'grouped_num' => 1,
+                                        'goods_id' => $val['goods_id'],
+                                        'close_at' => time() + (365 * 24 * 60 *60) //防止自动关闭拼团的任务失效
+                                    ];
+                                    $group_order_id = M('group_order')->data($group_order)->add();
+
+                                } else {
+                                    throw new Exception('剩余库存不能开团');
+                                }
                             } else {
-                                throw new Exception('剩余库存不能开团');
+                                //找出当前拼团中的订单
+                                $group_order = M('group_order')
+                                    ->where(
+                                        "group_order_sn = '{$group_order_sn}' and group_status = 0 and grouped_num < group_num and close_at > " . time()
+                                    )->find();
+                                if ( ! $group_order) {
+                                    throw new Exception('当前拼团订单已失效');
+                                }
+                                if ($group_order['user_id'] == $user_id) {
+                                    throw new Exception('不能参与此拼团');
+                                }
+                                $group_order_id = $group_order['id'];
+                                M('group_order')->where(['id' => $group_order_id])->setInc('grouped_num', 1);
                             }
+                            M('order')->where(['order_id' => $order_id])->save([
+                                'group_order_id' => $group_order_id
+                            ]);
                         }
                     }
                     // 扣除商品库存  扣除库存移到 付完款后扣除

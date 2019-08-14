@@ -1,6 +1,9 @@
 <include file="Public/header"/>
 <link rel="stylesheet" href="__STATIC__/css/order_detail.css">
 <link rel="stylesheet" type="text/css" href="__STATIC__/font/iconfont.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+<script type="text/javascript" src="__STATIC__/js/layer.js" ></script>
+
 
 <body>
 <header>
@@ -86,7 +89,7 @@
 			</ul>
 		</div>
         <!--二维码-->
-		<if condition="$order_info.pay_btn neq 1">
+		<if condition="($order_info[order_status_code] eq 'WAITUSE' or $order_info[order_status_code] eq 'FINISH')">
 			<div class="QRcode-wrapper-list">
 				<foreach name="codes" item="code">
 					<div class="QRcode-item">
@@ -107,9 +110,12 @@
 	<!--商品列表-->
     <volist name="order_info.goods_list" id="good">
 			<div class="order_list">
-		        <a href="{:U('/Mobile/Goods/goodsInfo',array('id'=>$good['goods_id']))}">
 		          <dl>
-		          <dt><img src="{$good.goods_id|goods_thum_images=100,100}"></dt>
+					  <if condition="$order_info.group_order_id neq 0"> <a href="{:U('/Mobile/Activity/group',array('id'=>$good['goods_id']))}">
+						  <else /><a href="{:U('/Mobile/Goods/goodsInfo',array('id'=>$good['goods_id']))}">
+					  </if>
+
+					  <dt><img src="{$good.goods_id|goods_thum_images=100,100}"></dt>
 		          <dd class="name" class="pice" style=" width:55%;">
 	                  <strong>{$good.goods_name}</strong><span>{$good.spec_key_name}</span>
                    </dd>
@@ -122,8 +128,9 @@
                           </if>
                     </em>
                   </dd>
-                  </dl>
-		          </a>
+					  </a>
+
+				  </dl>
 		          <div class="pic" style=" border:0;"><span>小计：</span><strong>￥{$good['member_goods_price'] * $good['goods_num']}元</strong></div>
 		    </div>
 	</volist>
@@ -156,7 +163,8 @@
                 <if condition="$order_info.pay_btn eq 1"><a href="{:U('Mobile/Cart/cart4',array('order_id'=>$order_info['order_id']))}" class="on_comment">立即付款</a></if>
                 <!--<if condition="$order_info.receive_btn eq 1"><a href="{:U('Mobile/User/order_confirm',array('id'=>$order_info['order_id']))}" class="on_comment">收货确认</a></if>-->
                 <!--<if condition="$order_info.shipping_btn eq 1"><a href="http://www.kuaidi100.com/" target="_blank" class="on_comment">查看物流</a></if>-->
-                <if condition="$order_info.return_btn eq 1"><a href="mqqwpa://im/chat?chat_type=wpa&uin={$store['store_qq']}&version=1&src_type=web&web_src=oicqzone.com" target="_blank" class="on_comment">联系客服</a></if>
+                <!--<if condition="$order_info.return_btn eq 1"><a href="mqqwpa://im/chat?chat_type=wpa&uin={$store['store_qq']}&version=1&src_type=web&web_src=oicqzone.com" target="_blank" class="on_comment">联系客服</a></if>-->
+				<if condition="$order_info.group_btn eq 1"><a data-clipboard-text="{:U('/Mobile/Activity/group',['id' => $order_info['group_order']['goods_id'], 'group_order_sn' => $order_info[group_order][group_order_sn]], true, true)}" href="javascript:void(0)" onclick="copyUrl()" target="_blank" class="on_comment invite-buy">邀请好友拼团</a></if>
 			</div>
 		</div>
 	</div>
@@ -180,6 +188,17 @@
             // }
         });
     })
+
+	function copyUrl()
+	{
+		var clipboard = new ClipboardJS('a.invite-buy');
+		clipboard.on('success', function (e) {
+			layer.open({
+				content: '复制成功'
+			});
+		});
+
+	}
 </script>
 </body>
 </html>

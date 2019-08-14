@@ -1,4 +1,6 @@
 <include file="Public/header"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+<script type="text/javascript" src="__STATIC__/js/layer.js" ></script>
 <body>
 <header>
 <div class="tab_nav">
@@ -14,6 +16,49 @@
  </div>
 </header>
 <include file="Public/menu"/>
+
+<script >
+    var Tday = new Array();
+    var daysms = 24 * 60 * 60 * 1000
+    var hoursms = 60 * 60 * 1000
+    var Secondms = 60 * 1000
+    var microsecond = 1000
+    var DifferHour = -1
+    var DifferMinute = -1
+    var DifferSecond = -1
+
+    function clock11(key)
+    {
+        var time = new Date()
+        var hour = time.getHours()
+        var minute = time.getMinutes()
+        var second = time.getSeconds()
+        var timevalue = ""+((hour > 12) ? hour-12:hour)
+        timevalue +=((minute < 10) ? ":0":":")+minute
+        timevalue +=((second < 10) ? ":0":":")+second
+        timevalue +=((hour >12 ) ? " PM":" AM")
+        var convertHour = DifferHour
+        var convertMinute = DifferMinute
+        var convertSecond = DifferSecond
+        var Diffms = Tday[key].getTime() - time.getTime()
+        DifferHour = Math.floor(Diffms / daysms)
+        Diffms -= DifferHour * daysms
+        DifferMinute = Math.floor(Diffms / hoursms)
+        Diffms -= DifferMinute * hoursms
+        DifferSecond = Math.floor(Diffms / Secondms)
+        Diffms -= DifferSecond * Secondms
+        var dSecs = Math.floor(Diffms / microsecond)
+
+        if(convertHour != DifferHour) e="<span class=hour>"+DifferHour+"</span>天";
+        if(convertMinute != DifferMinute) f="<span class=min>"+DifferMinute+"</span>时";
+        if(convertSecond != DifferSecond) g="<span class=sec>"+DifferSecond+"</span>分";
+        h="<span class=msec>"+dSecs+"</span>秒";
+        if (DifferHour>0) {e=e}
+        else {e=''}
+        document.getElementById("jstimerBox"+key).innerHTML = e + f + g + h;
+    }
+
+</script>
 
 <div id="tbh5v0">
 <!--------筛选 form 表单 开始-------------->
@@ -59,17 +104,43 @@
 		          </dl>
 	          </volist>
           	</a>
-          <div class="pic">共{$list.goods_list|count}件商品<span>实付：</span><strong>￥{$list['order_amount']}元</strong></div>
+           <div class="pic">
+               <if condition="$list.group_order_id neq 0">
+                   <div style="float: left">
+                       <span><img src="__STATIC__/images/group_icon.jpg" width="30px" height="30px"></span>
+                       <if condition="$list['pay_status'] eq 1">
+                           <if condition="$list['group_status'] neq 2">
+                               已参团 <strong style="color: red">{$list[group_order][grouped_num]}</strong> / {$list[group_order][group_num]}
+                               <else />
+                               拼团失败
+                           </if>
+                       </if>
+                   </div>
+               </if>
+               共{$list.goods_list|count}件商品<span>实付：</span><strong>￥{$list['order_amount']}元</strong></div>
+           <if condition="($list[order_status_code] eq 'GROUPING') OR (($list[pay_btn] eq 1) and ($list[group_order][user_id] neq $user[user_id]))">
+               <div class="pic" style="text-align: left">
+                   <span>拼团倒计时：</span>
+                   <span class="sg_g_time last_g_time" id="jstimerBox{$list[order_id]}" style="color: red;"></span>
+                   <span>到期自动拼团失败，金额原路退回</span>
+                   <script>
+                       Tday['{$list[order_id]}'] = new Date('{$list[group_order][close_at]|date="Y/m/d H:i:s",###}');
+                       window.setInterval(function()
+                       {clock11('{$list[order_id]}');}, 1000);
+                   </script>
+               </div>
+           </if>
           <div class="anniu" style="width:95%">
-                <if condition="$list.cancel_btn eq 1"><span onClick="cancel_order({$list.order_id})">取消订单</span></if>
+              <if condition="$list.cancel_btn eq 1"><span onClick="cancel_order({$list.order_id})">取消订单</span></if>
                 <if condition="$list.pay_btn eq 1"><a href="{:U('Mobile/Cart/cart4',array('order_id'=>$list['order_id']))}">立即付款</a></if>
-                <if condition="$list.receive_btn eq 1"><a href="{:U('Mobile/User/order_confirm',array('id'=>$list['order_id']))}">收货确认</a></if>
+                <!--<if condition="$list.receive_btn eq 1"><a href="{:U('Mobile/User/order_confirm',array('id'=>$list['order_id']))}">收货确认</a></if>-->
                 <if condition="$list.comment_btn eq 1"><a href="{:U('/Mobile/User/order_detail',array('id'=>$list['order_id']))}">评价</a></if>
                 <!--<if condition="$list.shipping_btn eq 1"><a href="http://www.kuaidi100.com/" target="_blank">查看物流</a></if>-->
                 <!--<if condition="$list.return_btn eq 1"><a href="mqqwpa://im/chat?chat_type=wpa&uin={$storeList[$list['store_id']]['store_qq']}&version=1&src_type=web&web_src=oicqzone.com" target="_blank">联系客服</a></if>-->
+              <if condition="$list.group_btn eq 1"><a data-clipboard-text="{:U('/Mobile/Activity/group',['id' => $list['group_order']['goods_id'], 'group_order_sn' => $list[group_order][group_order_sn]], true, true)}" href="javascript:void(0)" onclick="copyUrl()" target="_blank" class="on_comment invite-buy">邀请好友拼团</a></if>
           </div>
        </div>
-		</volist>
+       </volist>
     </div>
   <!--查询条件-->
   <input type="hidden" name="type" value="<?php echo $_GET['type'];?>" />
@@ -111,6 +182,18 @@ function cancel_order(id){
 	if(!confirm("确定取消订单?"))
 		return false;
 	location.href = "/index.php?m=Mobile&c=User&a=cancel_order&id="+id;
+}
+
+
+function copyUrl()
+{
+    var clipboard = new ClipboardJS('a.invite-buy');
+    clipboard.on('success', function (e) {
+        layer.open({
+            content: '复制成功'
+        });
+    });
+
 }
 
 </script>

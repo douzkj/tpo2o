@@ -163,18 +163,18 @@
         <foreach name="last_flash_goods" item="last_flash_good">
             <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$last_flash_good[goods_id]))}">
                 <div class="shelf-obtained-products-item">
-                    <div class="products-img"><img src="{last_flash_good.goods_id|goods_thum_images=400,400}" style="width: 100%;height: 100%"></div>
+                    <div class="products-img"><img src="{$last_flash_good.goods_id|goods_thum_images=400,400}" style="width: 100%;height: 100%"></div>
                     <div class="products-des">
-                        <p class="products-end-time">距离结束还有{$new_flash_good['end_time']|get_delay_day}天</p>
-                        <p class="products-tips">{last_flash_good.goods_name}</p>
+                        <p class="products-end-time">距离结束还有{$last_flash_good['end_time']|get_delay_day}天</p>
+                        <p class="products-tips">{$last_flash_good.goods_name}</p>
                         <span class="products-sale-num-wrapper">
                   <span class="products-num">原价
-                      <i class="de-price">¥{last_flash_good.shop_price}</i>
+                      <i class="de-price">¥{$last_flash_good.shop_price}</i>
                   </span>
-                  <span class="products-sale">销量:{last_flash_good['sales_sum'] + last_flash_good['virtual_num']}</span>
+                  <span class="products-sale">销量:{$last_flash_good['sales_sum'] + $last_flash_good['virtual_num']}</span>
               </span>
                         <div class="price-buy-wrapper">
-                            <span class="products-price">¥{last_flash_good.price}</span>
+                            <span class="products-price">¥{$last_flash_good.price}</span>
                             <span class="buy-btn">购买</span>
                         </div>
                     </div>
@@ -308,11 +308,11 @@ function getGoodsList(){
                                     <img src="{$v.goods_id|goods_thum_images=300,300}"></div>
                                 <div class="goods_name">{$v.goods_name}</div>
                                 <div class="price">
-                                    <!--<a href="javascript:AjaxAddCart({$v[goods_id]},1,0);" class="btns">-->
-                                    <!--<img src="__STATIC__/images/index_flow.png">-->
-                                    <!--</a>-->
-                                    <span href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" class="price_pro">￥{$v.shop_price}</span>
-                                    <span class="dic-price">￥{$v.market_price}</span>
+                                    <div class="price-wrapper">
+                                        <span href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" class="price_pro">￥{$v.shop_price}</span>
+                                        <span class="dic-price">￥{$v.market_price}</span>
+                                    </div>
+                                    <span class="buy-num">已销{$v[sales_sum] + $v[virtual_num]}</span>
                                 </div>
                             </div>
                         </a>

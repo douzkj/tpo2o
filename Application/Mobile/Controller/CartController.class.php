@@ -46,6 +46,7 @@ class CartController extends MobileBaseController {
             exit;
         }
         $goods_id = I('goods_id');
+        $group_order_sn = I('group_order_sn');
         $goods = M('goods')->where(['goods_id' => $goods_id])->find();
         C('TOKEN_ON',true);
         if(empty($goods)){
@@ -56,6 +57,7 @@ class CartController extends MobileBaseController {
         if (IS_POST) {
             $goods_num = I('goods_num');
             $consignee = trim(I('consignee'));
+            $group_order_sn = trim(I('group_order_sn'));
             $mobile = trim(I('mobile'));
             $this->cartLogic->flushCart($this->user_id);
             $result = $this->cartLogic->addCart($goods_id, $goods_num, '',$this->session_id,$this->user_id, $is_group); // 将商品加入购物车
@@ -86,7 +88,7 @@ class CartController extends MobileBaseController {
                 'store_goods_price'=>$result['result']['store_goods_price'], // 每个商家的商品总价
             );
 
-            $result = $this->cartLogic->newAddOrder($this->user_id,$consignee, $mobile, $car_price); // 添加订单
+            $result = $this->cartLogic->newAddOrder($this->user_id,$consignee, $mobile, $car_price, 0, $group_order_sn); // 添加订单
             exit(json_encode($result));
         }
         //商品促销
@@ -101,6 +103,7 @@ class CartController extends MobileBaseController {
         }
         $this->assign('goods', $goods);
         $this->assign('is_group', $is_group);
+        $this->assign('group_order_sn', $group_order_sn);
         $this->display();
     }
 

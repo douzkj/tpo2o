@@ -85,11 +85,11 @@ return array(
     // 订单用户端显示状态
     'WAITPAY'=>' AND pay_status = 0 AND order_status = 0 AND pay_code !="cod" ', //订单查询状态 待支付
     'WAITSEND'=>' AND (pay_status=1 OR pay_code="cod") AND shipping_status !=1 AND order_status in(0,1) ', //订单查询状态 待发货
-    'WAITUSE'=>' AND (pay_status=1 OR pay_code="cod") AND is_used !=1 AND order_status in(0,1) ', //订单查询状态 待使用
+    'WAITUSE'=>' AND pay_status=1 AND is_used !=1 AND (group_order_id = 0 OR (group_order_id <> 0 AND group_status = 1)) AND order_status in(0,1) ', //订单查询状态 待使用
     'WAITRECEIVE'=>' AND shipping_status=1 AND order_status = 1 ', //订单查询状态 待收货
     'WAITCCOMMENT'=> ' AND order_status=2 ', // 待评价 确认收货     //'FINISHED'=>'  AND order_status=1 ', //订单查询状态 已完成
     'FINISH'=> ' AND order_status = 4 ', // 已完成
-    'GROUPING'=> ' AND group_order_id <> 0 ', // 已完成
+    'GROUPING'=> ' AND pay_status=1 AND group_order_id <> 0', //拼团中
     'CANCEL'=> ' AND order_status = 3 ', // 已取消
 	'CANCELLED'=> 'AND order_status = 5 ',//已作废
 
@@ -133,4 +133,6 @@ return array(
      */
     'SPHINX_HOST'         =>      '127.0.0.1',
     'SPHINX_PORT'         =>      '9312',
+
+    'CLI_TOKEN'           =>  'qVzudgWZdJqKuufC'
 );
