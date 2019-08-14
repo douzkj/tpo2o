@@ -66,16 +66,7 @@ class CartLogic extends RelationModel
                     'master_order_sn'  =>$master_order_sn, // 主订单号
                     'user_id'          =>$user_id, // 用户id
                     'consignee'        =>$consignee, // 收货人
-//                'province'         =>$address['province'],//'省份id',
-//                'city'             =>$address['city'],//'城市id',
-//                'district'         =>$address['district'],//'县',
-//                'twon'             =>$address['twon'],// '街道',
-//                'address'          =>$address['address'],//'详细地址',
                     'mobile'           => $mobile,//'手机',
-//                'zipcode'          =>$address['zipcode'],//'邮编',
-//                'email'            =>$address['email'],//'邮箱',
-//                'shipping_code'    =>$shipping['code'],//'物流编号',
-//                'shipping_name'    =>$shipping['name'], //'物流名称',
                     'invoice_title'    =>"", //'发票抬头',
                     'user_note'        => "", //'给卖家留言',
                     'goods_price'      =>$car_price['store_goods_price'][$k],//每个店铺的商品价格',
@@ -136,8 +127,8 @@ class CartLogic extends RelationModel
                             $update = [];
                             if ($group_order_sn == '') {
                                 //如果是新开团，判断此用户当前是否有拼团的订单
-                                if (M('group_order')->where(['user_id' => $user_id, 'group_status' => 0])->count()) {
-                                    throw new \Exception('已有未完成拼团订单');
+                                if (M('group_order')->where(['user_id' => $user_id, 'group_status' => ['in', [0, 1]]])->count()) {
+                                    throw new Exception('已有未完成拼团订单');
                                 }
                                 $group_orders = M('group_order')
                                     ->where(['group_id' => $group['id'], 'group_status' => ['between', [0, 1]]])
