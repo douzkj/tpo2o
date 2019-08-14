@@ -51,7 +51,7 @@ class IndexController extends MobileBaseController {
                 if (!empty($goods_ids)) {
                     $how_scope['goods_id'] = ['in', $goods_ids];
                     $favourite_scope['goods_id'] = ['in', $goods_ids];
-                    $goods_flash_where = " and tp_goods.goods_id in (".implode(",", $goods_ids).")";
+                    $goods_flash_where = " and goods.goods_id in (".implode(",", $goods_ids).")";
                     $goods_where = " and goods_id in (".implode(",", $goods_ids).")";
                 }
             }
@@ -68,24 +68,22 @@ class IndexController extends MobileBaseController {
 
         //获取最新闪购和即将下架闪购
         $thread =48 * 60 * 60;
-        $new_flash_goods = M('flash_sale')
-            ->join('__GOODS__ on __GOODS__.prom_id = __FLASH_SALE__.id')
-            ->where("__GOODS__.is_on_sale=1 and __GOODS__.prom_type =2 {$goods_flash_where} and " . time()." >= start_time and ".time()." <= start_time + {$thread} ")
+        $new_flash_goods = M('flash_sale flash')
+            ->join('__GOODS__ goods on goods.prom_id = flash.id')
+            ->where("goods.is_on_sale=1 and goods.prom_type =2 {$goods_flash_where} and " . time()." >= flash.start_time and ".time()." <= flash.start_time + {$thread} ")
             ->limit(15)
             ->select();
         $this->assign('new_flash_goods', $new_flash_goods);
-        $last_flash_goods = M('flash_sale')
-            ->join('__GOODS__ on __GOODS__.prom_id = __FLASH_SALE__.id')
-            ->where("__GOODS__.is_on_sale=1 and __GOODS__.prom_type =2 {$goods_flash_where} and " . time()." <= end_time and ".time()." >= end_time - {$thread} ")
+        $last_flash_goods = M('flash_sale flash')
+            ->join('__GOODS__ goods on goods.prom_id = flash.id')
+            ->where("goods.is_on_sale=1 and goods.prom_type =2 {$goods_flash_where} and " . time()." <= flash.end_time and ".time()." >= flash.end_time - {$thread} ")
             ->limit(15)
             ->select();
         $this->assign('last_flash_goods', $last_flash_goods);
 
         $now = time();
-        $group_buy = <<<sql
-select * from `__PREFIX__.group_buy` where start_time < {$now} and end_time > {$now} {$goods_where}
-sql;
-
+        $group_buy = M('group_buy')->where("start_time <= {$now} and end_time > {$now} {$goods_where}")->select();
+        $this->assign('group_buy', $group_buy);
 
 
         //获取区县

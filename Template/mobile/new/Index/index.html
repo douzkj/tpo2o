@@ -186,23 +186,23 @@
             <h2>————&nbsp;团购活动&nbsp;————</h2>
 
             <ul class="product single_item info">
-                <foreach name="hot_goods" item="v">
+                <foreach name="group_buy" item="v">
                     <li>
-                        <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" title="{$v.goods_name}">
+                        <a href="{:U('Mobile/Activity/group',array('id'=>$v[goods_id]))}" title="{$v.goods_name}">
                             <div class="index_pro">
-                                <div class="dic-num"><span class="text">{:getDiscount($v[shop_price], $v[market_price])}折</span></div>
+                                <div class="dic-num"><span class="text">{$v['group_num']} 人团</span></div>
                                 <div class="products_kuang">
                                     <img src="{$v.goods_id|goods_thum_images=400,400}"></div>
-                                <div class="goods_name">{$v.goods_name}</div>
+                                <div class="goods_name">{$v.title}</div>
                                 <div class="price">
                                     <!--<a href="javascript:AjaxAddCart({$v[goods_id]},1,0);" class="btns">-->
                                     <!--<img src="__STATIC__/images/index_flow.png">-->
                                     <!--</a>-->
                                     <div class="price-wrapper">
-                                        <span href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" class="price_pro">￥{$v.shop_price}</span>
-                                        <span class="dic-price">￥{$v.market_price}</span>
+                                        <span href="{:U('Mobile/Goods/goodsInfo',array('id'=>$v[goods_id]))}" class="price_pro">拼团价：￥{$v.price}</span>
+                                        <span class="dic-price">￥{$v.goods_price}</span>
                                     </div>
-                                    <span class="buy-num">已销{$v[sales_sum] + $v[virtual_num]}</span>
+                                    <span class="buy-num">已成团{$v[virtual_num] + $v[grouped_num]}</span>
                                 </div>
                             </div>
                         </a>

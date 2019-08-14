@@ -1308,6 +1308,8 @@ class UserController extends MobileBaseController
 
     public function consumeCode()
     {
+        $this->display();
+        exit;
         $token = I('get.token');
         $code_id = I('get.code_id');
         $code = M('order_codes')->where(['token' => $token, 'code_id' => $code_id, 'is_checked' => 0])->find();
@@ -1316,6 +1318,5 @@ class UserController extends MobileBaseController
         } else {
             $this->error('此二维码无效或已被核销', U('Mobile/User/login'));
         }
-        $this->display();
     }
 }
