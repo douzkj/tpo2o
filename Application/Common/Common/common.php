@@ -918,11 +918,16 @@ function update_pay_status($order_sn,$pay_status = 1)
                         'close_at' => time() + $group_buy['deadline'] * 60
                     ]);
                 } else {
-                    $update['grouped_num'] = $group_order['grouped_num'] + 1;
+//                    $update['grouped_num'] = $group_order['grouped_num'] + 1;
+                    $update = [];
                     if ($group_order['grouped_num'] + 1 == $group_order['group_num']) {
                         //说明拼团成功
                         $update['done_at'] = time();
                         $update['group_status'] = 1;
+                        //将所有此拼团下的订单状态修改
+                        M('order')->where(['group_order_id' => $group_order['id'], 'group_status' => 0])->save([
+                            'group_status' => 1
+                        ]);
                     }
                     M('group_order')->where("id = {$group_order['id']}")->save($update);
                 }
