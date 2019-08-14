@@ -71,6 +71,9 @@ class ActivityController extends MobileBaseController {
             $store = M('store')->where(array('store_id'=>$goods['store_id']))->find();
             $this->assign('store',$store);
         }
+        //获取附近在售
+        $nearbyGoods = $goodsLogic->getGoodsNearby(3);
+        $this->assign('nearbyGoods', $nearbyGoods);
         $this->assign('group_buy_info',$group_buy_info);
         $this->assign('spec_goods_price', json_encode($spec_goods_price,true)); // 规格 对应 价格 库存表
         $this->assign('commentStatistics',$commentStatistics);

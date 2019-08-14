@@ -57,16 +57,15 @@ class GoodsLogic extends RelationModel
            }, $shops);
            $good_ids = M('goods_shop')->where(['shop_id' => ['in', $shop_ids]])->getField('goods_id', true);
            if (!empty($good_ids)) {
-               $goods = M('goods')->where(['goods_id' => ['in', $good_ids]])->limit(0, $limit)->select();
+               $goods = M('goods')->where(['goods_id' => ['in', $good_ids]])->limit(0, 30)->select();
            } else {
-               $goods = M('goods')->where('is_hot=1 and is_on_sale=1')->order('sales_sum desc')->limit(0, $limit)->select();
+               $goods = M('goods')->where('is_hot=1 and is_on_sale=1')->order('sales_sum desc')->limit(0, 30)->select();
            }
            //若附近无在售,则取出爆款推荐商品
        } else {
-           $goods = M('goods')->where('is_hot=1 and is_on_sale=1')->order('sales_sum desc')->limit(0, $limit)->select();
-
+           $goods = M('goods')->where('is_hot=1 and is_on_sale=1')->order('sales_sum desc')->limit(0, 30)->select();
        }
-        return $goods;
+        return array_random_assoc($goods, count($goods) > $limit ? $limit : count($goods));
    }
 
    public function getShopNearby($nearBy= 20, $limit = 10)

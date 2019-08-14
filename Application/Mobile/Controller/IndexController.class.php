@@ -27,12 +27,15 @@ class IndexController extends MobileBaseController {
             $signPackage = $jssdk->GetSignPackage();
             print_r($signPackage);
         */
-        $goods_in = [
-            'goods_id' => [
-                'in' => []
-            ]
+        $how_scope = [
+            'is_hot' => 1,
+            'is_on_sale' => 1
         ];
-
+        $favourite_scope = [
+            'is_recommend' => 1,
+            'is_on_sale' => 1
+        ];
+        $goods_where = '';
         if (AREA_ID || PROVINCE_ID) {
             $district_where = [];
             if (PROVINCE_ID) {
@@ -45,28 +48,27 @@ class IndexController extends MobileBaseController {
             if (!empty($shops)) {
                 $goods_ids = M('goods_shop')->where(['shop_id' => ['in', $shops]])->getField('goods_id', true);
                 if (!empty($goods_ids)) {
-                    $goods_in = [
-                        'goods_id' => [
-                            'in' => $goods_ids
-                        ]
-                    ];
+                    $how_scope['goods_id'] = ['in', $goods_ids];
+                    $favourite_scope['goods_id'] = ['in', $goods_ids];
+                    $goods_where = "tp_goods.goods_id in (".implode(",", $goods_ids).")";
                 }
             }
         }
-        $hot_goods = M('goods')->where("is_hot=1 and is_on_sale=1")->where($goods_in)->order('goods_id DESC')->limit(20)->cache(true,TPSHOP_CACHE_TIME)->select();//首页热卖商品
+
+        $hot_goods = M('goods')->where($how_scope)->order('goods_id DESC')->limit(20)->cache(true,TPSHOP_CACHE_TIME)->select();//首页热卖商品
         $thems = M('goods_category')->where('level=1')->order('sort_order')->limit(9)->cache(true,TPSHOP_CACHE_TIME)->select();
         $this->assign('thems',$thems);
         $this->assign('hot_goods',$hot_goods);
-        $favourite_goods = M('goods')->where($goods_in)->where("is_recommend=1 and is_on_sale=1")->order('goods_id DESC')->limit(20)->cache(true,TPSHOP_CACHE_TIME)->select();//首页推荐商品
+        $favourite_scope = [
+            'is_recommend' => 1,
+            'is_on_sale' => 1
+        ];
+        $favourite_goods = M('goods')->where($favourite_scope)->order('goods_id DESC')->limit(20)->cache(true,TPSHOP_CACHE_TIME)->select();//首页推荐商品
         $this->assign('favourite_goods',$favourite_goods);
         $provinces = M('region')->where(['is_open' => 1, 'parent_id' => 0])->select();
 
         //获取最新闪购和即将下架闪购
         $thread =48 * 60 * 60;
-        $goods_where = '';
-        if (isset($goods_ids)) {
-            $goods_where = "tp_goods.goods_id in (".implode(",", $goods_ids).")";
-        }
         $new_flash_goods = M('flash_sale')
             ->join('__GOODS__ on __GOODS__.prom_id = __FLASH_SALE__.id')
             ->where('__GOODS__.is_on_sale=1 and __GOODS__.prom_type =2 ' . $goods_where)

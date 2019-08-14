@@ -819,6 +819,9 @@ function orderBtn($order_id = 0, $order = array())
             $btn_arr['receive_btn'] = 1;  // 确认收货
             $btn_arr['return_btn'] = 1; // 退货按钮 (联系客服)
         }
+        if ($order['pay_status'] == 1 && $order['group_order_id'] && $order['group_status']  == 0) {
+            $btn_arr['group_btn'] = 1; //拼团分享按钮
+        }
     }
     if($order['order_status'] == 2)
     {
@@ -835,6 +838,18 @@ function orderBtn($order_id = 0, $order = array())
     }
 
     return $btn_arr;
+}
+
+
+function array_random_assoc($arr, $num = 1) {
+    $keys = array_keys($arr);
+    shuffle($keys);
+
+    $r = array();
+    for ($i = 0; $i < $num; $i++) {
+        $r[$keys[$i]] = $arr[$keys[$i]];
+    }
+    return $r;
 }
 
 /**
