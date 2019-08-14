@@ -160,7 +160,6 @@ class CartLogic extends RelationModel
                                     ];
                                     if ($group['group_num'] == 1) {
                                         $group_order['group_status'] = 1;
-                                        $update['group_status'] = 1;
                                     }
                                     $group_order_id = M('group_order')->data($group_order)->add();
                                 } else {
@@ -180,7 +179,7 @@ class CartLogic extends RelationModel
                                 }
                                 $group_order_id = $group_order['id'];
                                 $res = M('group_order')
-                                    ->where(['id' => $group_order_id, 'grouped_num' => $group_order['grouped_num']])
+                                    ->where("id = {$group_order['id']} and grouped_num < group_num")
                                     ->setInc('grouped_num', 1);
                                 if (!$res) {
                                     throw new \Exception('拼团失败');

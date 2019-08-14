@@ -908,29 +908,33 @@ function update_pay_status($order_sn,$pay_status = 1)
 		//拼团订单修改
         if ($order['group_order_id']) {
             $group_order = M('group_order')
-                ->where("id = {$order['group_order_id']} and grouped_num < group_num")
+                ->where("id = {$order['group_order_id']} and grouped_num <= group_num")
                 ->find();
             if ($group_order) {
-                if ($group_order['user_id'] == $order['user_id']) {
-                    //如果是团长的订单成功，则更新时间
-                    $group_buy = M('group_buy')->where(['id' => $group_order['group_id']])->find();
-                    M('group_order')->where(['id' => $order['group_order_id']])->save([
-                        'close_at' => time() + $group_buy['deadline'] * 60
+                //如果当前付款的用户是最后一个
+                if ($group_order['grouped_num'] == $group_order['group_num']) {
+                    //直接更新拼单状态和订单状态
+                    M('group_order')->where("id = {$group_order['id']}")->save([
+                        'group_status' => 1,
+                        'done_at' => time()
                     ]);
-                } else {
-//                    $update['grouped_num'] = $group_order['grouped_num'] + 1;
-                    $update = [];
-                    if ($group_order['grouped_num'] + 1 == $group_order['group_num']) {
-                        //说明拼团成功
-                        $update['done_at'] = time();
-                        $update['group_status'] = 1;
-                        //将所有此拼团下的订单状态修改
-                        M('order')->where(['group_order_id' => $group_order['id'], 'group_status' => 0])->save([
+                    //将所有此拼团下的订单状态修改
+                    M('order')->where([
+                        'group_order_id' => $group_order['id'],
+                        'group_status' => 0
+                    ])->save([
                             'group_status' => 1
                         ]);
+                } else {
+                    if ($group_order['user_id'] == $order['user_id']) {
+                        //如果是团长的订单成功，则更新时间
+                        $group_buy = M('group_buy')->where(['id' => $group_order['group_id']])->find();
+                        M('group_order')->where(['id' => $order['group_order_id']])->save([
+                            'close_at' => time() + $group_buy['deadline'] * 60
+                        ]);
                     }
-                    M('group_order')->where("id = {$group_order['id']}")->save($update);
                 }
+
             }
         }
 
