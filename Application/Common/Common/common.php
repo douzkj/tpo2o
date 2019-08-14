@@ -785,7 +785,8 @@ function orderBtn($order_id = 0, $order = array())
         'shipping_btn' => 0, // 查看物流
         'return_btn' => 0, // 退货按钮 (联系客服),
         'use_btn' => 0,  //待使用按钮,
-        'group_btn' => 0, //拼团分享按钮
+        'group_btn' => 0, //拼团分享按钮,
+        'cancel_group' => 0, //取消拼团按钮
     );
 
 

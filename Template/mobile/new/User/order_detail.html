@@ -1,6 +1,9 @@
 <include file="Public/header"/>
 <link rel="stylesheet" href="__STATIC__/css/order_detail.css">
 <link rel="stylesheet" type="text/css" href="__STATIC__/font/iconfont.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+<script type="text/javascript" src="__STATIC__/js/layer.js" ></script>
+
 
 <body>
 <header>
@@ -160,7 +163,8 @@
                 <if condition="$order_info.pay_btn eq 1"><a href="{:U('Mobile/Cart/cart4',array('order_id'=>$order_info['order_id']))}" class="on_comment">立即付款</a></if>
                 <!--<if condition="$order_info.receive_btn eq 1"><a href="{:U('Mobile/User/order_confirm',array('id'=>$order_info['order_id']))}" class="on_comment">收货确认</a></if>-->
                 <!--<if condition="$order_info.shipping_btn eq 1"><a href="http://www.kuaidi100.com/" target="_blank" class="on_comment">查看物流</a></if>-->
-                <if condition="$order_info.return_btn eq 1"><a href="mqqwpa://im/chat?chat_type=wpa&uin={$store['store_qq']}&version=1&src_type=web&web_src=oicqzone.com" target="_blank" class="on_comment">联系客服</a></if>
+                <!--<if condition="$order_info.return_btn eq 1"><a href="mqqwpa://im/chat?chat_type=wpa&uin={$store['store_qq']}&version=1&src_type=web&web_src=oicqzone.com" target="_blank" class="on_comment">联系客服</a></if>-->
+				<if condition="$order_info.group_btn eq 1"><a data-clipboard-text="{:U('/Mobile/Activity/group',['id' => $order_info['group_order']['goods_id'], 'group_order_sn' => $order_info[group_order][group_order_sn]], true, true)}" href="javascript:void(0)" onclick="copyUrl()" target="_blank" class="on_comment invite-buy">邀请好友拼团</a></if>
 			</div>
 		</div>
 	</div>
@@ -184,6 +188,17 @@
             // }
         });
     })
+
+	function copyUrl()
+	{
+		var clipboard = new ClipboardJS('a.invite-buy');
+		clipboard.on('success', function (e) {
+			layer.open({
+				content: '复制成功'
+			});
+		});
+
+	}
 </script>
 </body>
 </html>

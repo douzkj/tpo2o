@@ -75,6 +75,47 @@
 <body>
 <script type="text/javascript">
 	var process_request = "正在处理您的请求...";
+
+	var Tday = new Array();
+	var daysms = 24 * 60 * 60 * 1000
+	var hoursms = 60 * 60 * 1000
+	var Secondms = 60 * 1000
+	var microsecond = 1000
+	var DifferHour = -1
+	var DifferMinute = -1
+	var DifferSecond = -1
+
+	function clock11(key)
+	{
+		var time = new Date()
+		var hour = time.getHours()
+		var minute = time.getMinutes()
+		var second = time.getSeconds()
+		var timevalue = ""+((hour > 12) ? hour-12:hour)
+		timevalue +=((minute < 10) ? ":0":":")+minute
+		timevalue +=((second < 10) ? ":0":":")+second
+		timevalue +=((hour >12 ) ? " PM":" AM")
+		var convertHour = DifferHour
+		var convertMinute = DifferMinute
+		var convertSecond = DifferSecond
+		var Diffms = Tday[key].getTime() - time.getTime()
+		DifferHour = Math.floor(Diffms / daysms)
+		Diffms -= DifferHour * daysms
+		DifferMinute = Math.floor(Diffms / hoursms)
+		Diffms -= DifferMinute * hoursms
+		DifferSecond = Math.floor(Diffms / Secondms)
+		Diffms -= DifferSecond * Secondms
+		var dSecs = Math.floor(Diffms / microsecond)
+
+		if(convertHour != DifferHour) e="<span class=hour>"+DifferHour+"</span>天";
+		if(convertMinute != DifferMinute) f="<span class=min>"+DifferMinute+"</span>时";
+		if(convertSecond != DifferSecond) g="<span class=sec>"+DifferSecond+"</span>分";
+		h="<span class=msec>"+dSecs+"</span>秒";
+		if (DifferHour>0) {e=e}
+		else {e=''}
+		document.getElementById("jstimerBox"+key).innerHTML = e + f + g + h;
+	}
+
 </script>
 <div class="main">
 	<div class="tab_nav">
@@ -97,7 +138,42 @@
 	<include file="Public/menu"/>
 	<div class="main" id="user_goods_ka_1" style="display:block;">
 		<div class="banner">
+			<style>
+				.float-top {
+					position: inherit;
+					background: gray;
+					opacity: 0.6;
+				}
+
+				.groupbuy-invite {
+					text-align: center;
+					line-height: 30px;
+				}
+				.groupbuy-invite-user {
+					color: #ff8000;
+				}
+			</style>
+
 			<div id="slider" class="slider" style="overflow: hidden; visibility: visible; list-style: none; position: relative;">
+				<if condition="$group_order">
+					<div class="timerBox float-top" style="box-sizing: border-box;">
+						<div class="pingtuan-wrapper">
+							<div class="pingtuan-wrapper-flex">
+								<div class="y-price">
+									<img src="{$group_order['user']['head_pic']|default=" __STATIC__/images/user68.jpg"}" width="30px" height="30px">
+								</div>
+								<span class="groupbuy-invite">
+									<span class="groupbuy-invite-user">{$group_order['user']['nickname']}</span>
+									发起的拼团
+								</span>
+							</div>
+							<span class="al-ping-num">
+								已参团：{$group_order[grouped_num]} / 成团人数：{$group_order[group_num]}
+							</span>
+						</div>
+					</div>
+				</if>
+
 				<ul id="sliderlist" class="sliderlist" style="position: relative; overflow: hidden; transition: left 600ms ease; -webkit-transition: left 600ms ease;">
 					<foreach  name="goods_images_list" item="pic">
 						<li style="float: left; display: block; width: 100%;"><span><a  href="javascript:void(0)">
@@ -164,23 +240,24 @@
 				<div class="timer-wrapper">
 					<span class="des">限量购买 每个ID限量 {$group_buy_info['buy_limit']} 件</span>
 				</div>
-				<div>
-					<div class="mbody progress-bar">
-						<php>
-							$buy_num = $group_buy_info['virtual_num'] + $group_buy_info['order_num'] + $group_buy_info['buy_num'];
-							$remain = $group_buy_info['goods_num'] - $buy_num;
-							$percent = floor(($buy_num / $group_buy_info['goods_num']) * 100);
-						</php>
-						<div class="hd"><span class="text-middle">已抢购</span><span
-								class="text-middle text-red">{$buy_num}</span><span class="text-right"><span
-								class="text-middle">仅剩</span><span
-								class="text-middle text-red">{$remain}</span><span
-								class="text-middle">人</span></span></div>
-						<div class="bar-bg">
-							<div class="bar" style="width:{$percent}%"></div>
-						</div>
+				<if condition="$group_order">
+					<div class="timer-wrapper">
+					<span class="des">成团倒计时:
+                        <if condition="$group_order[group_status] eq 2">
+                            <span class="sg_g_time last_g_time" style="color: red;">此拼团已失效</span>
+                        <else />
+                         	<span class="sg_g_time last_g_time" id="jstimerBox{$group_order[goods_id]}" style="color: red;"></span>
+                            <script>
+							Tday['{$group_order[goods_id]}'] = new Date('{$group_order[close_at]|date="Y/m/d H:i:s",###}');
+                            window.setInterval(function()
+                            {clock11('{$group_order[goods_id]}');}, 1000);
+						</script>
+                        </if>
+					</span>
+
 					</div>
-				</div>
+				</if>
+
 
 				<ul class="price_dottm">
 					<li style=" text-align:left">折扣：{$group_buy_info.rebate}折</li>
@@ -397,10 +474,39 @@ function changeAtt1(t) {
 						<span>单独购买</span>
 						<span>¥{$group_buy_info['goods_price']}</span>
 					</div>
-					<div class="ping-btn" onclick="javascript:window.location.href='{:U('Cart/confirmOrder', ['goods_id' => $goods[goods_id], 'is_group' => 1])}'">
-						<span>拼团购买</span>
-						<span>¥{$group_buy_info['price']}</span>
-					</div>
+				<if condition="$group_order">
+                    <switch name="group_order.group_status">
+                        <case value="2">
+                            <div class="ping-btn"  style="background: grey">
+                                <span>此拼团已失效</span>
+
+                            </div>
+                         </case>
+                        <case value="1">
+                            <div class="ping-btn" >
+                            <span>
+                                此拼团已完成
+                                </span>
+                            </div>
+                        </case>
+
+                        <default />
+                        <div class="ping-btn" onclick="javascript:window.location.href='{:U('Cart/confirmOrder', ['goods_id' => $goods[goods_id], 'is_group' => 1, 'group_order_sn' => $group_order['group_order_sn']])}'">
+                                    <span>
+							参团购买
+						</span>
+                                <span>¥{$group_buy_info['price']}</span>
+					   </div>
+                </switch>
+
+                <else />
+                <div class="ping-btn" onclick="javascript:window.location.href='{:U('Cart/confirmOrder', ['goods_id' => $goods[goods_id], 'is_group' => 1])}'">
+                    <span>
+                        拼团购买
+                    </span>
+                    <span>¥{$group_buy_info['price']}</span>
+                </div>
+            </if>
 			</dd>
 		</if>
 	</dl>

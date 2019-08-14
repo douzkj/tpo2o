@@ -1,4 +1,6 @@
 <include file="Public/header"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+<script type="text/javascript" src="__STATIC__/js/layer.js" ></script>
 <body>
 <header>
 <div class="tab_nav">
@@ -120,7 +122,7 @@
                <div class="pic" style="text-align: left">
                    <span>拼团倒计时：</span>
                    <span class="sg_g_time last_g_time" id="jstimerBox{$list[order_id]}" style="color: red;"></span>
-                   <span>到期自动拼团失败</span>
+                   <span>到期自动拼团失败，金额原路退回</span>
                    <script>
                        Tday['{$list[order_id]}'] = new Date('{$list[group_order][close_at]|date="Y/m/d H:i:s",###}');
                        window.setInterval(function()
@@ -135,7 +137,7 @@
                 <if condition="$list.comment_btn eq 1"><a href="{:U('/Mobile/User/order_detail',array('id'=>$list['order_id']))}">评价</a></if>
                 <!--<if condition="$list.shipping_btn eq 1"><a href="http://www.kuaidi100.com/" target="_blank">查看物流</a></if>-->
                 <!--<if condition="$list.return_btn eq 1"><a href="mqqwpa://im/chat?chat_type=wpa&uin={$storeList[$list['store_id']]['store_qq']}&version=1&src_type=web&web_src=oicqzone.com" target="_blank">联系客服</a></if>-->
-                <if condition="$list.return_btn eq 1"><a href="{:U('/Mobile/User/order_share',array('id'=>$list['order_id']))}" target="_blank">邀请好友拼团</a></if>
+              <if condition="$list.group_btn eq 1"><a data-clipboard-text="{:U('/Mobile/Activity/group',['id' => $list['group_order']['goods_id'], 'group_order_sn' => $list[group_order][group_order_sn]], true, true)}" href="javascript:void(0)" onclick="copyUrl()" target="_blank" class="on_comment invite-buy">邀请好友拼团</a></if>
           </div>
        </div>
        </volist>
@@ -180,6 +182,18 @@ function cancel_order(id){
 	if(!confirm("确定取消订单?"))
 		return false;
 	location.href = "/index.php?m=Mobile&c=User&a=cancel_order&id="+id;
+}
+
+
+function copyUrl()
+{
+    var clipboard = new ClipboardJS('a.invite-buy');
+    clipboard.on('success', function (e) {
+        layer.open({
+            content: '复制成功'
+        });
+    });
+
 }
 
 </script>

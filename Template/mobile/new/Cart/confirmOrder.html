@@ -92,6 +92,7 @@
     </div>
     <input type="hidden" name="goods_id" id="goods_id" value="{$goods.goods_id}">
     <input type="hidden" name="is_group"  id="is_group" value="{$is_group}">
+    <input type="hidden" name="group_order_sn"  id="group_order_sn" value="{$group_order_sn}">
     <div class="pay-price" id="pay">立即付款</div>
 </div>
 
@@ -112,7 +113,8 @@
                 goods_num:$('#goods_num').val(),
                 consignee: $('#consignee').val(),
                 mobile: $('#mobile').val(),
-                is_group: $('#is_group').val()
+                is_group: $('#is_group').val(),
+                group_order_sn: '{$group_order_sn}'
             } ,
             dataType:'json',
             success: function(data){

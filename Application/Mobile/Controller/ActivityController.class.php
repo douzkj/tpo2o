@@ -71,6 +71,18 @@ class ActivityController extends MobileBaseController {
             $store = M('store')->where(array('store_id'=>$goods['store_id']))->find();
             $this->assign('store',$store);
         }
+        $group_order_sn = I('group_order_sn');
+        if ($group_order_sn) {
+            $group_order = M('group_order')->where(['group_order_sn' => $group_order_sn])->find();
+            if ($group_order) {
+                $group_order['user'] = M('users')->where("user_id = {$group_order['user_id']}")->find();
+            }
+            if ($group_order['close_at'] < time()) {
+                //拼团已失效
+                $group_order['group_status'] = 2;
+            }
+            $this->assign('group_order', $group_order);
+        }
         //获取附近在售
         $nearbyGoods = $goodsLogic->getGoodsNearby(3);
         $this->assign('nearbyGoods', $nearbyGoods);
