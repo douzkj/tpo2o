@@ -57,7 +57,7 @@
 			<div class="title_box">{$vo.goods_name}</div>
 			<div class="price-wrapper">
 				<span class="sale-price">￥{$vo.shop_price}元</span>
-				<span class="sale-num">已售999</span>
+				<span class="sale-num">已售{$vo[virtual_num] + $vo[sales_sum]}</span>
 			</div>
 		</a>
 		<!--<div class="ui-number b"> -->
@@ -223,6 +223,7 @@ var  page = 1;
 		if($.trim($('#q').val()) != '') {
 			//$('#sourch_form').submit();
 			$("#mix_search_div").hide();
+			$("._next").hide();
 			$("._pre").show();
 		} else {
 			alert('输入搜索词');
@@ -230,6 +231,13 @@ var  page = 1;
 	}
 
 $(document).ready(function(){
+
+	if($.trim($('#q').val()) != '') {
+		//$('#sourch_form').submit();
+		$("#mix_search_div").hide();
+		$("._next").hide();
+		$("._pre").show();
+	}
         //筛选浮层显示控制
         var filtrate = $(".filtrate"), submit = $(".submit,.back,.reset");
         filtrate.bind("click", function () {

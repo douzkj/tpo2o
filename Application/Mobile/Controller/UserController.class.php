@@ -1316,5 +1316,6 @@ class UserController extends MobileBaseController
         } else {
             $this->error('此二维码无效或已被核销', U('Mobile/User/login'));
         }
+        $this->display();
     }
 }
