@@ -8,7 +8,7 @@
     <meta http-equiv="keywords" content="{$tpshop_config['shop_info_store_keyword']}" />
     <meta name="description" content="{$tpshop_config['shop_info_store_desc']}" />
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+    <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 </head>
 <body>
 
@@ -23,20 +23,45 @@
         nonceStr: '{$signPackage["nonceStr"]}',
         signature: '{$signPackage["signature"]}',
         jsApiList: [
+            'checkJsApi',
+            'onMenuShareTimeline',
+            'onMenuShareAppMessage',
+            'onMenuShareQQ',
+            'onMenuShareWeibo',
+            'chooseImage',
+            'previewImage',
+            'uploadImage',
+            'downloadImage',
+            'getNetworkType',
             'openLocation',
             'getLocation',
+            'closeWindow',
+            'scanQRCode',
+            'chooseWXPay',
+            'openAddress'
         ] // 功能列表，我们要使用JS-SDK的什么功能
     });
 
     function openLocation()
     {
-        wx.openLocation({
-            latitude: {$shop.latitude},
-            longitude : {$shop.longitude},
-            name: '{$shop.title}',
-            address: '{:getShopPosition($shop)}',
-            scale: 28,
-        })
+        wx.getLocation({
+            type : 'gcj02', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+            success : function(res) {
+                console.log(res);
+                //使用微信内置地图查看位置接口
+                wx.openLocation({
+                    latitude : res.latitude, // 纬度，浮点数，范围为90 ~ -90
+                    longitude : res.longitude, // 经度，浮点数，范围为180 ~ -180。
+                    name : '我的位置', // 位置名
+                    address : '329创业者社区', // 地址详情说明
+                    scale : 28, // 地图缩放级别,整形值,范围从1~28。默认为最大
+                    infoUrl : 'http://www.gongjuji.net' // 在查看位置界面底部显示的超链接,可点击跳转（测试好像不可用）
+                });
+            },
+            cancel : function(res) {
+
+            }
+        });
     }
 
 </script>
