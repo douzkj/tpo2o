@@ -1,0 +1,134 @@
+<include file="Public/header"/>
+<style>
+   html,body {
+     background-color: #f6f6f6;
+     line-height: 1;
+   }
+  .examine-wrapper {
+    padding: 10px;
+    font-size: 0px;
+  }
+  .examine-wrapper .examine-all {
+      width: 70px;
+      height: 30px;
+      background-color: red;
+      border-radius: 10px;
+      font-size: 14px;
+      color: white;
+      text-align: center;
+      padding: 0 3px;
+      line-height: 30px;
+      box-shadow: 1px 1px 1px 0px coral;
+  }
+  .examine-wrapper .examine-list {
+      margin-top: 10px;
+  }
+  .examine-wrapper .examine-list .examine-item {
+      height: 60px;
+      width: 100%;
+      border-radius: 8px;
+      background-color: white;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0px 20px;
+      box-sizing: border-box;
+      margin-top: 10px;
+  }
+  .examine-wrapper .examine-list .examine-item .sequence-code {
+      font-size: 17px;
+      color: black;
+  }
+  .examine-wrapper .examine-list .examine-item .examine-btn {
+      width: 50px;
+      height: 30px;
+      background-color: red;
+      border-radius: 8px;
+      font-size: 14px;
+      color: white;
+      text-align: center;
+      padding: 0 3px;
+      line-height: 30px;
+      box-shadow: 1px 1px 1px 0px coral;
+  }
+  /*核销添加样式*/
+  .examine-wrapper .examine-list .examine-item .examined-code {
+    color: grey;
+    text-decoration: line-through;
+  }
+  .examine-wrapper .examine-list .examine-item .btn-disabled {
+    background-color: grey;
+    box-shadow: 1px 1px 1px 0px #f6f6f6;
+  }
+</style>
+<body>
+<header>
+    <div class="tab_nav">
+        <div class="header">
+            <div class="h-left"><a class="sb-back" href="javascript:history.back(-1)" title="返回"></a></div>
+            <div class="h-mid">核销</div>
+            <div class="h-right"></div>
+        </div>
+    </div>
+</header>
+<div class="examine-wrapper">
+    <div class="examine-all">全部核销</div>
+    <div class="examine-list">
+        <div class="examine-item">
+            <span class="sequence-code">ADUY2F4T57E11DVY</span>
+            <div class="examine-btn" onclick="btnClick()">核销1</div>
+        </div>
+        <div class="examine-item">
+            <span class="sequence-code">ADUY2F4T57E11DVY</span>
+            <div class="examine-btn" onclick="btnClick()">核销2</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script>
+    var all = false; //是否已经全部核销
+    var singleBtnClick = false; //单个核销点击
+    var btns = document.querySelectorAll('.examine-btn');
+    var codes = document.querySelectorAll('.sequence-code');
+    //全部核销事件
+    document.querySelector('.examine-all').addEventListener('click',function () {
+        if(all){
+            return
+        }
+        all = true;
+        //请求接口
+        setTimeout(function () {
+            codes.forEach(function (c) {
+                c.classList.add('examined-code');
+            });
+            btns.forEach(function (b) {
+                b.classList.add('btn-disabled');
+            });
+            all = false;
+        },5000)
+    },false);
+    //单个核销点击事件
+    function btnClick(e) {
+        if(all || singleBtnClick) {
+           return
+        }
+        singleBtnClick = true;
+        var event = e || window.event;
+        var parentNode = event.target.parentNode;
+        var btn = parentNode.querySelector('.examine-btn');
+        var code = parentNode.querySelector('.sequence-code');
+        if(btn.classList.contains('btn-disabled') || code.classList.contains('examined-code')){
+            return
+        }
+        //取值调接口
+        setTimeout(function () {
+          singleBtnClick = false;
+          btn.classList.add('btn-disabled');
+          code.classList.add('examined-code');
+          console.log(code.textContent)
+        },2000)
+    }
+</script>
