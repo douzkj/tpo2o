@@ -143,10 +143,19 @@ class UserController extends MobileBaseController
         if (IS_POST) {
             $data = I('post.');
             $data['user_id'] = $this->user_id;
+            $data['contacts_name'] = $data['store_person_name'];
+            $data['contacts_mobile'] = $data['store_person_mobile'];
+            $data['company_name'] = $data['store_name'];
+            $data['company_address'] = $data['store_address'];
+            $sc = M('store_class')->where(['sc_id' => $data['sc_id']])->find();
+            $data['sc_name'] = $sc['sc_name'];
+            $data['sc_bail'] = $sc['sc_bail'];
+            $data['first_leader'] = cookie('first_leader') ? : 0;
             $apply = M('store_apply')->where(['user_id' => $this->user_id])->find();
             if ($apply) {
                 $res = M('store_apply')->where(['id' => $apply['id'] ])->save($data);
             } else {
+                $data['add_time'] = time();
                 $res = M('store_apply')->data($data)->add();
             }
             if ($res) {

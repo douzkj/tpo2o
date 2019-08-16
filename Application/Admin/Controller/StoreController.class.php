@@ -440,6 +440,9 @@ class StoreController extends BaseController{
 			}
 			$this->assign('bind_class_list',$bind_class_list);
 		}
+		$apply['first_leader'] = M('users')->where(['user_id' => $apply['first_leader']])->find();
+		$apply['first_leader'] = $apply['first_leader'] ? $apply['first_leader']['mobile']."-".$apply['first_leader']['nickname'] : '无';
+		$apply['store_certs'] = explode(',', $apply['store_certs']) ? : [];
 		$this->assign('apply',$apply);
 		$apply_log = M('admin_log')->where(array('log_type'=>1))->select();
 		$this->assign('apply_log',$apply_log);

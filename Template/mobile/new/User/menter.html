@@ -163,7 +163,7 @@
                 <label class="weui-label">电话</label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-input" type="tel" name="store_person_mobile" required>
+                <input class="weui-input" type="number" pattern="[0-9{11}]" name="store_person_mobile" required>
             </div>
         </div>
         <div class="weui-cell">
@@ -212,7 +212,7 @@
 </head>
 <body>
 
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=YtPYQ0XMmcmGnPaLFImTl3719X8oz3p8"></script>
+<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=YtPYQ0XMmcmGnPaLFImTl3719X8oz3p8"></script>
 <script>
 
     var loading = $("#loadingToast");
@@ -429,6 +429,12 @@
     })
 
     function checkSubmit() {
+        var longitude = $("input[name=longitude]").val();
+        var latitude = $("input[name=latitude]").val();
+        if (! longitude || ! latitude) {
+            layer.open({content: "未检索到地址信息，请选择地图上的点"});
+            return;
+        }
         loading.fadeIn(1000);
         $("input[name=store_logo]").val(uploadFiles[0]);
         $("input[name=store_certs]").val(uploadFilesUser);
