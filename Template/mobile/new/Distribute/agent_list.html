@@ -19,14 +19,17 @@
     </div>
 </div>
 <div class="agent-list">
-    <div class="agent-item">
-        <div class="agent-item-left">
-            <span class="user-rank">1</span>
-            <span class="user-img"></span>
-            <span class="user-name">xxxxxxxxx</span>
+    <foreach name="lists" item="list" key="k">
+        <div class="agent-item">
+            <div class="agent-item-left">
+                <span class="user-rank">{$k + 1}</span>
+                <img class="user-img" src="{$list['head_pic']}">
+                <span class="user-name">{$list['nickname']}</span>
+            </div>
+            <span class="user-num">{$list['invite_num']}人</span>
         </div>
-        <span class="user-num">1000人</span>
-    </div>
+    </foreach>
+
 </div>
 </body>
 </html>

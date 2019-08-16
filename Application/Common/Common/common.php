@@ -601,7 +601,7 @@ function tpCache($config_key,$data = array()){
  * @param   float   distribut_money 分佣金额
  * @return  bool
  */
-function accountLog($user_id, $user_money = 0,$pay_points = 0, $desc = '',$distribut_money = 0,$order_id = 0){
+function accountLog($user_id, $user_money = 0,$pay_points = 0, $desc = '',$distribut_money = 0,$order_id = 0, $type = 0){
     /* 插入帐户变动记录 */
     $account_log = array(
         'user_id'       => $user_id,
@@ -609,11 +609,23 @@ function accountLog($user_id, $user_money = 0,$pay_points = 0, $desc = '',$distr
         'pay_points'    => $pay_points,
         'change_time'   => time(),
         'desc'   => $desc,
-        'order_id'   => $order_id
+        'order_id'   => $order_id,
+        'type' => $type
     );
-    /* 更新用户信息 */
-    $sql = "UPDATE __PREFIX__users SET user_money = user_money + $user_money," .
-        " pay_points = pay_points + $pay_points, distribut_money = distribut_money + $distribut_money WHERE user_id = $user_id";
+    //直推奖励：包含拉新奖励和产品推广奖励
+    if ($type == 1 || $type == 2) {
+        /* 更新用户信息 */
+        $sql = "UPDATE __PREFIX__users SET user_money = user_money + $user_money," .
+            " invite_commission = invite_commission + $user_money, distribut_money = distribut_money + $distribut_money WHERE user_id = $user_id";
+    } else if ($type == 3) {
+        //团队分佣
+        /* 更新用户信息 */
+        $sql = "UPDATE __PREFIX__users SET user_money = user_money + $user_money," .
+            " group_commission = group_commission + $user_money, distribut_money = distribut_money + $distribut_money WHERE user_id = $user_id";
+    } else {
+        $sql = "UPDATE __PREFIX__users SET user_money = user_money + $user_money," .
+            " pay_points = pay_points + $pay_points, distribut_money = distribut_money + $distribut_money WHERE user_id = $user_id";
+    }
     if( D('users')->execute($sql)){
     	M('account_log')->add($account_log);
         return true;
@@ -1448,5 +1460,4 @@ function getRecycleRegion($regions, $pid = 0, $max_level = 3)
     }
     return $lists;
 }
-
 

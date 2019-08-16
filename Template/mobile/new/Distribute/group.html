@@ -19,66 +19,20 @@
     </div>
 </div>
     <div class="group-list">
-        <div class="group-item">
-        <div class="group-left">
-            <span class="group-item-name">名称：名称名称名称名称</span>
-            <span class="group-item-phone">电话：18282828282</span>
-        </div>
-        <div class="group-right">
-            <span class="group-item-date">日期：2019/09/12</span>
-            <span class="group-item-money">收入：¥1000000.00</span>
-        </div>
-    </div>
-        <div class="group-item">
-            <div class="group-left">
-                <span class="group-item-name">名称：名称名称名称名称</span>
-                <span class="group-item-phone">电话：18282828282</span>
+        <foreach name="groups" item="group">
+            <div class="group-item">
+                <div class="group-left">
+                    <span class="group-item-name">昵称：{$group[nickname]}</span>
+                    <span class="group-item-phone">电话：{$group['mobile']}</span>
+                </div>
+                <div class="group-right">
+                    <span class="group-item-date">注册时间：{$group.reg_time.|date='Y-m-d',###}</span>
+                    <span class="group-item-money">累计佣金:¥ {$group['distribut_money']}</span>
+                </div>
             </div>
-            <div class="group-right">
-                <span class="group-item-date">日期：2019/09/12</span>
-                <span class="group-item-money">收入：¥1000000.00</span>
-            </div>
-        </div>
-        <div class="group-item">
-            <div class="group-left">
-                <span class="group-item-name">名称：名称名称名称名称</span>
-                <span class="group-item-phone">电话：18282828282</span>
-            </div>
-            <div class="group-right">
-                <span class="group-item-date">日期：2019/09/12</span>
-                <span class="group-item-money">收入：¥1000000.00</span>
-            </div>
-        </div>
-        <div class="group-item">
-            <div class="group-left">
-                <span class="group-item-name">名称：名称名称名称名称</span>
-                <span class="group-item-phone">电话：18282828282</span>
-            </div>
-            <div class="group-right">
-                <span class="group-item-date">日期：2019/09/12</span>
-                <span class="group-item-money">收入：¥1000000.00</span>
-            </div>
-        </div>
-        <div class="group-item">
-            <div class="group-left">
-                <span class="group-item-name">名称：名称名称名称名称</span>
-                <span class="group-item-phone">电话：18282828282</span>
-            </div>
-            <div class="group-right">
-                <span class="group-item-date">日期：2019/09/12</span>
-                <span class="group-item-money">收入：¥1000000.00</span>
-            </div>
-        </div>
-        <div class="group-item">
-            <div class="group-left">
-                <span class="group-item-name">名称：名称名称名称名称</span>
-                <span class="group-item-phone">电话：18282828282</span>
-            </div>
-            <div class="group-right">
-                <span class="group-item-date">日期：2019/09/12</span>
-                <span class="group-item-money">收入：¥1000000.00</span>
-            </div>
-        </div>
+            <empty/>
+            无数据
+        </foreach>
     </div>
 </body>
 </html>

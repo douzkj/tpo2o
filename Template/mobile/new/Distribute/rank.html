@@ -19,47 +19,17 @@
     </div>
 </div>
 <div class="rank-list">
-    <div class="rank-item">
-        <div class="rank-item-left">
-            <span class="user-rank">1</span>
-            <span class="user-img"></span>
-            <span class="user-name">xxxxxxxxx</span>
+    <foreach name="ranks" item="rank" key="k">
+        <div class="rank-item">
+            <div class="rank-item-left">
+                <span class="user-rank">{$k + 1}</span>
+                <img class="user-img" src="{$rank[head_pic]}"/>
+                <span class="user-name">{$rank[nickname]}</span>
+            </div>
+            <span class="user-money">¥{$rank['today_money']}</span>
         </div>
-        <span class="user-money">¥100000.00</span>
-    </div>
+    </foreach>
 
-    <div class="rank-item">
-        <div class="rank-item-left">
-            <span class="user-rank">2</span>
-            <span class="user-img"></span>
-            <span class="user-name">xxxxxxxxx</span>
-        </div>
-        <span class="user-money">¥100000.00</span>
-    </div>
-    <div class="rank-item">
-        <div class="rank-item-left">
-            <span class="user-rank">3</span>
-            <span class="user-img"></span>
-            <span class="user-name">xxxxxxxxx</span>
-        </div>
-        <span class="user-money">¥100000.00</span>
-    </div>
-    <div class="rank-item">
-        <div class="rank-item-left">
-            <span class="user-rank">4</span>
-            <span class="user-img"></span>
-            <span class="user-name">xxxxxxxxx</span>
-        </div>
-        <span class="user-money">¥100000.00</span>
-    </div>
-    <div class="rank-item">
-        <div class="rank-item-left">
-            <span class="user-rank">222</span>
-            <span class="user-img"></span>
-            <span class="user-name">xxxxxxxxx</span>
-        </div>
-        <span class="user-money">¥100000.00</span>
-    </div>
 </div>
 </body>
 </html>

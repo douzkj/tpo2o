@@ -96,7 +96,7 @@ class UserController extends MobileBaseController
         $userLogic = new UsersLogic();
         $user_info = $userLogic->get_info($this->user_id); // 获取用户信息
         if ($user_info['is_distribut']) {
-            $this->success('已经成为分销代理', U('Mobile/User/index'));
+            $this->success('已经成为代理', U('Mobile/User/index'));
             exit;
         }
         if (IS_POST) {
@@ -104,19 +104,31 @@ class UserController extends MobileBaseController
             $mobile = $post['mobile'];
             $code = $post['mobile_code'];
             if (!empty($mobile)) {
-                if (!$code)
-                    $this->error('请输入验证码');
+                if (!$code) {
+                    $this->error('请输入验证码');exit;
+                }
                 $check_code = $userLogic->check_validate_code($code, $mobile);
                 if ($check_code['status'] != 1)
                     exit(json_encode($check_code));
                 $c = M('users')->where("mobile = '{$post['mobile']}' and user_id != {$this->user_id}")->count();
-                $c && $this->error("手机已被绑定");
+                if ($c) {
+                    $this->error("手机已被绑定"); exit;
+                }
                 if (!$userLogic->update_info($this->user_id, [
                     'mobile' => $post['mobile'],
                     'is_distribut' => 1,
                     'mobile_validated' => 1
-                ]))
-                    $this->error("保存失败");
+                ])) {
+                    $this->error("保存失败"); exit;
+                }
+                //对应的人进行奖励
+                $first_leader = M('users')->where(['user_id' => $this->user_id])->getField('first_leader');
+                if ($first_leader) {
+                    //若存在拉新上级，上级奖励0.5
+                    accountLog($first_leader, 0.5, 0, "新用户【". $post['mobile']."】升级代理直推奖励", 0.5, 0, 1);
+                    //新代理奖励1元
+                    accountLog($this->user_id, 1, 0, "升级代理平台奖励");
+                }
                 $this->success("操作成功");
             } else {
                 $this->error('请输入手机号');

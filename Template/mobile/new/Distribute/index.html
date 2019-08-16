@@ -26,7 +26,7 @@
     <div style="width: 100%;height: 5px;"></div>
     <div class="dis-price-detail">
         <div class="tit_withdrawals">
-            <a href="">
+            <a href="{:U('User/withdrawals')}">
                 <i class="icon icon-money"></i>
                 <span class="mi_cutout">可提现金额(元)</span>
                 <i class="iconfont icon-gengduo"></i>
@@ -34,30 +34,26 @@
         </div>
         <div class="cashleri">
             <div class="sum_money_le">
-                <span>0.00</span>
+                <span>{$user.user_money}</span>
             </div>
             <div class="detail_money_ri">
                 <p>
                     <span class="tit">今日收入(元)</span>
-                    <span class="cont">0</span>
-                </p>
-                <p>
-                    <span class="tit">总销售额(元)</span>
-                    <span class="cont">¥0</span>
+                    <span class="cont">{$today_commission}</span>
                 </p>
             </div>
         </div>
         <p class="all_comm">
             <span class="tit">累计获得佣金(元)</span>
-            <span class="cont">¥ 0</span>
+            <span class="cont">¥ {$user[invite_commission] + $user[group_commission]}</span>
         </p>
         <p class="all_comm-zt">
-            <span class="tit">只推佣金(元)</span>
-            <span class="cont">¥ 0</span>
+            <span class="tit">直推佣金(元)</span>
+            <span class="cont">¥ {$user.invite_commission}</span>
         </p>
         <p class="all_comm-zt">
             <span class="tit">团队佣金(元)</span>
-            <span class="cont">¥ 0</span>
+            <span class="cont">¥ {$user.group_commission}</span>
         </p>
     </div>
     <div class="mynav_link_list">
@@ -70,7 +66,7 @@
         <div class="mynav_link_item">
             <a href="{:U('Distribute/rank')}">
                 <div class="mynav_link_item-img"><i class="iconfont icon-liebiaopailie _font"></i></div>
-                <span class="mynav_link_item-tip">分销排名</span>
+                <span class="mynav_link_item-tip">佣金排名</span>
             </a>
         </div>
         <div class="mynav_link_item">
@@ -83,6 +79,12 @@
             <a href="{:U('Distribute/invite')}">
                 <div class="mynav_link_item-img"><i class="iconfont icon-icon_addperson _font"></i></div>
                 <span class="mynav_link_item-tip">邀请新用户</span>
+            </a>
+        </div>
+        <div class="mynav_link_item">
+            <a href="{:U('Distribute/store_invite')}">
+                <div class="mynav_link_item-img"><i class="iconfont icon-icon_addperson _font"></i></div>
+                <span class="mynav_link_item-tip">邀请商家入驻</span>
             </a>
         </div>
     </div>

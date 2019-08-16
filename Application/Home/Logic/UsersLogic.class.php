@@ -133,9 +133,10 @@ class UsersLogic extends RelationModel
             // 如果找到他老爸还要找他爷爷他祖父等
             if($map['first_leader'])
             {
-                $first_leader = M('users')->where("user_id = {$map['first_leader']}")->find();
-                $map['second_leader'] = $first_leader['first_leader']; //  第一级推荐人
-                $map['third_leader'] = $first_leader['second_leader']; // 第二级推荐人
+                $first_leader = M('users')->where("user_id = {$map['first_leader']}")->setInc('user_money', 0.5);
+                //若有上级id，则对双方进行奖励操作
+//                $map['second_leader'] = $first_leader['first_leader']; //  第一级推荐人
+//                $map['third_leader'] = $first_leader['second_leader']; // 第二级推荐人
             }else
 			{
 				$map['first_leader'] = 0;
