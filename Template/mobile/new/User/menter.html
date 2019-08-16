@@ -421,10 +421,12 @@
         //删除图片
         $(".weui-gallery__del").click(function() {
             $uploaderFilesShop.find("li").eq(indexShop).remove();
+            uploadFiles.splice(indexShop,1);
 
         });
         $(".weui-gallery__del").click(function() {
             $uploaderFilesUser.find("li").eq(indexUser).remove();
+            uploadFilesUser.splice(indexUser,1);
         });
     })
 
