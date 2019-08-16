@@ -78,9 +78,16 @@
         <foreach name="codes" item="code">
             <div class="examine-item">
                 <span class="sequence-code <if condition='$code[is_checked] eq 1'>examined-code</if>">{$code.code}</span>
-                <div class="examine-btn <if condition='$code[is_checked] eq 1'> btn-disabled</if>" onclick="btnClick('{$code.id})'">核销</div>
+                <div class="examine-btn <if condition='$code[is_checked] eq 1'> btn-disabled</if>" onclick="btnClick('{$code.id}')">核销</div>
             </div>
         </foreach>
+    </div>
+</div>
+<div id="loadingToast" style="display:none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-loading weui-icon_toast"></i>
+        <p class="weui-toast__content">处理中...</p>
     </div>
 </div>
 </body>
@@ -111,12 +118,15 @@
     }
 
     function consumeCode(ids) {
+        var loading = $("#loadingToast");
+        loading.fadeIn(100);
         $.ajax({
             url: "{:U('User/consumeCode')}",
-            method: 'post',
-            data: {token: '{$code.token}', id: ids},
+            type: 'post',
+            data: {token: '{$code.token}', code_id: ids},
             dataType: 'json',
             success: function (data) {
+                loading.fadeOut(100);
                 if (data.code == 1) {
                     layer.open({
                         content: '核销成功'

@@ -88,6 +88,11 @@
 
 			</ul>
 		</div>
+		<style>
+			.code-consumed {
+				text-decoration: line-through;
+			}
+		</style>
         <!--二维码-->
 		<if condition="($order_info[order_status_code] eq 'WAITUSE' or $order_info[order_status_code] eq 'FINISH')">
 			<div class="QRcode-wrapper-list">
@@ -96,7 +101,7 @@
 						<div class="QRcode <if condition='$code[is_checked] eq 1'>QRcode-consume</if>">
 							<img src="{$code|order_qrcode}" class="order-qrcode" data-code="{$code.code}"  alt="">
 						</div>
-						<span class="QRcode-number"><i class="tip">兑换码：</i><i class="code">{$code.code}</i></span>
+						<span class="QRcode-number"><i class="tip">兑换码：</i><i class="code <if condition='$code[is_checked] eq 1'>code-consumed</if>">{$code.code}</i></span>
 					</div>
 				</foreach>
 			</div>

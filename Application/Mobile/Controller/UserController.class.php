@@ -1312,10 +1312,10 @@ class UserController extends MobileBaseController
         $code_id = I('get.code_id');
         if (IS_POST) {
             $token = I('token');
-            $id = I('id');
+            $id = I('code_id');
             $where = '';
             if ($id) {
-                $where = " and id = ".$id;
+                $where = " and id = ". intval($id);
             }
             $seller = M('seller')->where(['user_id' => $this->user_id])->find();
             if (!$seller) {
@@ -1324,16 +1324,23 @@ class UserController extends MobileBaseController
                     'msg' => '无此核销员记录'
                 ]);
             }
-            $codes = M('order_codes')->where("token = '{$token} {$where}")->save([
+            $codes = M('order_codes')->where("token = '{$token}' {$where}")->save([
                 'user_id' => $this->user_id,
                 'shop_id' => $seller['shop_id']?:0,
                 'checked_at' => time(),
                 'is_checked' => 1
             ]);
+            $order_id = M('order_codes')->where(['token' => $token])->limit(1)->getField('order_id');
+            if (M('order_codes')->where(['token' => $token, 'order_id' => $order_id, 'is_checked' => 0])->count() == 0) {
+                M('order')->where(['order_id' => $order_id])->save([
+                    'is_used' => true,
+                    'order_status' => 4
+                ]);
+            }
             if ($codes) {
                 $this->ajaxReturn(['code' => 1, 'msg' => '核销成功']);
             } else {
-                $this->ajaxReturn(['code' => -1, 'msg' => '核销失败']);
+                $this->ajaxReturn(['code' => -1, 'msg' => '无可销码']);
             }
         }
 
