@@ -1,7 +1,5 @@
 <include file="Public/header"/>
-<link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.0.1/weui.min.css">
 <link rel="stylesheet" href="__STATIC__/iconfont/iconfont.css">
-<script type="text/javascript" src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
 <style>
     .weui-cells {
         font-size: 14px;
@@ -85,9 +83,12 @@
                 <label class="weui-label">营业时间</label>
             </div>
             <div class="weui-cell__bd">
-                <input type="text" name="start_time" class="chose-time" style="width: 200px" placeholder="选择开店时间">
-
-                <input type="text" name="end_time"  class="chose-time" style="width: 200px"  placeholder="选择关店时间">
+                <div class="weui-btn weui-btn_default chose-time" data-name="start_time">选择开店时间</div>
+                <div class="weui-btn weui-btn_default chose-time" data-name="end_time">选择关店时间</div>
+                <input type="hidden" name="start_time"  placeholder="选择开店时间">
+                <input type="hidden" name="end_time"     placeholder="选择关店时间">
+            </div>
+            <div class="weui-cell__bd">
             </div>
             <!--<div class="weui-cell__bd">-->
                 <!--<input class="weui-input" type="text">-->
@@ -255,7 +256,9 @@
                 console.log(result);
             },
             onConfirm: function (result) {
-                _this.val(result[0].value  + ":" + result[1].value);
+                var value = result[0].value  + ":" + result[1].value;
+                $("input[name='" +_this.data('name')+ "']").val(value);
+                _this.text(value);
             },
             title: '选择时间'
         });

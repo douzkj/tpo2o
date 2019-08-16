@@ -114,7 +114,7 @@ class AdminController extends BaseController {
     			if(M('seller')->where("user_id=".$userinfo['user_id'])->count()){
     				$this->error("该用户已经添加过店铺管理员",U('Admin/admin_info'));
     			}
-//    			$data['password'] = encrypt($data['password']);
+    			$data['password'] = encrypt($data['password']);
     			$data['user_id'] = $userinfo['user_id'];
     			$data['store_id'] = STORE_ID;
     			$data['add_time'] = time();

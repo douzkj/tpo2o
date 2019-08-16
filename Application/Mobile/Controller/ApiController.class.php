@@ -97,7 +97,8 @@ class ApiController extends MobileBaseController {
         $share_image = "./" . $path . $filename;
         $image->open($original_img)->water("./".$user_qrcode, Image::IMAGE_WATER_SOUTHWEST, 80)->save($share_image);
         $this->successResponse([
-            'path' => $share_image
+            'path' => $share_image,
+            'fullUrl' => U($share_image, true, true)
         ]);
 
     }

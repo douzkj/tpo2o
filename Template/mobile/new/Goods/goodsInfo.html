@@ -19,6 +19,8 @@
 <script src="__PUBLIC__/js/global.js"></script>
 <script src="__PUBLIC__/js/mobile_common.js"></script>
 <script src="__STATIC__/js/common.js"></script>
+<link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.0.1/weui.min.css">
+<script type="text/javascript" src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
 </head>
 <body>
 <script type="text/javascript">
@@ -188,113 +190,56 @@ var t2=new TouchSlider({id:'sliderlist', speed:600, timeout:6000, before:functio
               </div>
           </div>
 
-          <script >
-              var Tday = new Array();
-              var daysms = 24 * 60 * 60 * 1000
-              var hoursms = 60 * 60 * 1000
-              var Secondms = 60 * 1000
-              var microsecond = 1000
-              var DifferHour = -1
-              var DifferMinute = -1
-              var DifferSecond = -1
+          <if condition="$flash_sale">
+              <script >
+                  var Tday = new Array();
+                  var daysms = 24 * 60 * 60 * 1000
+                  var hoursms = 60 * 60 * 1000
+                  var Secondms = 60 * 1000
+                  var microsecond = 1000
+                  var DifferHour = -1
+                  var DifferMinute = -1
+                  var DifferSecond = -1
 
-              function clock11(key)
-              {
-                  var time = new Date()
-                  var hour = time.getHours()
-                  var minute = time.getMinutes()
-                  var second = time.getSeconds()
-                  var timevalue = ""+((hour > 12) ? hour-12:hour)
-                  timevalue +=((minute < 10) ? ":0":":")+minute
-                  timevalue +=((second < 10) ? ":0":":")+second
-                  timevalue +=((hour >12 ) ? " PM":" AM")
-                  var convertHour = DifferHour
-                  var convertMinute = DifferMinute
-                  var convertSecond = DifferSecond
-                  var Diffms = Tday[key].getTime() - time.getTime()
-                  DifferHour = Math.floor(Diffms / daysms)
-                  Diffms -= DifferHour * daysms
-                  DifferMinute = Math.floor(Diffms / hoursms)
-                  Diffms -= DifferMinute * hoursms
-                  DifferSecond = Math.floor(Diffms / Secondms)
-                  Diffms -= DifferSecond * Secondms
-                  var dSecs = Math.floor(Diffms / microsecond)
+                  function clock11(key)
+                  {
+                      var time = new Date()
+                      var hour = time.getHours()
+                      var minute = time.getMinutes()
+                      var second = time.getSeconds()
+                      var timevalue = ""+((hour > 12) ? hour-12:hour)
+                      timevalue +=((minute < 10) ? ":0":":")+minute
+                      timevalue +=((second < 10) ? ":0":":")+second
+                      timevalue +=((hour >12 ) ? " PM":" AM")
+                      var convertHour = DifferHour
+                      var convertMinute = DifferMinute
+                      var convertSecond = DifferSecond
+                      var Diffms = Tday[key].getTime() - time.getTime()
+                      DifferHour = Math.floor(Diffms / daysms)
+                      Diffms -= DifferHour * daysms
+                      DifferMinute = Math.floor(Diffms / hoursms)
+                      Diffms -= DifferMinute * hoursms
+                      DifferSecond = Math.floor(Diffms / Secondms)
+                      Diffms -= DifferSecond * Secondms
+                      var dSecs = Math.floor(Diffms / microsecond)
 
-                  if(convertHour != DifferHour) e="<span class=hour>"+DifferHour+"</span>天";
-                  if(convertMinute != DifferMinute) f="<span class=min>"+DifferMinute+"</span>时";
-                  if(convertSecond != DifferSecond) g="<span class=sec>"+DifferSecond+"</span>分";
-                  h="<span class=msec>"+dSecs+"</span>秒";
-                  if (DifferHour>0) {e=e}
-                  else {e=''}
-                  document.getElementById("jstimerBox"+key).innerHTML = e + f + g + h;
-              }
+                      if(convertHour != DifferHour) e="<span class=hour>"+DifferHour+"</span>天";
+                      if(convertMinute != DifferMinute) f="<span class=min>"+DifferMinute+"</span>时";
+                      if(convertSecond != DifferSecond) g="<span class=sec>"+DifferSecond+"</span>分";
+                      h="<span class=msec>"+dSecs+"</span>秒";
+                      if (DifferHour>0) {e=e}
+                      else {e=''}
+                      document.getElementById("jstimerBox"+key).innerHTML = e + f + g + h;
+                  }
 
-          </script>
-          <script>
-              Tday['{$goods[goods_id]}'] = new Date('{$flash_sale.end_time|date="Y/m/d H:i:s",###}');
-              window.setInterval(function()
-              {clock11('{$goods[goods_id]}');}, 1000);
-          </script>
+              </script>
+              <script>
+                  Tday['{$goods[goods_id]}'] = new Date('{$flash_sale.end_time|date="Y/m/d H:i:s",###}');
+                  window.setInterval(function()
+                  {clock11('{$goods[goods_id]}');}, 1000);
+              </script>
+          </if>
 
-
-
-<!--<if condition="$filter_spec neq ''">-->
-<!--<section id="search_ka">-->
-<!--&lt;!&ndash;-属性&#45;&#45;&ndash;&gt;-->
-<!--<div class="ui-sx bian1">-->
-<!--<div class="subNavBox">-->
-	<!--<div class="subNav"><strong>选择商品属性</strong></div>-->
-    <!--<ul class="navContent">-->
-    <!--<foreach item="spec" key="key" name="filter_spec">-->
-    <!--<li>-->
-          <!--<div class="title">{$key}</div>-->
-          <!--<div class="item">-->
-          <!--<foreach name="spec" item="v2" key="k2">-->
-	          <!--<a href="javascript:;" onclick="switch_spec(this);" title="{$v2[item]}" <if condition="$k2 eq 0">class="hover"</if>>-->
-	          	<!--<input type="radio" style="display:none;" name="goods_spec[{$key}]" value="{$v2[item_id]}" <if condition="$k2 eq 0 ">checked="checked"</if>/>-->
-          		<!--{$v2[item]}-->
-          	  <!--</a>-->
-           <!--</foreach>-->
-          <!--</div>-->
-    <!--</li>-->
-    <!--</foreach>-->
-       <!--</ul>-->
-    <!--</div>-->
-    <!--</div>-->
-<!--</section>-->
-<!--</if>-->
-      <!--<section id="search_ka">-->
-        <!--<div class="ui-sx bian1">-->
-          <!--<div class="subNavBox">-->
-            <!--<div class="subNav on"><strong>购买数量</strong></div>-->
-            <!--<ul class="navContent" style="display: block;">-->
-              <!--<li style=" border-bottom:1px solid #eeeeee">-->
-                <!--<div class="item1">-->
-                  <!--<span class="ui-number">-->
-                  <!--<button type="button" class="decrease" onClick="goods_cut();">-</button>-->
-                    <!--<input type="text" class="num" id="number" name="goods_num" value="1" min="1" max="1000"/>-->
-                    <!--<input type="hidden" name="goods_id" value="{$goods.goods_id}"/>-->
-                  <!--<button type="button" class="increase" onClick="goods_add();">+</button>-->
-                  <!--</span> </div>-->
-              <!--</li>-->
-            <!--</ul>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</section>-->
-      <!--<section id="search_ka">-->
-        <!--<div class="ui-sx bian1">-->
-          <!--<div class="subNavBox" >-->
-            <!--<div class="subNav"><strong>会员专享价</strong></a></div>-->
-            <!--<ul class="navContent" >-->
-              <!--<li  class="user_price">-->
-                <!--<p> <span class="key">铜牌会员：</span> <b class="p-price-v">9.8折</b> </p>-->
-                <!--<p> <span class="key">金牌会员：</span> <b class="p-price-v">9.5折</b> </p>-->
-                <!--<p> <span class="key">钻石会员：</span> <b class="p-price-v">9折</b> </p>-->
-              <!--</li>-->
-            <!--</ul>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</section>-->
 <script type="text/javascript">
 $(function(){
 	$(".subNav").click(function(){
@@ -415,31 +360,48 @@ function goTop(){
 </script>
 <a href="javascript:goTop();" class="gotop"><img src="__STATIC__/images/topup.png"></a>
 <div style=" height:60px;"></div>
+<div id="loadingToast" style="display:none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-loading weui-icon_toast"></i>
+        <p class="weui-toast__content">请求中...</p>
+    </div>
+</div>
 <div class="footer_nav">
   <ul>
       <li class="bian"><a href="{:U('Index/index')}"><em class="goods_nav1"></em><span>首页</span></a> </li>
       <li class="bian"><a href="tel:{$tpshop_config['shop_info_phone']}"><em class="goods_nav2"></em><span>客服</span></a> </li>
       <li class="bian">
-          <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt" target="_blank">
+          <a href="javascript:void(0)" onclick="getGoodsShare({$goods['goods_id']})" class="jiathis jiathis_txt" target="_blank">
               <em id="pro_share" class="goods_share"></em>
               <span>分享</span>
           </a>
-          <script>
-              var jiathis_config = {
-                  url: "http://{$_SERVER[HTTP_HOST]}/index.php?m=Home&c=Goods&a=goodsInfo&id={$_GET[id]}",
-                  pic: "http://{$_SERVER[HTTP_HOST]}{$goods[goods_id]|goods_thum_images=400,400}",
-              }
-              var is_distribut = getCookie('is_distribut');
-              var user_id = getCookie('user_id');
-              // 如果已经登录了, 并且是分销商
-              if (parseInt(is_distribut) == 1 && parseInt(user_id) > 0) {
-                  jiathis_config.url = jiathis_config.url + "&first_leader=" + user_id;
-              }
-              //alert(jiathis_config.url);
-          </script>
-          <script type="text/javascript" src="http://v3.jiathis.com/code_mini/jia.js" charset="utf-8"></script>
-          <!--<a href=""><em class="goods_share"></em><span>分享</span></a> -->
       </li>
+      <script>
+          var loading = $("#loadingToast");
+          function getGoodsShare(goods_id) {
+              loading.fadeIn(1000);
+              $.ajax({
+                  url: "{:U('Api/goodsShare')}",
+                  type: 'post',
+                  data: {goods_id: goods_id},
+                  success: function (data) {
+                      loading.fadeOut();
+                      if (data.code == 200) {
+                          window.location.href = data.data.fullUrl;
+                      } else if (data.code == 403) {
+                          layer.open({
+                              content: '您未注册代理，请先绑定手机升级为代理',
+                              time: 1
+                          });
+                          window.location.href = "{:U('Mobile/User/distribute')}";
+                      } else {
+                          layer.open({content: "请求失败!" + data.message})
+                      }
+                  }
+              })
+          }
+      </script>
   </ul>
   <dl>
     <!--<dd class="flow"><a class="button active_button" href="javascript:void(0);" onClick="AjaxAddCart({$goods.goods_id},1,0);">加入购物车</a> </dd>-->
