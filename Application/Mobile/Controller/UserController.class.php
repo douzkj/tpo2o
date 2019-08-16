@@ -1308,15 +1308,50 @@ class UserController extends MobileBaseController
 
     public function consumeCode()
     {
-        $this->display();
-        exit;
         $token = I('get.token');
         $code_id = I('get.code_id');
-        $code = M('order_codes')->where(['token' => $token, 'code_id' => $code_id, 'is_checked' => 0])->find();
-        if ($code) {
+        if (IS_POST) {
+            $token = I('token');
+            $id = I('id');
+            $where = '';
+            if ($id) {
+                $where = " and id = ".$id;
+            }
+            $seller = M('seller')->where(['user_id' => $this->user_id])->find();
+            if (!$seller) {
+                $this->ajaxReturn([
+                    'code' => -1,
+                    'msg' => '无此核销员记录'
+                ]);
+            }
+            $codes = M('order_codes')->where("token = '{$token} {$where}")->save([
+                'user_id' => $this->user_id,
+                'shop_id' => $seller['shop_id']?:0,
+                'checked_at' => time(),
+                'is_checked' => 1
+            ]);
+            if ($codes) {
+                $this->ajaxReturn(['code' => 1, 'msg' => '核销成功']);
+            } else {
+                $this->ajaxReturn(['code' => -1, 'msg' => '核销失败']);
+            }
+        }
+
+        $codes = M('order_codes')->where(['token' => $token])->select();
+        if (!empty($codes)) {
+            $store_id = M('order')->where(['order_id' => $codes[0]['order_id']])->getField('store_id');
+            $seller = M('seller')->where(['store_id' => $store_id, 'user_id' => $this->user_id])->find();
+            if (!$store_id || !$seller) {
+                $this->error('此二维码无效或已被核销', U('Mobile/Index/index')); exit;
+            }
+            if (!$seller) {
+                $this->display('_error'); exit;
+            }
             //找出对应的wx_ser
+            $this->assign('codes', $codes);
+            $this->display();
         } else {
-            $this->error('此二维码无效或已被核销', U('Mobile/User/login'));
+            $this->error('此二维码无效或已被核销', U('Mobile/Index/index'));
         }
     }
 }

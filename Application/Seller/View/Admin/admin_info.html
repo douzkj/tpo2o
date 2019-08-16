@@ -21,16 +21,10 @@
                                 <tbody>
                                 <empty name="info">
                                 <tr>
-                                    <td class="col-sm-2">前台用户名：</td>
+                                    <td class="col-sm-2">前台用户注册手机号：</td>
                                     <td class="col-sm-8">
                                         <input type="text" class="form-control" name="user_name" value="{$info.user_name}" >
-                                        <p class="text-warning">请先在前台注册会员账号，这里为前台会员名称</p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>用户密码：</td>
-                                    <td>
-                               			<input type="password" class="form-control" name="password" value="{$info.password}" >
+                                        <p class="text-warning">请先在前台注册会员账号，并绑定手机号</p>
                                     </td>
                                 </tr>
                                 <tr>
@@ -40,26 +34,36 @@
                                     	<p class="text-warning">此账号为商家管理后台登录账号</p>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>登录密码：</td>
+                                    <td>
+                                        <input type="password" class="form-control" name="password" value="" >
+
+                                    </td>
+                                </tr>
                                 <else/>
-                                <tr>
-                                    <td>原密码：</td>
-                                    <td>
-                               			<input type="password" class="form-control" name="password">
-                               			<p class="text-warning">若忘记原密码请去前台会员中心通过邮箱或手机验证找回密码</p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>新密码：</td>
-                                    <td>
-                               			<input type="password" class="form-control" name="password2">
-                                    </td>
-                                </tr>
+                                <if condition="($seller['is_admin'] eq 1) or ($info['seller_id'] eq $seller['seller_id'])">
+                                    <tr>
+                                        <td>原密码：</td>
+                                        <td>
+                                            <input type="password" class="form-control" name="password">
+                                            <p class="text-warning">不修改，请置空</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>新密码：</td>
+                                        <td>
+                                            <input type="password" class="form-control" name="password2">
+                                            <p class="text-warning">不修改，请置空</p>
+                                        </td>
+                                    </tr>
+                                </if>
                                 </empty>
                                 <tr>
                                     <td>是否激活：</td>
                                     <td>
-                                        <input type="radio" name="enabled" value="0" <if condition="$info[enabled] eq 0">checked</if>> 启用
-                                        <input type="radio" name="enabled" value="1" <if condition="$info[enabled] eq 1">checked</if>> 停用
+                                        <input type="radio" name="enabled" value="1" <if condition="$info[enabled] eq 0">checked</if>> 启用
+                                        <input type="radio" name="enabled" value="0" <if condition="$info[enabled] eq 1">checked</if>> 停用
                                     </td>
                                 </tr>
                                 <tr>

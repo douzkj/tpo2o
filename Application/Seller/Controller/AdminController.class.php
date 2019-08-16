@@ -49,6 +49,7 @@ class AdminController extends BaseController {
     		}
     		$info['user_name'] = empty($user['mobile']) ? $user['email'] : $user['mobile'];
     		$this->assign('info',$info);
+    		$this->assign('seller', session('seller'));
     	}
     	$role = D('seller_group')->where('1=1')->select();
     	$shops = M('store_shops')->where(['store_id' => STORE_ID])->select();
@@ -74,26 +75,27 @@ class AdminController extends BaseController {
 
     	if($data['seller_id']>0){
     		$seller = session('seller');//修改密码
-    		if($data['seller_id'] == $seller['seller_id']){
+    		if(($data['seller_id'] == $seller['seller_id']) || $seller['is_admin']){
+    		    $update = [
+                    'shop_id' => $data['shop_id'],
+                    'group_id' => $data['group_id'],
+                    'enabled' => $data['enabled']
+                ];
     		    if (!empty($data['password'] && !empty($data['password2']))) {
                     if($data['password'] == $data['password2']){
                         $this->error("两次密码一致",U('admin/admin_info',array('seller_id'=>$seller['seller_id'])));
                     }else{
-                        if(M('users')->where(array('user_id'=>$seller['user_id'],'password'=>encrypt($data['password'])))->count()>0){
-                            $r = M('users')->where(array('user_id'=>$seller['user_id']))->save(array('password'=>encrypt($data['password2'])));
+                        if (M('seller')->where(['seller_id' => $seller['seller_id'], 'password' => encrypt($data['password'])])->count() > 0) {
+                            $update['password'] = encrypt($data['password2']);
+//                            $r = M('users')->where(array('user_id'=>$seller['user_id']))->save(array('password'=>encrypt($data['password2'])));
+//                        if(M('users')->where(array('user_id'=>$seller['user_id'],'password'=>encrypt($data['password'])))->count()>0){
+//                            $r = M('users')->where(array('user_id'=>$seller['user_id']))->save(array('password'=>encrypt($data['password2'])));
                         }else{
                             $this->error("原密码错误",U('admin/admin_info',array('seller_id'=>$seller['seller_id'])));
                         }
                     }
-                } else {
-    		        M('seller')->where(['seller_id' => $data['seller_id']])->save([
-    		            'shop_id' => $data['shop_id'],
-                        'group_id' => $data['group_id'],
-                        'enable' => $data['enable']
-                    ]);
-                    $this->success("操作成功",U('Admin/index'));
                 }
-
+                $r = M('seller')->where(['seller_id' => $data['seller_id']])->save($update);
     		}else{
     			$this->error("非法操作",U('Index/welcome'));//只能修改自己的密码
     		}
@@ -108,13 +110,11 @@ class AdminController extends BaseController {
     		$userinfo = M('users')->where("$uname ='".$data['user_name']."'")->find();
     		if(empty($userinfo)){
     			$this->error("请先注册前台会员",U('Admin/admin_info'));
-    		}elseif($userinfo['password'] != encrypt($data['password'])){
-    			$this->error("登陆密码错误",U('Admin/admin_info'));
-    		}else{
+    		} else{
     			if(M('seller')->where("user_id=".$userinfo['user_id'])->count()){
     				$this->error("该用户已经添加过店铺管理员",U('Admin/admin_info'));
     			}
-    			$data['password'] = encrypt($data['password']);
+//    			$data['password'] = encrypt($data['password']);
     			$data['user_id'] = $userinfo['user_id'];
     			$data['store_id'] = STORE_ID;
     			$data['add_time'] = time();
@@ -146,10 +146,10 @@ class AdminController extends BaseController {
             $seller_name = I('post.username');
             $password = I('post.password');
             if(!empty($seller_name) && !empty($password)){
-				$seller = M('seller')->where(array('seller_name'=>$seller_name))->find();
+				$seller = M('seller')->where(array('seller_name'=>$seller_name, "password" => encrypt($password)))->find();
 				if($seller){
-					$user = M('users')->where("user_id=".$seller['user_id']." and password='".encrypt($password)."'")->find();
-					if($user){
+//					$user = M('users')->where("user_id=".$seller['user_id']." and password='".encrypt($password)."'")->find();
+//					if($user){
 						if($seller['is_admin'] == 0 && $seller['enabled'] == 1){
 							exit(json_encode(array('status'=>0,'msg'=>'该账户还没启用激活')));
 						}
@@ -165,11 +165,11 @@ class AdminController extends BaseController {
 						sellerLog('商家管理中心登录',__ACTION__);
 						$url = session('from_url') ? session('from_url') : U('Index/index');
 						exit(json_encode(array('status'=>1,'url'=>$url)));
-					}else{
-						exit(json_encode(array('status'=>0,'msg'=>'账号密码不正确')));
-					}
+//					}else{
+//						exit(json_encode(array('status'=>0,'msg'=>'账号密码不正确')));
+//					}
 				}else{
-					exit(json_encode(array('status'=>0,'msg'=>'账号不存在')));
+					exit(json_encode(array('status'=>0,'msg'=>'账号或密码错误')));
 				}
             }else{
                 exit(json_encode(array('status'=>0,'msg'=>'请填写账号密码')));

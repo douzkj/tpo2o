@@ -116,7 +116,7 @@ class CartLogic extends RelationModel
                         $code = [
                             'order_id' => $order_id,
                             'code' => $get_code,
-                            'token' => md5($get_code . $order_id . time())
+                            'token' => md5($order_id)
                         ];
                         M('OrderCodes')->data($code)->add();
                     }

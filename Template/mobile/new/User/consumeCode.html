@@ -75,14 +75,12 @@
 <div class="examine-wrapper">
     <div class="examine-all">全部核销</div>
     <div class="examine-list">
-        <div class="examine-item">
-            <span class="sequence-code">ADUY2F4T57E11DVY</span>
-            <div class="examine-btn" onclick="btnClick()">核销1</div>
-        </div>
-        <div class="examine-item">
-            <span class="sequence-code">ADUY2F4T57E11DVY</span>
-            <div class="examine-btn" onclick="btnClick()">核销2</div>
-        </div>
+        <foreach name="codes" item="code">
+            <div class="examine-item">
+                <span class="sequence-code <if condition='$code[is_checked] eq 1'>examined-code</if>">{$code.code}</span>
+                <div class="examine-btn <if condition='$code[is_checked] eq 1'> btn-disabled</if>" onclick="btnClick('{$code.id})'">核销</div>
+            </div>
+        </foreach>
     </div>
 </div>
 </body>
@@ -99,36 +97,35 @@
             return
         }
         all = true;
-        //请求接口
-        setTimeout(function () {
-            codes.forEach(function (c) {
-                c.classList.add('examined-code');
-            });
-            btns.forEach(function (b) {
-                b.classList.add('btn-disabled');
-            });
-            all = false;
-        },5000)
+        consumeCode();
+        all = false;
     },false);
     //单个核销点击事件
-    function btnClick(e) {
+    function btnClick(id) {
         if(all || singleBtnClick) {
            return
         }
         singleBtnClick = true;
-        var event = e || window.event;
-        var parentNode = event.target.parentNode;
-        var btn = parentNode.querySelector('.examine-btn');
-        var code = parentNode.querySelector('.sequence-code');
-        if(btn.classList.contains('btn-disabled') || code.classList.contains('examined-code')){
-            return
-        }
-        //取值调接口
-        setTimeout(function () {
-          singleBtnClick = false;
-          btn.classList.add('btn-disabled');
-          code.classList.add('examined-code');
-          console.log(code.textContent)
-        },2000)
+        consumeCode(id);
+        singleBtnClick = false;
+    }
+
+    function consumeCode(ids) {
+        $.ajax({
+            url: "{:U('User/consumeCode')}",
+            method: 'post',
+            data: {token: '{$code.token}', id: ids},
+            dataType: 'json',
+            success: function (data) {
+                if (data.code == 1) {
+                    layer.open({
+                        content: '核销成功'
+                        ,skin: 'msg'
+                        ,time: 2 //2秒后自动关闭
+                    });
+                    window.location.reload();
+                }
+            }
+        });
     }
 </script>
