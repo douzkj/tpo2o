@@ -140,6 +140,21 @@ class UserController extends MobileBaseController
 
     public function menter()
     {
+        if (IS_POST) {
+            $data = I('post.');
+            $data['user_id'] = $this->user_id;
+            $apply = M('store_apply')->where(['user_id' => $this->user_id])->find();
+            if ($apply) {
+                $res = M('store_apply')->where(['id' => $apply['id'] ])->save($data);
+            } else {
+                $res = M('store_apply')->data($data)->add();
+            }
+            if ($res) {
+                $this->display('menter_success');
+            } else {
+                $this->error('提交失败');
+            }
+        }
         $store_class = M('store_class')->select();
         $regions = M('region')->where('level <= 3 and is_open = 1')->cache(true)->select();
         $region_json = getRecycleRegion($regions);

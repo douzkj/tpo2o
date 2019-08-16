@@ -50,6 +50,7 @@
             </div>
         </div>
     </div>
+    <form id="storeForm" action="{:U('User/menter')}" method="post">
     <div style="background-color: #ededed;font-size: 12px;color: #999999;padding: 7px 0px 7px 15px;">基本信息</div>
     <div style=" margin-top: 0px" class="weui-cells weui-cells_form">
         <div class="weui-cell">
@@ -57,7 +58,7 @@
                 <label class="weui-label">店铺名称</label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-input" type="text" name="company_name">
+                <input class="weui-input" type="text" name="store_name" required>
             </div>
         </div>
         <div class="weui-cell">
@@ -65,7 +66,7 @@
                 <label class="weui-label">店铺电话</label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-input" type="text">
+                <input class="weui-input" type="number" pattern="[0-9]*" name="company_telephone" required>
             </div>
         </div>
         <div class="weui-cell">
@@ -95,6 +96,7 @@
             </div>
         </div>
     </div>
+
     <div style="background-color: #ededed;font-size: 12px;color: #999999;padding: 7px 0px 7px 15px;">区域地址</div>
     <div style=" margin-top: 0px" class="weui-cells weui-cells_form">
         <div class="weui-cell">
@@ -113,7 +115,7 @@
                 <label class="weui-label">店铺地址</label>
             </div>
             <div class="weui-cell__bd" style="display: flex;align-items: center;" type="text">
-                <input class="weui-input" style="padding-right: 15px;" name="store_address">
+                <input class="weui-input" style="padding-right: 15px;" name="store_address" required>
                 <div class="icon-box" onclick="checkPoint()">
                     <i class="iconfont icon-dingwei" style="font-size: 20px;color: red;position: absolute;top: 25%;right: 10px;"></i>
                 </div>
@@ -140,17 +142,9 @@
             <div class="weui-uploader__bd">
                 <ul class="weui-uploader__files" id="uploaderFilesShop"></ul>
                 <div class="weui-uploader__input-box">
+                    <input type="hidden" name="store_logo" value="">
                     <input id="uploaderInputShop" class="weui-uploader__input" type="file" accept="image/*" multiple />
                 </div>
-            </div>
-        </div>
-    </div>
-    <div style="background-color: #ededed;font-size: 12px;color: #999999;padding: 7px 0px 7px 15px;">其他信息</div>
-
-    <div class="weui-cells weui-cells_form" style="margin-top: 0px;">
-        <div class="weui-cell">
-            <div class="weui-cell__bd">
-                <textarea class="weui-textarea" placeholder="请输入文本" rows="3"></textarea>
             </div>
         </div>
     </div>
@@ -161,7 +155,7 @@
                 <label class="weui-label">联系人</label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-input" type="text" name="contacts_name">
+                <input class="weui-input" type="text" name="store_person_name" required>
             </div>
         </div>
         <div class="weui-cell">
@@ -169,7 +163,15 @@
                 <label class="weui-label">电话</label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-input" type="text" name="contacts_mobile">
+                <input class="weui-input" type="tel" name="store_person_mobile" required>
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">登录账户</label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="text" name="seller_name" id="seller_name" required>
             </div>
         </div>
     </div>
@@ -192,18 +194,28 @@
             <div class="weui-uploader__bd">
                 <ul class="weui-uploader__files" id="uploaderFilesUser"></ul>
                 <div class="weui-uploader__input-box">
+                    <input type="hidden" name="store_certs" id="store_certs">
                     <input id="uploaderInputUser" class="weui-uploader__input" type="file" accept="image/*" multiple />
                 </div>
             </div>
         </div>
     </div>
-    <div style="margin: 10px;background: red;" class="weui-btn weui-btn_block weui-btn_primary">提交</div>
+    </form>
+    <div style="margin: 10px;background: red;" class="weui-btn weui-btn_block weui-btn_primary" onclick="checkSubmit();">提交</div>
+    <div id="loadingToast" style="display:none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <i class="weui-loading weui-icon_toast"></i>
+            <p class="weui-toast__content">请求中...</p>
+        </div>
+    </div>
 </head>
 <body>
 
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=YtPYQ0XMmcmGnPaLFImTl3719X8oz3p8"></script>
 <script>
 
+    var loading = $("#loadingToast");
     var map = new BMap.Map("l-map");
     map.addEventListener("click", setPointInfo);
 
@@ -310,12 +322,12 @@
                 weui.alert('请上传不超过10M的图片');
                 return false;
             }
-            if (files.length > 5) { // 防止一下子选择过多文件
-                weui.alert('最多只能上传5张图片，请重新选择');
+            if (files.length > 1) { // 防止一下子选择过多文件
+                weui.alert('只能上传一张');
                 return false;
             }
-            if (uploadCount + 1 > 5) {
-                weui.alert('最多只能上传5张图片');
+            if (uploadCount + 1 > 1) {
+                weui.alert('最多只能上传1张图片，请先删除原有照片');
                 return false;
             }
             ++uploadCount;
@@ -323,7 +335,8 @@
         },
         onSuccess: function (ret) {
             if(ret.code == 200){
-               uploadFiles.push(ret.data.fileVal)
+               uploadFiles.push(ret.data.fileVal);
+               $("input[name=store_logo]").val(ret.data.fileVal);
             } else {
                 var li = $uploaderFilesShop.find("li");
                 for(var i=0;i<li.length;i++){
@@ -371,7 +384,7 @@
         },
         onSuccess: function (ret) {
             if(ret.code == 200){
-                uploadFilesUser.push(ret.data.fileVal)
+                uploadFilesUser.push(ret.data.fileVal);
             } else {
                 var li = $uploaderFilesUser.find("li");
                 for(var i=0;i<li.length;i++){
@@ -408,11 +421,19 @@
         //删除图片
         $(".weui-gallery__del").click(function() {
             $uploaderFilesShop.find("li").eq(indexShop).remove();
+
         });
         $(".weui-gallery__del").click(function() {
             $uploaderFilesUser.find("li").eq(indexUser).remove();
         });
     })
+
+    function checkSubmit() {
+        loading.fadeIn(1000);
+        $("input[name=store_logo]").val(uploadFiles[0]);
+        $("input[name=store_certs]").val(uploadFilesUser);
+        $('#storeForm').submit();
+    }
 
 </script>
 </body>
