@@ -93,8 +93,7 @@ class UserController extends MobileBaseController
 
     public function distribute()
     {
-        $userLogic = new UsersLogic();
-        $user_info = $userLogic->get_info($this->user_id); // 获取用户信息
+        $user_info = $this->user; // 获取用户信息
         if ($user_info['is_distribut']) {
             $this->success('已经成为代理', U('Mobile/User/index'));
             exit;
