@@ -192,6 +192,11 @@ class UsersLogic extends RelationModel
         // 如果找到他老爸还要找他爷爷他祖父等
         if(!$map['first_leader']) {
             $map['first_leader'] = 0;
+        } else {
+            $first_leader = M('users')->where("user_id = {$map['first_leader']}")->find();
+            if ($first_leader) {
+                $map['second_leader'] = $first_leader['first_leader']; //  团推代理
+            }
         }
 
         // 成为分销商条件

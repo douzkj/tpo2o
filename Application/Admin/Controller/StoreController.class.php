@@ -465,13 +465,32 @@ class StoreController extends BaseController{
 							'company_name'=>$apply['company_name'],'store_phone'=>$apply['store_person_mobile'],
 							'store_address'=>empty($apply['store_address']) ? '待完善' : $apply['store_address'] ,
 							'store_time'=>time(),'store_state'=>1,'store_qq'=>$apply['store_person_qq'],
+                        'first_leader'=>$apply['first_leader'],'longitude' => $apply['longitude'], 'latitude' => $apply['latitude']
 					);
 					$store_id = M('store')->add($store);//通过审核开通店铺
 					if($store_id){
 						$seller = array('seller_name'=>$apply['seller_name'],'user_id'=>$apply['user_id'],
-							'group_id'=>0,'store_id'=>$store_id,'is_admin'=>1
+							'group_id'=>0,'store_id'=>$store_id,'is_admin'=>1, 'password' => encrypt(123456)
 						);
-						M('seller')->add($seller);//点击店铺管理员
+						$seller_id = M('seller')->add($seller);//点击店铺管理员
+                        //默认加入第一个门店
+                        $shop_id = M('store_shop')->add([
+                            'store_id' => $store_id,
+                            'longitude' => $apply['longitude'],
+                            'latitude' => $apply['latitude'],
+                            'title' => $apply['store_name'],
+                            'open_time' => $apply['start_time'],
+                            'end_time' => $apply['end_time'],
+                            'province_id' => $apply['company_province'],
+                            'city_id' => $apply['company_city'],
+                            'district_id' => $apply['company_district'],
+                            'position' => $apply['store_address'],
+                            'state' => 1,
+                            'phone' => $apply['company_telephone'],
+                            'created_at' => time(),
+                        ]);
+                        M('seller')->where(['seller_id' => $seller_id])->save(['shop_id' => $shop_id]);
+
 						//绑定商家申请类目
 						if(!empty($apply['store_class_ids'])){
 							$goods_cates = M('goods_category')->where(array('level'=>3))->getField('id,name,commission');

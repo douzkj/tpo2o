@@ -262,10 +262,17 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>佣金:</td>
+                                    <td>直推佣金:</td>
                                     <td>
                                         <input type="text" value="{$goodsInfo.distribut}" name="distribut" class="form-control" style="width:150px;" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" />
-                                        	用于分销的分成金额
+                                        	用于直推的分成金额
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>团推佣金:</td>
+                                    <td>
+                                        <input type="text" value="{$goodsInfo.group_distribut}" name="group_distribut" class="form-control" style="width:150px;" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" />
+                                        用于团推的分成金额
                                     </td>
                                 </tr>
                                 <tr>

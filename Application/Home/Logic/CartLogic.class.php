@@ -49,7 +49,7 @@ class CartLogic extends RelationModel
             return array('status'=>-9,'msg'=>'一天只能下50个订单','result'=>'');
 
         // 插入订单 order
-
+        $user = M('users')->where(['user_id' => $user_id])->find();
         // 循环添加订单 多少个商家添加多少个订单
         foreach($car_price['store_order_amount'] as $k => $v)
         {
@@ -61,6 +61,7 @@ class CartLogic extends RelationModel
             $car_price['store_point_count'][$k] = $car_price['store_point_count'][$k] ? $car_price['store_point_count'][$k] : 0;
             M()->startTrans();
             try {
+                $rebate_log = [];
                 $data = array(
                     'order_sn'         =>$order_sn, // 订单编号
                     'master_order_sn'  =>$master_order_sn, // 主订单号
@@ -120,10 +121,18 @@ class CartLogic extends RelationModel
                         ];
                         M('OrderCodes')->data($code)->add();
                     }
+                    $rebate = [
+                        'first_leader' => $user['first_leader'],
+                        'first_commission' => $goods['distribut'],
+                        'second_leader' => $user['second_leader'],
+                        'second_commission' => $goods['second_commission']
+                    ];
                     //若为拼团订单，则加入拼团订单关联
                     if ($val['prom_type'] == 2 && $val['prom_id']) {
                         $group = M('group_buy')->where(['id' => $val['prom_id']])->find();
                         if ($group) {
+                            $rebate['first_commission'] = $group['distribut'];
+                            $rebate['second_commission'] = $group['group_distribut'];
                             $update = [];
                             if ($group_order_sn == '') {
                                 //如果是新开团，判断此用户当前是否有拼团的订单
@@ -180,8 +189,42 @@ class CartLogic extends RelationModel
                             M('order')->where(['order_id' => $order_id])->save($update);
                         }
                     }
+                    if ($rebate['first_leader']) {
+                        $rebate_log[] = [
+                            'user_id' => $rebate['first_leader'],
+                            'buy_user_id' => $user_id,
+                            'nickname' => $user['nickname'],
+                            'order_sn' => $order_sn,
+                            'order_id' => $order_id,
+                            'goods_price' => $data['goods_price'],
+                            'money' => $rebate['distribut'],
+                            'level' => 1, //直推
+                            'create_time' => time(),
+                            'store_id' => $data['store_id'],
+                            'status' => 0
+                        ];
+
+                    }
+                    if ($rebate['second_leader']) {
+                        $rebate_log[] = [
+                            'user_id' => $rebate['second_leader'],
+                            'buy_user_id' => $user_id,
+                            'nickname' => $user['nickname'],
+                            'order_sn' => $order_sn,
+                            'order_id' => $order_id,
+                            'goods_price' => $data['goods_price'],
+                            'money' => $rebate['group_distribut'],
+                            'level' => 2, //团推
+                            'create_time' => time(),
+                            'store_id' => $data['store_id'],
+                            'status' => 0
+                        ];
+                    }
                     // 扣除商品库存  扣除库存移到 付完款后扣除
                     //M('Goods')->where("goods_id = ".$val['goods_id'])->setDec('store_count',$val['goods_num']); // 商品减少库存
+                }
+                if (!empty($rebate_log)) {
+                    M('rebate_log')->addAll($rebate_log);
                 }
                 M()->commit();
             } catch (\Exception $exception) {
@@ -226,11 +269,11 @@ class CartLogic extends RelationModel
 
             //分销开关全局
             $order = M("Order")->where("order_id = $order_id")->find();
-            if(file_exists(APP_PATH.'Common/Logic/DistributLogic.class.php'))
-            {
-                $distributLogic = new \Common\Logic\DistributLogic();
-                $distributLogic->rebate_log($order); // 生成分成记录
-            }
+//            if(file_exists(APP_PATH.'Common/Logic/DistributLogic.class.php'))
+//            {
+//                $distributLogic = new \Common\Logic\DistributLogic();
+//                $distributLogic->rebate_log($order); // 生成分成记录
+//            }
             // 如果有微信公众号 则推送一条消息到微信
             $user = M('users')->where("user_id = $user_id")->find();
             if($user['oauth']== 'weixin')

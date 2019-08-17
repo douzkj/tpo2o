@@ -931,12 +931,20 @@ function update_pay_status($order_sn,$pay_status = 1)
                         'done_at' => time()
                     ]);
                     //将所有此拼团下的订单状态修改
-                    M('order')->where([
+                    $orders =  M('order')->where([
                         'group_order_id' => $group_order['id'],
                         'group_status' => 0
-                    ])->save([
+                    ])->select();
+                    foreach ($orders as $o) {
+                        M('order')->where([
+                            'order_id' => $o['order_id'],
+                            'group_status' => 0
+                        ])->save([
                             'group_status' => 1
                         ]);
+                        //进行分佣
+                        settleOrderDistribute($o['order_id']);
+                    }
                 } else {
                     if ($group_order['user_id'] == $order['user_id']) {
                         //如果是团长的订单成功，则更新时间
@@ -946,10 +954,11 @@ function update_pay_status($order_sn,$pay_status = 1)
                         ]);
                     }
                 }
-
             }
+        } else {
+            //单独购买订单修改
+            settleOrderDistribute($order['order_id']);
         }
-
 
 		// 减少对应商品的库存
 		minus_stock($order['order_id']);
@@ -1459,5 +1468,22 @@ function getRecycleRegion($regions, $pid = 0, $max_level = 3)
         }
     }
     return $lists;
+}
+
+function settleOrderDistribute($order_id)
+{
+    $rebate_logs = M('rebate_log')->where(['order_id' => $order_id, 'status' => 0])->select();
+    foreach ($rebate_logs as $rebate_log) {
+        if ($rebate_log['user_id']) {
+            $desc = $rebate_log['level'] == 1
+                ? "订单【{$rebate_log['order_sn']}】直推佣金【{$rebate_log['money']}】入账"
+                : "订单【{$rebate_log['order_sn']}】团推佣金【{$rebate_log['money']}】入账";
+            accountLog($rebate_log['user_id'], $rebate_log['money'], 0, $desc, $rebate_log['money'], $rebate_log['order_id'], ($rebate_log == 1 ? 2 : 3));
+            M('rebate_log')->where(['id' => $rebate_log['id']])->save([
+                'confirm_time' => time(),
+                'status' => 3 //分成成功
+            ]);
+        }
+    }
 }
 

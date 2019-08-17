@@ -77,6 +77,26 @@
                                     <td class="col-sm-4">商品团购价格</td>
                                 </tr>
                                 <tr>
+                                    <td>直推佣金：</td>
+                                    <td>
+                                        <div class="col-xs-4">
+                                            <input type="text" class="form-control" id="distribut" name="distribut" value="{$info[distribut]?:0}"  onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')"/>
+                                        </div>
+                                        <span id="price_html"></span>
+                                    </td>
+                                    <td class="col-sm-4">直推返佣</td>
+                                </tr>
+                                <tr>
+                                    <td>团推佣金：</td>
+                                    <td>
+                                        <div class="col-xs-4">
+                                            <input type="text" class="form-control" id="group_distribut" name="group_distribut" value="{$info[group_distribut]?:0}"  onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')"/>
+                                        </div>
+                                        <span id="price_html"></span>
+                                    </td>
+                                    <td class="col-sm-4">团推返佣</td>
+                                </tr>
+                                <tr>
                                     <td>成团人数：</td>
                                     <td>
                                         <input type="text" class="form-control" id="group_num" name="group_num" value="{$info.group_num}"  onpaste="this.value=this.value.replace(/[^\d]/g,'')" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" />
