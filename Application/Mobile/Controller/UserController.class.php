@@ -123,6 +123,16 @@ class UserController extends MobileBaseController
                 }
                 //对应的人进行奖励
                 $first_leader = $this->user['first_leader'];
+                if (!$first_leader && session('first_leader')) {
+                    $first_leader = session('first_leader');
+                    if ($first_leader) {
+                        $second_leader = M('users')->where(['user_id' => $first_leader])->getField('first_leader');
+                        M('users')->where(['user_id' => $this->user_id])->save([
+                            'first_leader' => $first_leader,
+                            'second_leader' => $second_leader
+                        ]);
+                    }
+                }
                 if ($first_leader) {
                     //若存在拉新上级，上级奖励0.5
                     accountLog($first_leader, 0.5, 0, "新用户【". $post['mobile']."】升级代理直推奖励", 0.5, 0, 1);

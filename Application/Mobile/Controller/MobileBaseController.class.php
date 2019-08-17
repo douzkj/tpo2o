@@ -27,7 +27,10 @@ class MobileBaseController extends Controller {
      */
     public function _initialize() {
         $this->session_id = session_id(); // 当前的 session_id
-
+        if ($_REQUEST['first_leader']) {
+            //设置一级代理人员
+            session('first_leader', $_REQUEST['first_leader']);
+        }
         // 判断当前用户是否手机
         if(isMobile())
             cookie('is_mobile','1',3600);
@@ -61,11 +64,6 @@ class MobileBaseController extends Controller {
                 $this->signPackage = $signPackage;
                 $this->assign('signPackage', $signPackage);
             }
-        }
-
-        if ($_REQUEST['first_leader']) {
-            //设置一级代理人员
-            setcookie('first_leader',$_REQUEST['first_leader'],null,'/');
         }
 
         //通过定位设置地区

@@ -126,17 +126,15 @@ class UsersLogic extends RelationModel
             $map['head_pic'] = $data['head_pic'];
             $map['sex'] = $data['sex'] === null ? 0 :  $data['sex'];
             $map['token'] = md5(time().mt_rand(1,99999));
-            $map['first_leader'] = cookie('first_leader'); // 推荐人id
-            if($_GET['first_leader'])
-                $map['first_leader'] = $_GET['first_leader']; // 微信授权登录返回时 get 带着参数的
+            $map['first_leader'] = session('first_leader'); // 推荐人id
 
             // 如果找到他老爸还要找他爷爷他祖父等
             if($map['first_leader'])
             {
-                $first_leader = M('users')->where("user_id = {$map['first_leader']}")->setInc('user_money', 0.5);
+                $first_leader = M('users')->where(['user_id' => $map['first_leader']])->find();
                 //若有上级id，则对双方进行奖励操作
-//                $map['second_leader'] = $first_leader['first_leader']; //  第一级推荐人
-//                $map['third_leader'] = $first_leader['second_leader']; // 第二级推荐人
+                $map['second_leader'] = $first_leader['first_leader']; //  第一级推荐人
+                session('first_leader', null);
             }else
 			{
 				$map['first_leader'] = 0;
