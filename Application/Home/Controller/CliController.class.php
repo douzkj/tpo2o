@@ -32,9 +32,9 @@ class CliController extends Controller
         $group_orders = M('group_order')->where('group_status = 0 and close_at <= ' .$now )->select();
         foreach (array_chunk($group_orders, 50) as $group_chunk) {
             foreach ($group_chunk as $group_order) {
-                echo "拼团订单【{$group_order['group_order_sn']}】退款中";
+                echo "拼团订单【{$group_order['group_order_sn']}】退款中 \r\n";
                 $this->closeGroupOrder($group_order, $now);
-                echo "拼团订单【{$group_order['group_order_sn']}】退款成功";
+                echo "拼团订单【{$group_order['group_order_sn']}】退款成功 \r\n";
             }
         }
     }
@@ -46,7 +46,7 @@ class CliController extends Controller
             $res1 = M('group_order')->where([
                 'id' => $group_order['id'],
                 'group_status' => 0,
-                'close_at' => ['lte', $time]
+                'close_at' => ['elt', $time]
             ])->save([
                 'group_status' => 2
             ]);
@@ -61,17 +61,17 @@ class CliController extends Controller
                     'order_status' => 3
                 ]);
                 accountLog($order['user_id'], $order['total_amount'], 0, "拼团订单【{$order['order_sn']}】退回金额【{$order['total_amount']}】");
-                echo "订单【{$order['order_sn']}】退回成功";
+                echo "订单【{$order['order_sn']}】退回成功 \r\n";
             }
             if ($res1) {
                 M()->commit();
             } else {
                 M()->rollback();
-                echo "拼团订单【{$group_order['group_order_sn']}】无退回";
+                echo "拼团订单【{$group_order['group_order_sn']}】无退回 \r\n";
             }
         } catch (\Exception $exception) {
             M()->rollback();
-            echo "拼团订单【{$group_order['group_order_sn']}】拼团自动结束更新错误:" . $exception->getMessage();
+            echo "拼团订单【{$group_order['group_order_sn']}】拼团自动结束更新错误:" . $exception->getMessage() . "\r\n";
         }
     }
 }

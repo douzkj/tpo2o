@@ -64,7 +64,7 @@ class CartController extends MobileBaseController {
             if ($result['status'] != 1) {
                 exit(json_encode($result));
             }
-            $order_goods = M('cart')->where("user_id = {$this->user_id} and selected = 1")->select();
+            $order_goods = M('cart')->where("user_id = {$this->user_id} and selected = 1")->order('id desc')->limit(1)->select();
             $result = calculate_price($this->user_id,$order_goods);
             if($result['status'] < 0)
                 exit(json_encode($result));
