@@ -41,6 +41,7 @@ class MobileBaseController extends Controller {
                 if (!empty($_SESSION['openid'])) {
                     $user = get_user_info($_SESSION['openid'], 3, 'weixin');
                     if (!$user) {
+                        $_SESSION['openid'] = null;
                         $user = $this->getWxUser();
                     }
                 } else {
@@ -60,6 +61,11 @@ class MobileBaseController extends Controller {
                 $this->signPackage = $signPackage;
                 $this->assign('signPackage', $signPackage);
             }
+        }
+
+        if ($_REQUEST['first_leader']) {
+            //设置一级代理人员
+            setcookie('first_leader',$_REQUEST['first_leader'],null,'/');
         }
 
         //通过定位设置地区
