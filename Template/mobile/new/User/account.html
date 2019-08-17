@@ -14,7 +14,7 @@
 </div>
 </header>
 <include file="Public/menu"/>
-<div id="tbh5v0">			
+<div id="tbh5v0">
 <div style="background:#fff;">
 <div class="user_login_title"><h2><em>账户余额</em><span>￥{$user['user_money']}元</span></h2></div>
 <empty name="account_log">
@@ -25,7 +25,7 @@
   <foreach name="account_log" item="item" key="k">
     <li class="Funds_li" <if condition="$k eq count($account_log)"> style="border:0"</if>>
     	<span class="icon <if condition='$k eq 0'>on</if>"></span>
-        <span>增加,<em>{$item.pay_points}</em></span>
+        <span>增加,<em>{$item.user_money}</em></span>
         <span>{$item.change_time|date='Y-m-d H:i:s',###}</span>
         <span>{$item.desc}</span>
     </li>
@@ -39,13 +39,13 @@
 </notempty>
 </empty>
 </div>
-<a href="javascript:goTop();" class="gotop"><img src="__STATIC__/images/topup.png"></a> 
+<a href="javascript:goTop();" class="gotop"><img src="__STATIC__/images/topup.png"></a>
 </div>
 <script>
 var  page = 1;
- /*** ajax 提交表单 查询订单列表结果*/  
+ /*** ajax 提交表单 查询订单列表结果*/
  function ajax_sourch_submit()
- {	 	 	 
+ {
         page += 1;
 		$.ajax({
 			type : "GET",
@@ -58,8 +58,8 @@ var  page = 1;
 				else
 				    $(".Funds > ul").append(data);
 			}
-		}); 
- } 
+		});
+ }
 </script>
 
 <script type="text/javascript">

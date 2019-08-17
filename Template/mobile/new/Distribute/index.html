@@ -45,7 +45,7 @@
         </div>
         <p class="all_comm">
             <span class="tit">累计获得佣金(元)</span>
-            <span class="cont">¥ {$user[invite_commission] + $user[group_commission]}</span>
+            <span class="cont">¥ {:bcadd($user[invite_commission],$user[group_commission], 2)}</span>
         </p>
         <p class="all_comm-zt">
             <span class="tit">直推佣金(元)</span>
