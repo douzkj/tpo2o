@@ -51,6 +51,13 @@ class MobileBaseController extends Controller {
                     $user = $this->getWxUser();
                 }
                 if($user){
+                    if ( ! $user['first_leader'] && session('first_leader')) {
+                        $first_leader =  session('first_leader');
+                        M('users')->where(['user_id' => $user['user_id']])->save([
+                            'first_leader' => $first_leader,
+                            'second_leader' => M('users')->where(['user_id' => $first_leader])->getField('first_leader')
+                        ]);
+                    }
                     session('user', $user);
                     setcookie('user_id',$user['user_id'],null,'/');
                     setcookie('is_distribut',$user['is_distribut'],null,'/');
