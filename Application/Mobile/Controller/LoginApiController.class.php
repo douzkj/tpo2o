@@ -25,7 +25,7 @@ class LoginApiController extends MobileBaseController {
         $data = M('Plugin')->where("code='{$this->oauth}' and  type = 'login' ")->find();
         $this->config = unserialize($data['config_value']); // 配置反序列化
         if(!$this->oauth)
-            $this->error('非法操作',U('Home/User/login'));
+            $this->error('非法操作',U('Mobile/User/login'));
         include_once  "plugins/login/{$this->oauth}/{$this->oauth}.class.php";
         $class = '\\'.$this->oauth; //
         $login = new $class($this->config); //实例化对应的登陆插件
