@@ -626,7 +626,7 @@ function accountLog($user_id, $user_money = 0,$pay_points = 0, $desc = '',$distr
         $sql = "UPDATE __PREFIX__users SET user_money = user_money + $user_money," .
             " pay_points = pay_points + $pay_points, distribut_money = distribut_money + $distribut_money WHERE user_id = $user_id";
     }
-    if( D('users')->execute($sql)){
+    if( M('users')->execute($sql)){
     	M('account_log')->add($account_log);
         return true;
     }else{

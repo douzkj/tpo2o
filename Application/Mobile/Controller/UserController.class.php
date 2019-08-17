@@ -122,7 +122,7 @@ class UserController extends MobileBaseController
                     $this->error("保存失败"); exit;
                 }
                 //对应的人进行奖励
-                $first_leader = M('users')->where(['user_id' => $this->user_id])->getField('first_leader');
+                $first_leader = $this->user['first_leader'];
                 if ($first_leader) {
                     //若存在拉新上级，上级奖励0.5
                     accountLog($first_leader, 0.5, 0, "新用户【". $post['mobile']."】升级代理直推奖励", 0.5, 0, 1);
