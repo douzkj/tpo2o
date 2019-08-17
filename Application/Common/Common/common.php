@@ -915,8 +915,6 @@ function update_pay_status($order_sn,$pay_status = 1)
 		    'pay_status'=>1,
             'pay_time'=>time(),
             'shipping_status' => 1));
-
-
 		//拼团订单修改
         if ($order['group_order_id']) {
             $group_order = M('group_order')
@@ -930,6 +928,8 @@ function update_pay_status($order_sn,$pay_status = 1)
                         'group_status' => 1,
                         'done_at' => time()
                     ]);
+                    //成团记录+1
+                    M('group_buy')->where(['id' => $group_order['group_id']])->setInc('grouped_num', 1);
                     //将所有此拼团下的订单状态修改
                     $orders =  M('order')->where([
                         'group_order_id' => $group_order['id'],

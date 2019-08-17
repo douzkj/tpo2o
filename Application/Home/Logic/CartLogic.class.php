@@ -125,11 +125,34 @@ class CartLogic extends RelationModel
                         'first_leader' => $user['first_leader'],
                         'first_commission' => $goods['distribut'],
                         'second_leader' => $user['second_leader'],
-                        'second_commission' => $goods['second_commission']
+                        'second_commission' => $goods['group_distribute']
                     ];
+                    if ( ! $rebate['second_leader'] && $rebate['first_leader']) {
+                        $rebate['second_leader'] = M('users')->where(['user_id' => $rebate['first_leader']])->getField('first_leader') ? : 0;
+                    }
+                    if ($val['prom_type'] == 1 && $val['prom_id']) {
+                        $exists = <<<sql
+select couny(*) as total from __PREFIX__order_goods a LEFT JOIN __PREFIX__order b on a.order_id = b.order_id
+and b.pay_status = 1 and a.prom_type =1 and a.prom_id = {$val['prom_id']} and a.goods_id = {$val['goods_id']}
+sql;
+                        $count = M()->query($exists);
+                        if ($count[0]['total']) {
+                            throw new Exception("已参加过当前活动");
+                        }
+                    }
                     //若为拼团订单，则加入拼团订单关联
                     if ($val['prom_type'] == 2 && $val['prom_id']) {
                         $group = M('group_buy')->where(['id' => $val['prom_id']])->find();
+                        //若已经参加过当前的活动
+                        $exists = <<<sql
+select count(*) as total from __PREFIX__group_order a LEFT JOIN __PREFIX__order b on a.id = b.group_order_id 
+where a.group_status <> 2 and b.user_id = {$user_id} and a.group_id = {$group['id']}
+sql;
+
+                        $count = M()->query($exists);
+                        if ($count[0]['total']) {
+                            throw new Exception("已参加过当前活动");
+                        }
                         if ($group) {
                             $rebate['first_commission'] = $group['distribut'];
                             $rebate['second_commission'] = $group['group_distribut'];
@@ -197,7 +220,7 @@ class CartLogic extends RelationModel
                             'order_sn' => $order_sn,
                             'order_id' => $order_id,
                             'goods_price' => $data['goods_price'],
-                            'money' => $rebate['distribut'],
+                            'money' => $rebate['first_commission'],
                             'level' => 1, //直推
                             'create_time' => time(),
                             'store_id' => $data['store_id'],
@@ -213,7 +236,7 @@ class CartLogic extends RelationModel
                             'order_sn' => $order_sn,
                             'order_id' => $order_id,
                             'goods_price' => $data['goods_price'],
-                            'money' => $rebate['group_distribut'],
+                            'money' => $rebate['second_commission'],
                             'level' => 2, //团推
                             'create_time' => time(),
                             'store_id' => $data['store_id'],

@@ -27,7 +27,7 @@ class MobileBaseController extends Controller {
      */
     public function _initialize() {
         $this->session_id = session_id(); // 当前的 session_id
-        if ($_REQUEST['first_leader']) {
+        if (isset($_REQUEST['first_leader']) && $_REQUEST['first_leader']) {
             //设置一级代理人员
             session('first_leader', $_REQUEST['first_leader']);
         }

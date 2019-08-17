@@ -34,7 +34,8 @@ class CliController extends Controller
                     'group_status' => 2
                 ]);
                 M('order')->where(['group_order_id' => $group_order['id']])->save([
-                    'group_status' => 2
+                    'group_status' => 2,
+                    'order_status' => 3
                 ]);
             }
         }
