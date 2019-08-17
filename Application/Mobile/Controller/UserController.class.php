@@ -106,6 +106,7 @@ class UserController extends MobileBaseController
                 if (!$code) {
                     $this->error('请输入验证码');exit;
                 }
+                $userLogic = new UsersLogic();
                 $check_code = $userLogic->check_validate_code($code, $mobile);
                 if ($check_code['status'] != 1)
                     exit(json_encode($check_code));
