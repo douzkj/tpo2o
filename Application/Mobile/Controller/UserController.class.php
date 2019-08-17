@@ -237,8 +237,9 @@ class UserController extends MobileBaseController
      */
     public function login()
     {
-        if ($this->user_id > 0) {
+        if ($this->user_id) {
             header("Location: " . U('Mobile/User/index'));
+            exit;
         }
         if ($_REQUEST['first_leader']) {
             session('first_leader', $_REQUEST['first_leader']);
