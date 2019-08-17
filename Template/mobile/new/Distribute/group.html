@@ -26,12 +26,10 @@
                     <span class="group-item-phone">电话：{$group['mobile']}</span>
                 </div>
                 <div class="group-right">
-                    <span class="group-item-date">注册时间：{$group.reg_time.|date='Y-m-d',###}</span>
+                    <span class="group-item-date">注册时间：{$group.reg_time|date='Y-m-d',###}</span>
                     <span class="group-item-money">累计佣金:¥ {$group['distribut_money']}</span>
                 </div>
             </div>
-            <empty/>
-            无数据
         </foreach>
     </div>
 </body>
