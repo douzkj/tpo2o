@@ -41,10 +41,18 @@ class MobileBaseController extends Controller {
                 if (!empty($_SESSION['openid'])) {
                     $user = get_user_info($_SESSION['openid'], 3, 'weixin');
                     if (!$user) {
-                        $this->getWxUser();
+                        $user = $this->getWxUser();
                     }
                 } else {
-                    $this->getWxUser();
+                    $user = $this->getWxUser();
+                }
+                if($user){
+                    session('user', $user);
+                    setcookie('user_id',$user['user_id'],null,'/');
+                    setcookie('is_distribut',$user['is_distribut'],null,'/');
+                    setcookie('uname',$user['nickname'],null,'/');
+                    // 登录后将购物车的商品的 user_id 改为当前登录的id
+                    M('cart')->where("session_id = '{$this->session_id}'")->save(array('user_id'=>$user['user_id']));
                 }
                 // 微信Jssdk 操作类 用分享朋友圈 JS
                 $jssdk = new \Mobile\Logic\Jssdk($this->weixin_config['appid'], $this->weixin_config['appsecret']);
@@ -70,15 +78,8 @@ class MobileBaseController extends Controller {
         //微信自动登录
         $logic = new UsersLogic();
         $data = $logic->thirdLogin($wxuser);
+        if ($data['status'] == 1) return $data['result'];
 
-        if($data['status'] == 1){
-            session('user',$data['result']);
-            setcookie('user_id',$data['result']['user_id'],null,'/');
-            setcookie('is_distribut',$data['result']['is_distribut'],null,'/');
-            setcookie('uname',$data['result']['nickname'],null,'/');
-            // 登录后将购物车的商品的 user_id 改为当前登录的id
-            M('cart')->where("session_id = '{$this->session_id}'")->save(array('user_id'=>$data['result']['user_id']));
-        }
     }
 
     public function setSelectProvinceCookie($province_id)
