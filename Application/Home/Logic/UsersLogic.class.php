@@ -166,7 +166,6 @@ class UsersLogic extends RelationModel
             M('users')->where("user_id = '{$user['user_id']}'")->save(array('token'=>$user['token'],'last_login'=>time()));
         }
 
-        $user['status'] = 1;
         return array('status'=>1,'msg'=>'登陆成功','result'=>$user);
     }
 
