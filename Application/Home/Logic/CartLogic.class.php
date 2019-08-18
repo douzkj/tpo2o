@@ -88,7 +88,9 @@ class CartLogic extends RelationModel
                 logOrder($order_id,'您提交了订单，请等待系统确认','提交订单',$user_id,2);
 
                 // 1插入order_goods 表
-                $cartList = M('Cart')->where("store_id = $k and user_id = $user_id and selected = 1")->select();
+                $cartList = M('Cart')->where("store_id = $k and user_id = $user_id and selected = 1")
+                    ->order('id desc')
+                    ->limit(1)->select();
                 foreach($cartList as $key => $val)
                 {
                     $goods = M('goods')->where("goods_id = {$val['goods_id']} ")->find();

@@ -1377,13 +1377,13 @@ class UserController extends MobileBaseController
             $codes = M('order_codes')->where("token = '{$token}' {$where}")->save([
                 'user_id' => $this->user_id,
                 'shop_id' => $seller['shop_id']?:0,
-                'checked_at' => time(),
+                'checke_at' => time(),
                 'is_checked' => 1
             ]);
             $order_id = M('order_codes')->where(['token' => $token])->limit(1)->getField('order_id');
             if (M('order_codes')->where(['token' => $token, 'order_id' => $order_id, 'is_checked' => 0])->count() == 0) {
                 M('order')->where(['order_id' => $order_id])->save([
-                    'is_used' => true,
+                    'is_used' => 1,
                     'order_status' => 4
                 ]);
             }
