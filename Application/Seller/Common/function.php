@@ -130,8 +130,9 @@ function getMenuList() {
 			)),
 			'order' => array('name' => '订单物流', 'icon'=>'fa-money', 'child' => array(
 					array('name' => '订单列表', 'act'=>'index', 'op'=>'Order'),
-					array('name' => '发货', 'act'=>'delivery_list', 'op'=>'Order'),
-					array('name' => '发货设置', 'act'=>'index', 'op'=>'Plugin'),
+					array('name' => '核销记录', 'act'=>'index', 'op'=>'OrderCode'),
+//					array('name' => '发货', 'act'=>'delivery_list', 'op'=>'Order'),
+//					array('name' => '发货设置', 'act'=>'index', 'op'=>'Plugin'),
 					//array('name' => '运单模板', 'act'=>'store_waybill', 'op'=>'waybill_manage'),
 					array('name' => '商品评论','act'=>'index','op'=>'Comment'),
 					array('name' => '商品咨询','act'=>'ask_list','op'=>'Comment'),

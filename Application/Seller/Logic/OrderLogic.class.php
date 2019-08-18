@@ -43,10 +43,10 @@ class OrderLogic extends RelationModel
      */
     public function getOrderInfo($order_id)
     {
-        //  订单总金额查询语句		
+        //  订单总金额查询语句
         $order = M('order')->where("order_id = $order_id")->find();
         $order['address2'] = $this->getAddressName($order['province'],$order['city'],$order['district']);
-        $order['address2'] = $order['address2'].$order['address'];		
+        $order['address2'] = $order['address2'].$order['address'];
         return $order;
     }
 
@@ -81,7 +81,7 @@ class OrderLogic extends RelationModel
     				$order_goods[] = $arr;
     			}
     		}
-    		return $order_goods;	
+    		return $order_goods;
     }
 
     /*
@@ -90,14 +90,14 @@ class OrderLogic extends RelationModel
     public function orderActionLog($order,$action,$note='',$action_user = 0,$user_type = 0){
         $data['order_id'] = $order['order_id'];
         $data['action_user'] = $action_user;
-        $data['store_id'] = STORE_ID; 
+        $data['store_id'] = STORE_ID;
         $data['user_type'] = $user_type; // 0管理员 1商家 2前台用户
         $data['action_note'] = $note;
         $data['order_status'] = $order['order_status'];
         $data['pay_status'] = $order['pay_status'];
         $data['shipping_status'] = $order['shipping_status'];
         $data['log_time'] = time();
-        $data['status_desc'] = $action;        
+        $data['status_desc'] = $action;
         return M('order_action')->add($data);//订单操作记录
     }
 
@@ -126,7 +126,7 @@ class OrderLogic extends RelationModel
     public function getOrderButton($order){
         /*
          *  操作按钮汇总 ：付款、设为未付款、确认、取消确认、无效、去发货、确认收货、申请退货
-         * 
+         *
          */
     	$os = $order['order_status'];//订单状态
     	$ss = $order['shipping_status'];//发货状态
@@ -153,8 +153,8 @@ class OrderLogic extends RelationModel
         		$btn['cancel'] = '取消确认';
         		$btn['delivery'] = '去发货';
         	}
-        } 
-               
+        }
+
         if($ss == 1 && $os == 1 && $ps == 1){
         	$btn['delivery_confirm'] = '确认收货';
         	$btn['refund'] = '申请退货';
@@ -169,14 +169,14 @@ class OrderLogic extends RelationModel
         return $btn;
     }
 
-    
+
     public function orderProcessHandle($order_id,$act,$store_id = 0){
     	$updata = array();
     	switch ($act){
     		case 'pay': //付款
                 $order_sn = M('order')->where("order_id = $order_id")->getField("order_sn");
                 update_pay_status($order_sn); // 调用确认收货按钮
-    			return true;    			
+    			return true;
     		case 'pay_cancel': //取消付款
     			$updata['pay_status'] = 0;
     			break;
@@ -197,10 +197,10 @@ class OrderLogic extends RelationModel
     			return true;
     		default:
     			return true;
-    	}                
+    	}
     	return M('order')->where("order_id = $order_id and store_id = $store_id")->save($updata);//改变订单状态
     }
-    
+
     /**
      *	处理发货单
      * @param array $data  查询数量
@@ -225,13 +225,13 @@ class OrderLogic extends RelationModel
 		$data['shipping_name'] = $order['shipping_name'];
 		$data['shipping_price'] = $order['shipping_price'];
 		$data['create_time'] = time();
-        $data['store_id'] = $store_id;      
+        $data['store_id'] = $store_id;
 		$did = M('delivery_doc')->add($data);
 		$is_delivery = 0;
 		foreach ($orderGoods as $k=>$v){
 			if($v['is_send'] == 1){
 				$is_delivery++;
-			}			
+			}
 			if($v['is_send'] == 0 && in_array($v['rec_id'],$selectgoods)){
 				$res['is_send'] = 1;
 				$res['delivery_id'] = $did;
@@ -245,7 +245,7 @@ class OrderLogic extends RelationModel
 		}else{
 			$updata['shipping_status'] = 2;
 		}
-                
+
         M('order')->where("order_id ={$data['order_id']} and store_id = $store_id")->save($updata);//改变订单状态
 	    $seller_id = session('seller_id');
 		return $this->orderActionLog($order,'订单发货',$data['note'],$seller_id,1);//操作日志
@@ -273,6 +273,11 @@ class OrderLogic extends RelationModel
     	$a = M('order')->where(array('order_id'=>$order_id,'store_id'=>$store_id))->delete();
     	$b = M('order_goods')->where(array('order_id'=>$order_id,'store_id'=>$store_id))->delete();
     	return $a && $b;
+    }
+
+    public function getCodeList($condition,$order='',$start=0,$page_size=20){
+        $res = M('OrderCodes')->where($condition)->limit("$start,$page_size")->order($order)->select();
+        return $res;
     }
 
 }

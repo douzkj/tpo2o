@@ -75,7 +75,6 @@ class ApiController extends MobileBaseController {
         $hash = md5($poster);
         $image = new \Think\Image();
         $original_img = "." . $poster;
-        $image->open($original_img);
         $path = "Public/upload/poster/share/{$hash}/";
         $is_group = $data['is_group'];
         $target = $is_group ? "/Mobile/Activity/group" : '/Mobile/Goods/goodsInfo';

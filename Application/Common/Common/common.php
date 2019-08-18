@@ -971,7 +971,7 @@ function update_pay_status($order_sn,$pay_status = 1)
 		logOrder($order['order_id'],'订单付款成功','付款成功',$order['user_id'],2);
 		//付款成功后，若此订单是拼团订单，则将此拼团订单的过期时间
 		//分销设置
-		M('rebate_log')->where("order_id = {$order['order_id']}")->save(array('status'=>1));
+//		M('rebate_log')->where("order_id = {$order['order_id']}")->save(array('status'=>1));
 		// 成为分销商条件
 		//$distribut_condition = tpCache('distribut.condition');
 		//if($distribut_condition == 1)  // 购买商品付款才可以成为分销商
@@ -1506,5 +1506,16 @@ function sendSmsToUser($order_ids)
         }
     }
 
+}
+
+function getSellerInfo($seller_id, $field = "seller_name")
+{
+    return M('seller')->where(['seller_id' => $seller_id])->getField($field);
+}
+
+
+function getShopInfo($shop_id, $field = "title")
+{
+    return M('store_shops')->where(['id' => $shop_id])->getField($field);
 }
 

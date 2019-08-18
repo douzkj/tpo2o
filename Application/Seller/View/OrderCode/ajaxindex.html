@@ -1,0 +1,63 @@
+
+                    <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" style="font-size:12px;">
+                                <thead>
+                                <tr>
+                                    <td style="width: 1px;" class="text-center">
+                                        <input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);"></td>
+                                    <td class="text-center">
+                                        <a href="javascript:sort('order_sn');">订单编号</a>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="javascript:sort('add_time');">下单时间</a>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="javascript:sort('consignee');">购买用户</a>
+                                    </td>
+                                    <td class="text-center">
+                                        核销码
+                                    </td>
+
+                                    <td class="text-center">核销时间</td>
+                                    <td class="text-center">核销店员</td>
+                                    <td class="text-center">核销店铺</td>
+
+                                    <td class="text-center">操作</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <volist name="orderList" id="list">
+                                    <tr>
+                                        <td class="text-center">
+                                        	<input type="checkbox" name="selected[]" value="6">
+                                        	<input type="hidden" name="shipping_code[]" value="flat.flat">
+                                        </td>
+                                        <td class="text-center">{$list.order_sn}</td>
+                                        <td class="text-center">{$list.add_time|date='Y-m-d H:i',###}</td>
+                                        <td class="text-center">{$list.consignee}:{$list.mobile}</td>
+                                        <td class="text-center">{$list.code}</td>
+                                        <td class="text-center">{$list[is_checked]? date("Y-m-d H:i:s", $list['check_at']): "未核销"}</td>
+                                        <td class="text-center">{$list.user_id|getSellerInfo=###}</td>
+                                        <td class="text-center">{$list.shop_id|getShopInfo=###}</td>
+                                        <td class="text-center">
+                                            <if condition="$list.is_checked eq 0">
+                                                <a href="{:U('OrderCode/check',array('id'=>$list['id']))}" data-toggle="tooltip" title="" class="btn btn-info" data-original-title="核销">核销</a>
+                                            </if>
+                                        </td>
+                                    </tr>
+                                </volist>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-sm-6 text-left"></div>
+                        <div class="col-sm-6 text-right">{$page}</div>
+                    </div>
+<script>
+    $(".pagination  a").click(function(){
+        var page = $(this).data('p');
+        ajax_get_table('search-form2',page);
+    });
+</script>
