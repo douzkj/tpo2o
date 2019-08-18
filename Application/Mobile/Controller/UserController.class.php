@@ -1399,7 +1399,7 @@ class UserController extends MobileBaseController
             $store_id = M('order')->where(['order_id' => $codes[0]['order_id']])->getField('store_id');
             $seller = M('seller')->where(['store_id' => $store_id, 'user_id' => $this->user_id])->find();
             if (!$store_id || !$seller) {
-                $this->error('此二维码无效或已被核销', U('Mobile/Index/index')); exit;
+                $this->error('无权限操作', U('Mobile/Index/index')); exit;
             }
             if (!$seller) {
                 $this->display('_error'); exit;
