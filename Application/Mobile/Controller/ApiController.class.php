@@ -81,7 +81,7 @@ class ApiController extends MobileBaseController {
         $is_group = $data['is_group'];
         $target = $is_group ? "/Mobile/Activity/group" : '/Mobile/Goods/goodsInfo';
         $url = U($target, ["id" => $data['goods_id'], 'first_leader' => $user['id']], true, true);
-        $filename = "{$user['id']}.".$image->type();
+        $filename =  md5($url).$image->type();
         if (file_exists($path . $filename)) {
             //若存在，则直接返回
             $this->successResponse(['path' => "/" . $path . $filename]);
@@ -91,7 +91,7 @@ class ApiController extends MobileBaseController {
         }
         //生成代理分享二维码
         //获取当前用户的此商品分享token
-        $user_qrcode = $path . md5($url) . ".png";
+        $user_qrcode = $path . "user_code_". $user['id'] . ".png";
         if (! file_exists($user_qrcode)) {
             vendor('phpqrcode.phpqrcode');
             \QRcode::png($url, "./" . $user_qrcode, QR_ECLEVEL_L, 3, 2);
