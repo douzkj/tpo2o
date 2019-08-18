@@ -19,6 +19,9 @@
 	<script src="__PUBLIC__/js/global.js"></script>
 	<script src="__PUBLIC__/js/mobile_common.js"></script>
 	<script src="__STATIC__/js/common.js"></script>
+	<link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/2.0.1/weui.min.css">
+	<script type="text/javascript" src="https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js"></script>
+
 	<style>
 		.pingtuan-wrapper{
 			display: flex;
@@ -442,25 +445,35 @@ function changeAtt1(t) {
 		<li class="bian"><a href="{:U('Index/index')}"><em class="goods_nav1"></em><span>首页</span></a> </li>
 		<li class="bian"><a href="tel:{$tpshop_config['shop_info_phone']}"><em class="goods_nav2"></em><span>客服</span></a> </li>
 		<li class="bian">
-			<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt" target="_blank">
+			<a href="javascript:void(0)"  onclick="getGoodsShare({$goods['goods_id']})" class="jiathis jiathis_txt" target="_blank">
 				<em id="pro_share" class="goods_share"></em>
 				<span>分享</span>
 			</a>
 			<script>
-				var jiathis_config = {
-					url: "http://{$_SERVER[HTTP_HOST]}/index.php?m=Home&c=Goods&a=goodsInfo&id={$_GET[id]}",
-					pic: "http://{$_SERVER[HTTP_HOST]}{$goods[goods_id]|goods_thum_images=400,400}",
+				var loading = $("#loadingToast");
+				function getGoodsShare(goods_id) {
+					loading.fadeIn(1000);
+					$.ajax({
+						url: "{:U('Api/goodsShare')}",
+						type: 'post',
+						data: {goods_id: goods_id},
+						success: function (data) {
+							loading.fadeOut();
+							if (data.code == 200) {
+								window.location.href = data.data.fullUrl;
+							} else if (data.code == 403) {
+								layer.open({
+									content: '您未注册代理，请先绑定手机升级为代理',
+									time: 1
+								});
+								window.location.href = "{:U('Mobile/User/distribute')}";
+							} else {
+								layer.open({content: "请求失败!" + data.message})
+							}
+						}
+					})
 				}
-				var is_distribut = getCookie('is_distribut');
-				var user_id = getCookie('user_id');
-				// 如果已经登录了, 并且是分销商
-				if (parseInt(is_distribut) == 1 && parseInt(user_id) > 0) {
-					jiathis_config.url = jiathis_config.url + "&first_leader=" + user_id;
-				}
-				//alert(jiathis_config.url);
 			</script>
-			<script type="text/javascript" src="http://v3.jiathis.com/code_mini/jia.js" charset="utf-8"></script>
-			<!--<a href=""><em class="goods_share"></em><span>分享</span></a> -->
 		</li>
 	</ul>
 	<dl>

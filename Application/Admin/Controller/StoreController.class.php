@@ -474,7 +474,7 @@ class StoreController extends BaseController{
 						);
 						$seller_id = M('seller')->add($seller);//点击店铺管理员
                         //默认加入第一个门店
-                        $shop_id = M('store_shop')->add([
+                        $shop_id = M('store_shops')->add([
                             'store_id' => $store_id,
                             'longitude' => $apply['longitude'],
                             'latitude' => $apply['latitude'],

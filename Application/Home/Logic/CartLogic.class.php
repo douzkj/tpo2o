@@ -127,7 +127,7 @@ class CartLogic extends RelationModel
                         'first_leader' => $user['first_leader'],
                         'first_commission' => $goods['distribut'],
                         'second_leader' => $user['second_leader'],
-                        'second_commission' => $goods['group_distribute']
+                        'second_commission' => $goods['group_distribut']
                     ];
                     if ( ! $rebate['second_leader'] && $rebate['first_leader']) {
                         $rebate['second_leader'] = M('users')->where(['user_id' => $rebate['first_leader']])->getField('first_leader') ? : 0;

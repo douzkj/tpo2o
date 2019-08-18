@@ -170,7 +170,7 @@ function getAllMenu(){
 					array('name' => '商家等级', 'act'=>'store_grade', 'control'=>'Store'),
 					array('name' => '商家分类', 'act'=>'store_class', 'control'=>'Store'),
 					array('name' => '商家列表', 'act'=>'store_list', 'control'=>'Store'),
-//					array('name' => '自营店铺', 'act'=>'store_own_list', 'control'=>'Store'),
+					array('name' => '自营店铺', 'act'=>'store_own_list', 'control'=>'Store'),
 					array('name' => '经营类目审核', 'act'=>'apply_class_list', 'control'=>'Store'),
 			)),
 			'Ad' => array('name' => '广告管理', 'icon'=>'fa-flag', 'sub_menu' => array(

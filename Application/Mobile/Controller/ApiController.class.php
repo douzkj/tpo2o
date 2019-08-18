@@ -88,8 +88,10 @@ class ApiController extends MobileBaseController {
         }
         //生成代理分享二维码
         //获取当前用户的此商品分享token
-        $url = U('/Mobile/Goods/goodsInfo', ["id" => $data['goods_id'], 'first_leader' => $user['id']], true, true);
-        $user_qrcode = $path . "qrcode_" . $user['id'] . ".png";
+        $is_group = $data['is_group'];
+        $target = $is_group ? "/Mobile/Activity/group" : '/Mobile/Goods/goodsInfo';
+        $url = U($target, ["id" => $data['goods_id'], 'first_leader' => $user['id']], true, true);
+        $user_qrcode = $path . md5($url) . ".png";
         if (! file_exists($user_qrcode)) {
             vendor('phpqrcode.phpqrcode');
             \QRcode::png($url, "./" . $user_qrcode, QR_ECLEVEL_L, 3, 2);
