@@ -80,7 +80,7 @@ class ApiController extends MobileBaseController {
         $is_group = $data['is_group'];
         $target = $is_group ? "/Mobile/Activity/group" : '/Mobile/Goods/goodsInfo';
         $url = U($target, ["id" => $data['goods_id'], 'first_leader' => $user['user_id']], true, true);
-        $filename =  md5($url).$image->type();
+        $filename =  md5($url) . ".png";
         if (file_exists($path . $filename)) {
             //若存在，则直接返回
             $this->successResponse(['path' => "/" . $path . $filename]);
@@ -98,7 +98,7 @@ class ApiController extends MobileBaseController {
         $share_image = "./" . $path . $filename;
         $image->open($original_img)->water("./".$user_qrcode, Image::IMAGE_WATER_SOUTHWEST, 80)->save($share_image);
         $this->successResponse([
-            'path' => $share_image,
+            'path' => "/" . $path . $filename,
             'fullUrl' => U($share_image, [],true, true)
         ]);
 
