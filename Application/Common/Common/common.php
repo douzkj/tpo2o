@@ -380,7 +380,7 @@ function sendSMS($mobile,$content)
 //        return false;
 //    }
 //}
-function sendSMS($mobile, $code)
+function sendSMS($mobile, $code, $content = '')
 {
     //时区设置：亚洲/上海
     date_default_timezone_set('Asia/Shanghai');
@@ -393,7 +393,7 @@ function sendSMS($mobile, $code)
         'Uid'=>$uid,					//用户账号
         'Key'=> $pwd,			//MD5位32密码,密码和用户名拼接字符
         'smsMob'=>$mobile,				//号码，以英文逗号隔开
-        'smsText'=> str_replace('${code}', $code, $config['sms_templateCode']),			//内容
+        'smsText'=> $content ? : str_replace('${code}', $code, $config['sms_templateCode']),			//内容
     );
     //即时发送
     $res = httpRequest($http,'POST',$data);//POST方式提交
@@ -887,6 +887,7 @@ function set_btn_order_status($order)
  */
 function update_pay_status($order_sn,$pay_status = 1)
 {
+    $sendSms = [];
 	if(stripos($order_sn,'recharge') !== false){
 		//用户在线充值
 		$count = M('recharge')->where("order_sn = '$order_sn' and pay_status = 0")->count();   // 看看有没已经处理过这笔订单  支付宝返回不重复处理操作
@@ -944,6 +945,7 @@ function update_pay_status($order_sn,$pay_status = 1)
                         ]);
                         //进行分佣
                         settleOrderDistribute($o['order_id']);
+                        $sendSms[] = $o['order_id'];
                     }
                 } else {
                     if ($group_order['user_id'] == $order['user_id']) {
@@ -958,6 +960,7 @@ function update_pay_status($order_sn,$pay_status = 1)
         } else {
             //单独购买订单修改
             settleOrderDistribute($order['order_id']);
+            $sendSms[] = $order['order_id'];
         }
 
 		// 减少对应商品的库存
@@ -978,6 +981,7 @@ function update_pay_status($order_sn,$pay_status = 1)
 		M('store')->where("store_id = {$order['store_id']}")->setInc('pending_money',$order_settlement[0]['store_settlement']); // 店铺 待结算资金 累加
 		// 赠送积分
 		order_give($order);// 调用送礼物方法, 给下单这个人赠送相应的礼物
+        sendSmsToUser($sendSms);
 	}
 }
 
@@ -1485,5 +1489,22 @@ function settleOrderDistribute($order_id)
             ]);
         }
     }
+}
+
+function sendSmsToUser($order_ids)
+{
+    if (!empty($order_ids)) {
+        foreach ($order_ids as $order_id) {
+            $mobile = M('order')->where(['order_id' => $order_id])->getField('mobile');
+            if ($mobile) {
+                $goods = M('order_goods')->where(['order_id' => $order_id])->find();
+                $code = M('order_code')->where(['order_id' => $order_id])->getField('code', true);
+                if (!empty($code)) {
+                    sendSMS($mobile, '', "您购买的【".mb_substr($goods, 0, 30)."】核销码为：" . implode("," , $code));
+                }
+            }
+        }
+    }
+
 }
 
