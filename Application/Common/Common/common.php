@@ -1498,7 +1498,7 @@ function sendSmsToUser($order_ids)
             $mobile = M('order')->where(['order_id' => $order_id])->getField('mobile');
             if ($mobile) {
                 $goods = M('order_goods')->where(['order_id' => $order_id])->find();
-                $code = M('order_code')->where(['order_id' => $order_id])->getField('code', true);
+                $code = M('order_codes')->where(['order_id' => $order_id])->getField('code', true);
                 if (!empty($code)) {
                     sendSMS($mobile, '', "您购买的【".mb_substr($goods, 0, 30)."】核销码为：" . implode("," , $code));
                 }
