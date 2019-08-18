@@ -78,6 +78,9 @@ class ApiController extends MobileBaseController {
         $original_img = "." . $poster;
         $image->open($original_img);
         $path = "Public/upload/poster/share/{$hash}/";
+        $is_group = $data['is_group'];
+        $target = $is_group ? "/Mobile/Activity/group" : '/Mobile/Goods/goodsInfo';
+        $url = U($target, ["id" => $data['goods_id'], 'first_leader' => $user['id']], true, true);
         $filename = "{$user['id']}.".$image->type();
         if (file_exists($path . $filename)) {
             //若存在，则直接返回
@@ -88,9 +91,6 @@ class ApiController extends MobileBaseController {
         }
         //生成代理分享二维码
         //获取当前用户的此商品分享token
-        $is_group = $data['is_group'];
-        $target = $is_group ? "/Mobile/Activity/group" : '/Mobile/Goods/goodsInfo';
-        $url = U($target, ["id" => $data['goods_id'], 'first_leader' => $user['id']], true, true);
         $user_qrcode = $path . md5($url) . ".png";
         if (! file_exists($user_qrcode)) {
             vendor('phpqrcode.phpqrcode');
@@ -100,7 +100,7 @@ class ApiController extends MobileBaseController {
         $image->open($original_img)->water("./".$user_qrcode, Image::IMAGE_WATER_SOUTHWEST, 80)->save($share_image);
         $this->successResponse([
             'path' => $share_image,
-            'fullUrl' => U($share_image, true, true)
+            'fullUrl' => U($share_image, [],true, true)
         ]);
 
     }

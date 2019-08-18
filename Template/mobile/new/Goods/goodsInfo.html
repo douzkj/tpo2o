@@ -385,10 +385,11 @@ function goTop(){
                   url: "{:U('Api/goodsShare')}",
                   type: 'post',
                   data: {goods_id: goods_id},
+                  dataType: 'json',
                   success: function (data) {
                       loading.fadeOut();
                       if (data.code == 200) {
-                          window.location.href = data.data.fullUrl;
+                          window.location.href = data.data.path;
                       } else if (data.code == 403) {
                           layer.open({
                               content: '您未注册代理，请先绑定手机升级为代理',
