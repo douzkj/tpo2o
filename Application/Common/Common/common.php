@@ -393,7 +393,7 @@ function sendSMS($mobile, $code, $content = '')
         'Uid'=>$uid,					//用户账号
         'Key'=> $pwd,			//MD5位32密码,密码和用户名拼接字符
         'smsMob'=>$mobile,				//号码，以英文逗号隔开
-        'smsText'=> $content ? : str_replace('${code}', $code, $config['sms_templateCode']),			//内容
+        'smsText'=> strlen($content) != 0 ? $content : str_replace('${code}', $code, $config['sms_templateCode']),			//内容
     );
     //即时发送
     $res = httpRequest($http,'POST',$data);//POST方式提交
