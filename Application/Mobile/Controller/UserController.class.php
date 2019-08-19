@@ -1314,6 +1314,7 @@ class UserController extends MobileBaseController
     public function withdrawals(){
 
         C('TOKEN_ON',true);
+        $account = M('user_accounts')->where(['user_id' => $this->user_id])->find();
         if(IS_POST)
         {
             $this->verifyHandle('withdrawals');
@@ -1326,18 +1327,72 @@ class UserController extends MobileBaseController
                 $this->error('每次最少提现额度'.$distribut_min);
                 exit;
             }
-            if($data['money'] > $this->user['user_money'])
+            if(bccomp($data['money'],$this->user['user_money'], 2) == 1)
             {
                 $this->error("你最多可提现{$this->user['user_money']}账户余额.");
                 exit;
             }
 
-            if(M('withdrawals')->add($data)){
-                $this->success("已提交申请");
-                exit;
-            }else{
-                $this->error('提交失败,联系客服!');
-                exit;
+            if ($data['type'] == 1) {
+                $accountData = [
+                    'user_id' => $this->user_id,
+                    'account_name' =>  $data['account_name'],
+                    'account_no' => $data['account_bank'],
+                    'update_time' => time()
+                ];
+                if ( ! $account) {
+                    $accountData['add_time'] = time();
+                    M('user_accounts')->add($accountData);
+                } else {
+                    M('user_accounts')->where(['id' => $account['id']])->save($accountData);
+                }
+                M()->startTrans();
+                $out_trade_no = get_ali_trans_sn("withdrawals");
+
+                accountLog($this->user_id, ($data['money'] * -1), 0,"平台提现");
+                $data['out_trade_no'] = $out_trade_no;
+                $data['status'] = 1;
+                $withdrawals_id = M('withdrawals')->add($data);
+                if (!$withdrawals_id) {
+                    M()->rollback();
+                    $this->error('提交失败,联系客服!');
+                    exit;
+
+                }
+                $remittance = array(
+                    'user_id' => $this->user_id,
+                    'bank_name' => "支付宝",
+                    'account_bank' => $data['account_bank'],
+                    'account_name' => $data['account_name'],
+                    'money' => $data['money'],
+                    'status' => 1,
+                    'create_time' => time(),
+                    'admin_id' => session('admin_id'),
+                    'withdrawals_id' => $withdrawals_id,
+                    'remark'=> "代理提现",
+                );
+                M('remittance')->add($remittance);
+                $res = transferAliaop($out_trade_no, $data['account_bank'], $data['money'], $data['account_name'], "提现到账");
+                if ($res['status'] == 1) {
+                    M('withdrawals')->where(['id' => $withdrawals_id])->save([
+                        'order_id' => h_property_get($res['result'], "order_id", "")
+                    ]);
+                    M()->commit();
+                    $this->success("提现成功");
+                    exit;
+                } else {
+                    M()->rollback();
+                    $this->error($res['msg']);
+                    exit;
+                }
+            } else {
+                if(M('withdrawals')->add($data)){
+                    $this->success("已提交申请");
+                    exit;
+                }else{
+                    $this->error('提交失败,联系客服!');
+                    exit;
+                }
             }
         }
 
@@ -1348,6 +1403,7 @@ class UserController extends MobileBaseController
 
         $this->assign('page', $page->show());// 赋值分页输出
         $this->assign('list',$list); // 下线
+        $this->assign('account', $account);
         if($_GET['is_ajax'])
         {
             $this->display('ajaxx_withdrawals_list');

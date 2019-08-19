@@ -11,51 +11,71 @@
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-list"></i>提现申请</h3>
                 </div>
-                <div class="panel-body ">   
+                <div class="panel-body ">
                     <!--表单数据-->
-                    <form method="post" id="withdrawals_form">                    
+                    <form method="post" id="withdrawals_form">
                         <!--通用信息-->
-                    <div class="tab-content col-md-10">                 	  
-                        <div class="tab-pane active" id="tab_tongyong">                           
+                    <div class="tab-content col-md-10">
+                        <div class="tab-pane active" id="tab_tongyong">
                             <table class="table table-bordered">
-                                <tbody>                                
+                                <tbody>
+                                <tr>
+                                    <td class="col-sm-2">提现类型：</td>
+                                    <td class="col-sm-6">
+                                        <label>
+                                            <input type="radio" class="form-checkbox-normal "  name="type" <if condition="$withdrawals.type eq 0">checked </if> value="0"/> 对公账户提现
+
+                                        </label>
+                                        <label>
+                                            <input type="radio" class="form-checkbox-normal "  name="type"  <if condition="$withdrawals.type eq 1">checked </if> value="1"/ >支付宝提现
+                                        </label>
+                                    </td>
+                                    <td class="col-sm-4 text-warning">
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td class="col-sm-2">提现金额：</td>
                                     <td class="col-sm-6">
                                         <input type="text" class="form-control" onkeyup="this.value=this.value.replace(/[^\d.]/g,'')" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" placeholder="最少提现额度{$withdrawals_min}" name="money" id="money" value="{$withdrawals.money}"/>
                                     </td>
                                     <td class="col-sm-4"></td>
-                                </tr>   
+                                </tr>
                                 <tr>
                                     <td>银行名称：</td>
                                     <td>
 	                                    <input type="text" class="form-control" placeholder="如:支付宝,农业银行,工商银行等..." name="bank_name" id="bank_name" value="{$withdrawals.bank_name}" />
                                     </td>
-                                    <td></td>                                    
-                                </tr>                                
+                                    <td></td>
+                                </tr>
                                 <tr>
                                     <td>收款账号：</td>
                                     <td>
-	                                    <input type="text" class="form-control" placeholder="如:支付宝账号,建设银行账号" name="account_bank" id="account_bank" value="{$withdrawals.account_bank}" />
+	                                    <input type="text" class="form-control" placeholder="如:支付宝账号,银行账号" name="account_bank" id="account_bank" value="{$withdrawals.account_bank}" />
+                                    </td>
+                                    <td class="col-sm-4 text-warning">
+                                        请填写支付宝账户或者对公账户卡号
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>开户名：</td>
+                                    <td>收款人姓名：</td>
                                     <td>
-	                                    <input type="text" class="form-control" placeholder="开户人姓名" name="account_name" id="account_name" value="{$withdrawals.account_name}" />
+	                                    <input type="text" class="form-control" placeholder="请填写开户人姓名或支付宝实名姓名" name="account_name" id="account_name" value="{$withdrawals.account_name}" />
                                     </td>
-                                </tr>                                             
-                                </tbody> 
+                                    <td class="col-sm-4 text-warning">
+                                        请填写支付宝账户实名名称或者对公账户开户名，若填写错误不会到账
+                                    </td>
+                                </tr>
+                                </tbody>
                                 <tfoot>
                                 	<tr>
                                 	<td>
                                 		<input type="hidden" name="id" value="{$withdrawals.id}">
                                 	</td>
                                 	<td class="text-right"><input class="btn btn-primary" type="button" onclick="checkSubmit()" value="保存"></td></tr>
-                                </tfoot>                               
+                                </tfoot>
                                 </table>
-                        </div>                           
-                    </div>              
+                        </div>
+                    </div>
 			    	</form><!--表单数据-->
                 </div>
             </div>
@@ -66,6 +86,15 @@
     var withdrawals_min = {$withdrawals_min};
     var withdrawals_max = {$withdrawals_max};
 
+    $("input[name=type]").on('click', function () {
+        if ($(this).val() == 1) {
+            $("input[name=bank_name]").val("支付宝").attr('readonly', 'readonly');
+        } else {
+            $("input[name=bank_name]").val('{$withdrawals.bank_name}').attr('readonly', false);
+        }
+    });
+
+
 // 表单验证提交
 function checkSubmit(){
 
@@ -73,7 +102,7 @@ function checkSubmit(){
 	var bank_name = $.trim($('#bank_name').val());
 	var account_bank = $.trim($('#account_bank').val());
 	var account_name = $.trim($('#account_name').val());
-  
+
 	if(money == '')
 	{
 		alert('提现金额必填');

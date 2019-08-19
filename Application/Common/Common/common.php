@@ -1519,3 +1519,91 @@ function getShopInfo($shop_id, $field = "title")
     return M('store_shops')->where(['id' => $shop_id])->getField($field);
 }
 
+function h_property_get($class, $property, $default = '')
+{
+    if (is_null($class)) {
+        return $default;
+    }
+    if (is_object($class) && property_exists($class, $property)) {
+            return $class->$property;
+    }
+    if (is_array($class)) {
+        if (array_key_exists($property, $class)) {
+            return $class[$property];
+        }
+    }
+    return $default;
+}
+
+
+/**
+ * 获取订单 order_sn
+ */
+function get_ali_trans_sn($table = 'store_withdrawals', $field = 'out_trade_no')
+{
+    // 保证不会有重复订单号存在
+    while(true){
+        $order_sn = date('YmdHis').rand(1000,9999); // 订单编号
+        $order_sn_count = M($table)->where("{$field} = '$order_sn' ")->count();
+        if($order_sn_count == 0)
+            break;
+    }
+    return $order_sn;
+}
+
+
+function transferAliaop($out_trade_no, $payee_account, $money, $payee_name, $remark = '提现')
+{//引入支付宝账户单比转账
+
+    $res = [
+        'status' => 0,
+        'msg' => '网络错误',
+        'result' => null
+    ];
+    vendor('AliAop.AopSdk');
+    $aop_conf  = F('aliaop','',TEMP_PATH);
+    if (empty($aop_conf) || !$aop_conf['aliaop_appid']) {
+        $this->error("系统未配置支付宝接口信息，不能进行支付宝提现");
+        exit;
+    }
+    $aop = new AopClient ();
+    $aop->gatewayUrl = 'https://openapi.alipay.com/gateway.do';
+    $aop->appId = $aop_conf['aliaop_appid'];
+    $aop->rsaPrivateKey = $aop_conf['aliaop_privateKey'];
+    $aop->alipayrsaPublicKey= $aop_conf['aliaop_publicKey'];
+    $aop->apiVersion = '1.0';
+    $aop->signType = 'RSA2';
+    $aop->postCharset='utf-8';
+    $aop->format='json';
+    $request = new AlipayFundTransToaccountTransferRequest ();
+    $biz_content = [
+        'out_biz_no' => $out_trade_no,
+        'payee_type' => 'ALIPAY_LOGONID',
+        'payee_account' => $payee_account,
+        'amount' => $money,
+        'payee_real_name' => $payee_name,
+        'remark' => $remark
+    ];
+    $request->setBizContent(json_encode($biz_content));
+    try {
+        $result = $aop->execute($request);
+        $responseNode = str_replace(".", "_", $request->getApiMethodName()) . "_response";
+        $resultCode = $result->$responseNode->code;
+        if(!empty($resultCode)&&$resultCode == 10000){
+            $res['status'] = 1;
+            $res['result'] = $result->$responseNode;
+        } else {
+            \Think\Log::write("支付宝提现失败:" . json_encode($result->$responseNode));
+            $res['msg'] = '支付宝提现失败:' .
+                h_property_get($result->$responseNode,
+                    'sub_msg',
+                    h_property_get($result->$responseNode, "msg", "提现失败"));
+        }
+    } catch (\Think\Exception $e) {
+        \Think\Log::write("支付宝提现：" . $e->getMessage());
+        $res['msg'] =  "支付宝提现失败：" . $e->getMessage();
+    }
+    return $res;
+}
+
+
