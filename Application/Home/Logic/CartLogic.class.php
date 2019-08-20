@@ -129,6 +129,11 @@ class CartLogic extends RelationModel
                         'second_leader' => $user['second_leader'],
                         'second_commission' => $goods['group_distribut']
                     ];
+                    if (session('first_leader')) {
+                        $first_leader = session('first_leader');
+                        $rebate['first_leader'] = $first_leader;
+                        $rebate['second_leader'] = M('users')->where(['user_id' => $first_leader])->getField('first_leader');
+                    }
                     if ( ! $rebate['second_leader'] && $rebate['first_leader']) {
                         $rebate['second_leader'] = M('users')->where(['user_id' => $rebate['first_leader']])->getField('first_leader') ? : 0;
                     }
@@ -140,6 +145,11 @@ sql;
                         $count = M()->query($exists);
                         if ($count[0]['total']) {
                             throw new Exception("已参加过当前活动");
+                        }
+                        $flash_sale = M('flash_sale')->where(['id' => $val['prom_id']])->find();
+                        if ($flash_sale) {
+                            $rebate['first_commission'] = $flash_sale['distribut'];
+                            $rebate['second_commission'] = $flash_sale['group_distribut'];
                         }
                     }
                     //若为拼团订单，则加入拼团订单关联

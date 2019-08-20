@@ -19,13 +19,13 @@
 <header id="head_search_box" style="position: fixed; top: 0px; width: 100%;">
 <div class="search_header">
     <a href="javascript:history.back(-1)" class="back search_back"></a>
-    <div class="search">    
+    <div class="search">
      <form name="sourch_form" id="sourch_form2" method="post" action="{:U("Goods/search")}">
    		<div class="text_box" name="list_search_text_box" onClick="return 1;">
 	        <input type="text" class="text" name="q" id="keyword" value="<?php echo I('q'); ?>"  placeholder="搜索关键字"/>
    		</div>
-        <input type="button" value="" class="submit"  onclick="if($.trim($('#keyword').val()) != '') $('#sourch_form2').submit();" />        
- 	</form>    
+        <input type="button" value="" class="submit"  onclick="if($.trim($('#keyword').val()) != '') $('#sourch_form2').submit();" />
+ 	</form>
     </div>
     <a class="menu filtrate" name="list_go_filter" style=" color:#666">筛选</a>
 </div>
@@ -44,29 +44,50 @@
 <div class="touchweb-com_searchListBox openList" id="goods_list">
   <empty name="goods_list">
   <p class="goods_title">抱歉暂时没有相关结果，换个筛选条件试试吧</p>
-  <else /> 
+  <else />
    <foreach name="goods_list" item="vo" key="k">
-     <li>
-		<a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$vo[goods_id]))}" class="item">
-			<div class="pic_box">
-				<div class="active_box">
-					<span style=" background-position:0px -36px">新品</span>
-				</div>
-				<img src="{$vo.goods_id|goods_thum_images=400,400}">
-			</div>
-			<div class="title_box">{$vo.goods_name}</div>
-			<div class="price_box">
-				<span class="new_price"><i>￥{$vo.shop_price}元</i></span>
-			</div>
-			<div class="comment_box">已售0</div>
-		</a>
-		<div class="ui-number b"> 
-			<a class="decrease" onClick="goods_cut({$vo.goods_id});">-</a>
-			<input class="num" id="number_{$vo.goods_id}" type="text" onBlur="changePrice();" value="1" onFocus="if(value=='1') {value=''}" size="4" maxlength="5">
-			<a class="increase" onClick="goods_add({$vo.goods_id});">+</a> 
-		</div>
-		<span class="bug_car" onClick="AjaxAddCart({$vo[goods_id]},1,0);"><i class="icon-shop_cart"></i></span>
-	  </li>
+	   <li>
+		   <a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$vo[goods_id]))}" class="item">
+			   <div class="pic_box">
+				   <!--<div class="active_box">-->
+				   <!--<span style=" background-position:0px -36px">新品</span>-->
+				   <!--</div>-->
+				   <img src="{$vo.goods_id|goods_thum_images=400,400}">
+			   </div>
+			   <div class="title_box">{$vo.goods_name}</div>
+			   <div class="price-wrapper">
+				   <span class="sale-price">￥{$vo.shop_price}元</span>
+				   <span class="sale-num">已售{$vo[virtual_num] + $vo[sales_sum]}</span>
+			   </div>
+		   </a>
+		   <!--<div class="ui-number b"> -->
+		   <!--<a class="decrease" onClick="goods_cut({$vo.goods_id});">-</a>-->
+		   <!--<input class="num" id="number_{$vo.goods_id}" type="text" onBlur="changePrice();" value="1" onFocus="if(value=='1') {value=''}" size="4" maxlength="5">-->
+		   <!--<a class="increase" onClick="goods_add({$vo.goods_id});">+</a> -->
+		   <!--</div>-->
+		   <!--<span class="bug_car" onClick="AjaxAddCart({$vo[goods_id]},1,0);"><i class="icon-shop_cart"></i></span>-->
+	   </li>
+     <!--<li>-->
+		<!--<a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$vo[goods_id]))}" class="item">-->
+			<!--<div class="pic_box">-->
+				<!--<div class="active_box">-->
+					<!--<span style=" background-position:0px -36px">新品</span>-->
+				<!--</div>-->
+				<!--<img src="{$vo.goods_id|goods_thum_images=400,400}">-->
+			<!--</div>-->
+			<!--<div class="title_box">{$vo.goods_name}</div>-->
+			<!--<div class="price_box">-->
+				<!--<span class="new_price"><i>￥{$vo.shop_price}元</i></span>-->
+			<!--</div>-->
+			<!--<div class="comment_box">已售0</div>-->
+		<!--</a>-->
+		<!--<div class="ui-number b"> -->
+			<!--<a class="decrease" onClick="goods_cut({$vo.goods_id});">-</a>-->
+			<!--<input class="num" id="number_{$vo.goods_id}" type="text" onBlur="changePrice();" value="1" onFocus="if(value=='1') {value=''}" size="4" maxlength="5">-->
+			<!--<a class="increase" onClick="goods_add({$vo.goods_id});">+</a> -->
+		<!--</div>-->
+		<!--<span class="bug_car" onClick="AjaxAddCart({$vo[goods_id]},1,0);"><i class="icon-shop_cart"></i></span>-->
+	  <!--</li>-->
    </foreach>
   </empty>
 </div>
@@ -75,15 +96,15 @@
   		<a href="javascript:void(0)" onClick="ajax_sourch_submit()">点击加载更多</a>
   </div>
 </notempty>
-</section> 
+</section>
 </section>
 
 
 <script>
 var  page = 1;
- /*** ajax 提交表单 查询订单列表结果*/  
+ /*** ajax 提交表单 查询订单列表结果*/
  function ajax_sourch_submit()
- {	 	 	 
+ {
         page += 1;
 		$.ajax({
 			type : "GET",
@@ -96,8 +117,8 @@ var  page = 1;
 				else
 				    $("#goods_list").append(data);
 			}
-		}); 
- } 
+		});
+ }
 </script>
 
 
@@ -111,14 +132,14 @@ var  page = 1;
 	<section id="filter_content">
 	    <div class="filtrate_category">
 	        <a href="javascript:;" class="filtrate_category_a" >分类 <span class="up_down">全部展开</span></a>
-	    </div>   
+	    </div>
 	    <ul class="filtrate_list" id="filter_category_list" style="display: block; -webkit-transform-origin: 0px 0px 0px; opacity: 1; -webkit-transform: scale(1, 1);">
 	        <li class="filtrate_list_li">
 				<ul>
 				<foreach name="cateArr" item="v" key="k">
 					<li class="filtrate_list_li"><a href="{:U('Mobile/Goods/goodsList',array('id'=>$v['id']))}" class="filtrate_list_li_a " style="padding-left:25px"><span>{$v.name}</span></a>
 						<ul>
-						<foreach name="v.sub_menu" item="vv">	
+						<foreach name="v.sub_menu" item="vv">
 						<li class="filtrate_list_li">
 							<a href="{:U('Mobile/Goods/goodsList',array('id'=>$vv['id']))}" on class="filtrate_list_li_a " style="padding-left:45px;">{$vv.name}</a>
 						</li>
@@ -126,11 +147,11 @@ var  page = 1;
 						</ul>
 					</li>
 				</foreach>
-				</ul>  
+				</ul>
 			</li>
-		</ul> 
-	     <form method="post" action="{:U('Goods/goodsList',array('id'=>$filter_param['id']))}"> 
-	     <notempty name="filter_brand">    
+		</ul>
+	     <form method="post" action="{:U('Goods/goodsList',array('id'=>$filter_param['id']))}">
+	     <notempty name="filter_brand">
 	       <div class="filtrate_category" >
 	            <a href="javascript:;" class="filtrate_category_a">品牌 <span class="up_down">全部展开</span></a>
 	       </div>
@@ -140,7 +161,7 @@ var  page = 1;
 				</foreach>
 			</ul>
 	      </notempty>
-	       <foreach name="filter_spec" item="v" key="k">  
+	       <foreach name="filter_spec" item="v" key="k">
 	        <div class="filtrate_category" >
 	            <a href="javascript:;" class="filtrate_category_a">{$v.name}<span class="up_down">全部展开</span></a>
 	        </div>
@@ -152,35 +173,35 @@ var  page = 1;
 		        </foreach>
 	        </ul>
 	        </foreach>
-       
-	      	<foreach name="filter_attr" item="v" key="k">  
+
+	      	<foreach name="filter_attr" item="v" key="k">
 		      	<div class="filtrate_category" >
 		            <a href="javascript:;" class="filtrate_category_a">{$v.attr_name}<span class="up_down">全部展开</span></a>
-		        </div> 
+		        </div>
 		        <ul class="clearfix filtrate_address filtrate_list att_item" id="attrs_{$k}">
 			        <foreach name="v[attr_value]" item="v2" key="k2">
 			        <li id="attr_{$k2}">
 			            <a  href="{$v2[href]}">{$v2[attr_value]}</a>
 			        </li>
 			        </foreach>
-		        </ul>                       
+		        </ul>
 		   </foreach>
-        
+
       <!--价格帅选-->
       <if condition="$filter_price neq null">
- 
+
 		      	<div class="filtrate_category" >
 		            <a href="javascript:;" class="filtrate_category_a">价格<span class="up_down">全部展开</span></a>
-		        </div> 
+		        </div>
 		        <ul class="clearfix filtrate_address filtrate_list att_item">
 			       <foreach name="filter_price" item="v" key="k">
 			        <li>
 			            <a  href="{$v[href]}">{$v[value]}</a>
 			        </li>
 			        </foreach>
-		        </ul>                       
+		        </ul>
       </if>
-     <!--价格帅选 end-->                                            	      
+     <!--价格帅选 end-->
 		   <div class="filtrate_has">
 			    <h2>其他条件</h2>
 				<ul class="clearfix">
@@ -197,14 +218,14 @@ var  page = 1;
 				     <input type="radio" name='other_has' id="ruzhu_goods" value="3" >
 				    </li>
 				</ul>
-		   </div>  
+		   </div>
 		   <div class="filtrate_has1" style="display:none">
 		    <h2>是否有货</h2>
-		    <ul class="clearfix">	  
+		    <ul class="clearfix">
 			    <li  class="">
 			    <label for="">仅显示有货</label>
 			    <input type="radio" name='other_youhuo' id="other_youhuo" value='1'>
-			    </li>	  
+			    </li>
 			</ul>
 		   </div>
 	    <script>
@@ -213,20 +234,20 @@ var  page = 1;
 			$('.filtrate_has li').removeClass("on");
 			$(this).addClass("on");
 		})
-		
+
 	    $('.filtrate_has1 li').click(function(){
 			if($(this).hasClass("on")){
 				$(this).find("input").attr("checked","");
-				$(this).removeClass("on");	
+				$(this).removeClass("on");
 			}
 			else
 			{
 				$(this).find("input").attr("checked","checked");
-				$(this).addClass("on");	
-			}	
+				$(this).addClass("on");
+			}
 		})
 	    </script>
-	    
+
 	    <ul class="filtrate_btn">
 	        <li><a href="{:U('Goods/goodsList',array('id'=>$filter_param['id']))}" class="reset" id="clear_btn">取消筛选</a></li>
 	        <li> <input class="submit" id="submit_btn" type="submit" value="确定"></li>
@@ -245,8 +266,8 @@ var  page = 1;
                 </div>
                 <span class="mix_submit" onClick="if($.trim($('#q').val()) != '') $('#sourch_form').submit();"></span>
                 <a href="javascript:void(0)" class="clear_input" id="clear_input" style="display: block;"></a>
-            </div>       
-               <input type="button" onClick="if($.trim($('#q').val()) != '') $('#sourch_form').submit(); else alert('输入搜索词');" value="搜索" class="mix_filtrate">      
+            </div>
+               <input type="button" onClick="if($.trim($('#q').val()) != '') $('#sourch_form').submit(); else alert('输入搜索词');" value="搜索" class="mix_filtrate">
         </form>
     </section>
     <section class="mix_search_list"></section>
@@ -254,7 +275,7 @@ var  page = 1;
      <ul>
             <foreach name="tpshop_config.hot_keywords" item="wd" key="k">
                <li><a href="{:U('Goods/search',array('q'=>$wd))}" <if condition="$k eq 0">class="ht"</if>>{$wd}</a></li>
-            </foreach>     
+            </foreach>
       </ul>
      </section>
     <div class="spacer"></div>
@@ -279,20 +300,20 @@ $(document).ready(function(){
         bizFilter.init();
 });
 
-function goods_cut($val){  
-	var num_val=document.getElementById('number_'+$val);  
-	var new_num=num_val.value;  
-	var Num = parseInt(new_num);  
-	if(Num>1)Num=Num-1;  
-	num_val.value=Num;  
-} 
+function goods_cut($val){
+	var num_val=document.getElementById('number_'+$val);
+	var new_num=num_val.value;
+	var Num = parseInt(new_num);
+	if(Num>1)Num=Num-1;
+	num_val.value=Num;
+}
 
-function goods_add($val){ 
-	var num_val=document.getElementById('number_'+$val);  
-	var new_num=num_val.value;  
-	var Num = parseInt(new_num);  
-	Num=Num+1;  
-	num_val.value=Num;  
+function goods_add($val){
+	var num_val=document.getElementById('number_'+$val);
+	var new_num=num_val.value;
+	var Num = parseInt(new_num);
+	Num=Num+1;
+	num_val.value=Num;
 }
 </script>
 <script>
@@ -425,9 +446,9 @@ function goods_add($val){
             $(document).on("touchmove", sticky);
             $(window).on("scroll", sticky);
         }, 500);
- 
+
 	});
-    
+
     $('.show_type').bind("click", function() {
         if ($('#goods_list').hasClass('openList')){
     		$('#goods_list').removeClass('openList');
@@ -435,10 +456,10 @@ function goods_add($val){
     	}
     	else
     	{
-    		$('#goods_list').addClass('openList');	
+    		$('#goods_list').addClass('openList');
     		$(this).addClass('show_list');
     	}
-    });    
+    });
 </script>
 <script type="text/javascript">
 function get_brand(brand_id)
@@ -500,6 +521,6 @@ function goTop(){
 	$('html,body').animate({'scrollTop':0},600);
 }
 </script>
-<a href="javascript:goTop();" class="gotop" style=" z-index:9999"><img src="__STATIC__/images/topup.png"></a> 
+<a href="javascript:goTop();" class="gotop" style=" z-index:9999"><img src="__STATIC__/images/topup.png"></a>
 </body>
 </html>
