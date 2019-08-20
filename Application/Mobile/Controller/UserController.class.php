@@ -1317,8 +1317,17 @@ class UserController extends MobileBaseController
         $account = M('user_accounts')->where(['user_id' => $this->user_id])->find();
         if(IS_POST)
         {
-            $this->verifyHandle('withdrawals');
             $data = I('post.');
+            if (empty($data['mobile_code'])) {
+                $this->error("验证码不能为空"); exit;
+            }
+            $userLogic = new UsersLogic();
+            $check_code = $userLogic->check_validate_code($data['mobile_code'], $this->user['mobile']);
+            if ($check_code['status'] != 1) {
+                $this->error($check_code['msg']);
+                exit;
+            }
+            unset($data['mobile_code']);
             $data['user_id'] = $this->user_id;
             $data['create_time'] = time();
             $distribut_min = tpCache('distribut.min'); // 最少提现额度

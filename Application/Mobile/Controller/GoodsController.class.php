@@ -11,6 +11,7 @@
  * $Author: IT宇宙人 2015-08-10 $
  */
 namespace Mobile\Controller;
+use Home\Logic\GoodsLogic;
 use Mobile\Logic\ReplyLogic;
 use Think\AjaxPage;
 use Think\Page;
@@ -30,6 +31,16 @@ class GoodsController extends MobileBaseController {
     public function areaList()
     {
         $this->display();
+    }
+
+    /**
+     * 商品列表页
+     */
+    public function nearby(){
+        $goodsLogic = new GoodsLogic();
+        $nearbyGoods = $goodsLogic->getGoodsNearby(100, 20, true);
+        $this->assign('goods_list', $nearbyGoods);
+        $this->display('nearyList');
     }
 
     /**

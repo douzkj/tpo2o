@@ -48,24 +48,50 @@ class GoodsLogic extends RelationModel
         return array('status'=>1,'msg'=>'','result'=>$list_brand);
    }
 
-   public function getGoodsNearby($limit = 3, $nearBy = 20)
+   public function getGoodsNearby($limit = 3, $nearBy = 20, $strict = false)
    {
        $shops = $this->getShopNearby($nearBy, 20);
        if (!empty($shops)) {
            $shop_ids = array_map( function ($item) {
                return $item['id'];
            }, $shops);
-           $good_ids = M('goods_shop')->where(['shop_id' => ['in', $shop_ids]])->getField('goods_id', true);
-           if (!empty($good_ids)) {
-               $goods = M('goods')->where(['goods_id' => ['in', $good_ids]])->limit(0, 30)->select();
+           if ($strict) {
+               $maps = [];
+               foreach ($shops as $shop) {
+                    $maps[$shop['id']] = $shop['distance'];
+               }
+           }
+           if ($strict) {
+               $good_ids = M('goods_shop')->where(['shop_id' => ['in', $shop_ids]])->select();
+               $goods_map = [];
+               foreach ($good_ids as $good_id) {
+                   $goods_map[$good_id['goods_id']] = $maps[$good_id['shop_id']];
+               }
+               $good_ids =  array_keys($goods_map);
            } else {
+               $good_ids = M('goods_shop')->where(['shop_id' => ['in', $shop_ids]])->getField('goods_id', true);
+           }
+           if (!empty($good_ids)) {
+               $goods = M('goods')->where(['goods_id' => ['in', $good_ids]])->select();
+               if ($strict) {
+                   foreach ($goods as &$good) {
+                       $good['distance'] = $goods_map[$good['goods_id']];
+                   }
+                   usort($goods, function ($a, $b) {
+                       return bccomp($a['distance'], $b['distance'], 1);
+                   });
+               }
+
+           } else {
+               if ($strict) return [];
                $goods = M('goods')->where('is_hot=1 and is_on_sale=1')->order('sales_sum desc')->limit(0, 30)->select();
            }
            //若附近无在售,则取出爆款推荐商品
        } else {
+           if ($strict) return [];
            $goods = M('goods')->where('is_hot=1 and is_on_sale=1')->order('sales_sum desc')->limit(0, 30)->select();
        }
-        return array_random_assoc($goods, count($goods) > $limit ? $limit : count($goods));
+        return $strict ? $goods: array_random_assoc($goods, count($goods) > $limit ? $limit : count($goods));
    }
 
    public function getShopNearby($nearBy= 20, $limit = 10)
@@ -90,6 +116,9 @@ ORDER BY distance asc
 LIMIT 0, $limit;
 sql;
            $shops = M()->query($sql);
+           foreach ($shops as &$shop) {
+               $shop['distance'] = round($shop['distance'], 1);
+           }
        } else {
            $shops = [];
        }

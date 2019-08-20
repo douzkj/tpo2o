@@ -27,7 +27,7 @@
         <input type="button" value="" class="submit"  onclick="if($.trim($('#keyword').val()) != '') $('#sourch_form2').submit();" />
  	</form>
     </div>
-    <a class="menu filtrate" name="list_go_filter" style=" color:#666">筛选</a>
+    <!--<a class="menu filtrate" name="list_go_filter" style=" color:#666">筛选</a>-->
 </div>
 </header>
 <div style="height:51px;" class="empty_div">&nbsp;</div>
@@ -37,7 +37,7 @@
 		<li class="<if condition="$_GET[sort] eq 'sales_sum'">on</if>"><a href="<?php echo urldecode(U('Mobile/Goods/search',array_merge($filter_param,array('sort'=>'sales_sum')),''));?>" >销量</a></li>
 		<li class="<if condition="$_GET[sort] eq 'comment_count'">on</if>"><a href="<?php echo urldecode(U('Mobile/Goods/search',array_merge($filter_param,array('sort'=>'comment_count')),''));?>">评论</a></li>
 		<li class="<if condition="$_GET[sort] eq 'shop_price'">on</if>"><a href="<?php echo urldecode(U('Mobile/Goods/search',array_merge($filter_param,array('sort'=>'shop_price','sort_asc'=>$sort_asc)),''));?>">价格<span class="arrow_up"></span><span class="arrow_down"></span></a></li>
-		<li class=""><a href="javascript:;" class="show_type  show_list">&nbsp;</a></li>
+		<!--<li class=""><a href="javascript:;" class="show_type  show_list">&nbsp;</a></li>-->
 		</ul>
 </section>
 <section>

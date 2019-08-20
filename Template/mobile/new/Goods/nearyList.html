@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="format-detection" content="telephone=no">
 <meta name="viewport" content="minimal-ui=yes,width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<title>商品列表-{$tpshop_config['shop_info_store_title']}</title>
+<title>附近售卖-{$tpshop_config['shop_info_store_title']}</title>
 <meta http-equiv="keywords" content="{$tpshop_config['shop_info_store_keyword']}" />
 <meta name="description" content="{$tpshop_config['shop_info_store_desc']}" />
 <link rel="stylesheet" type="text/css" href="__STATIC__/css/public.css"/>
@@ -27,18 +27,12 @@
         <input type="button" value="" class="submit"  onclick="if($.trim($('#keyword').val()) != '') $('#sourch_form2').submit();" />
  	</form>
     </div>
-    <a class="menu filtrate" name="list_go_filter" style=" color:#666">筛选</a>
 </div>
 </header>
 <div style="height:51px;" class="empty_div">&nbsp;</div>
 <section class="filtrate_term" id="product_sort" style="width: 100%; background:#FFF;">
-		<ul>
-        <li class="<if condition="($_GET[sort] eq '') or ($_GET[sort] eq 'is_new')">on</if>"><a href="<?php echo urldecode(U('Mobile/Goods/goodsList',array_merge($filter_param,array('sort'=>'is_new')),''));?>">最新</a></li>
-		<li class="<if condition="$_GET[sort] eq 'sales_sum'">on</if>"><a href="<?php echo urldecode(U('Mobile/Goods/goodsList',array_merge($filter_param,array('sort'=>'sales_sum')),''));?>" >销量</a></li>
-		<li class="<if condition="$_GET[sort] eq 'comment_count'">on</if>"><a href="<?php echo urldecode(U('Mobile/Goods/goodsList',array_merge($filter_param,array('sort'=>'comment_count')),''));?>">评论</a></li>
-		<li class="<if condition="$_GET[sort] eq 'shop_price'">on</if>"><a href="<?php echo urldecode(U('Mobile/Goods/goodsList',array_merge($filter_param,array('sort'=>'shop_price','sort_asc'=>$sort_asc)),''));?>">价格<span class="arrow_up"></span><span class="arrow_down"></span></a></li>
-		<!--<li class=""><a href="javascript:;" class="show_type  show_list">&nbsp;</a></li>-->
-		</ul>
+		<span style="padding-left: 20px;
+    font-size: 14px;">附近20km在售商品</span>
 </section>
 <section>
 <div class="touchweb-com_searchListBox openList" id="goods_list">
@@ -57,45 +51,17 @@
 			   <div class="title_box">{$vo.goods_name}</div>
 			   <div class="price-wrapper">
 				   <span class="sale-price">￥{$vo.shop_price}元</span>
+				   <span class="sale-num">{$vo.distance}km</span>
 				   <span class="sale-num">已售{$vo[virtual_num] + $vo[sales_sum]}</span>
 			   </div>
 		   </a>
-		   <!--<div class="ui-number b"> -->
-		   <!--<a class="decrease" onClick="goods_cut({$vo.goods_id});">-</a>-->
-		   <!--<input class="num" id="number_{$vo.goods_id}" type="text" onBlur="changePrice();" value="1" onFocus="if(value=='1') {value=''}" size="4" maxlength="5">-->
-		   <!--<a class="increase" onClick="goods_add({$vo.goods_id});">+</a> -->
-		   <!--</div>-->
-		   <!--<span class="bug_car" onClick="AjaxAddCart({$vo[goods_id]},1,0);"><i class="icon-shop_cart"></i></span>-->
-	   </li>
-     <!--<li>-->
-		<!--<a href="{:U('Mobile/Goods/goodsInfo',array('id'=>$vo[goods_id]))}" class="item">-->
-			<!--<div class="pic_box">-->
-				<!--<div class="active_box">-->
-					<!--<span style=" background-position:0px -36px">新品</span>-->
-				<!--</div>-->
-				<!--<img src="{$vo.goods_id|goods_thum_images=400,400}">-->
-			<!--</div>-->
-			<!--<div class="title_box">{$vo.goods_name}</div>-->
-			<!--<div class="price_box">-->
-				<!--<span class="new_price"><i>￥{$vo.shop_price}元</i></span>-->
-			<!--</div>-->
-			<!--<div class="comment_box">已售0</div>-->
-		<!--</a>-->
-		<!--<div class="ui-number b"> -->
-			<!--<a class="decrease" onClick="goods_cut({$vo.goods_id});">-</a>-->
-			<!--<input class="num" id="number_{$vo.goods_id}" type="text" onBlur="changePrice();" value="1" onFocus="if(value=='1') {value=''}" size="4" maxlength="5">-->
-			<!--<a class="increase" onClick="goods_add({$vo.goods_id});">+</a> -->
-		<!--</div>-->
-		<!--<span class="bug_car" onClick="AjaxAddCart({$vo[goods_id]},1,0);"><i class="icon-shop_cart"></i></span>-->
-	  <!--</li>-->
+		   </li>
    </foreach>
   </empty>
 </div>
-<notempty name="goods_list">
-   <div id="getmore" style="font-size:.24rem;text-align: center;color:#888;padding:.25rem .24rem .4rem; clear:both">
-  		<a href="javascript:void(0)" onClick="ajax_sourch_submit()">点击加载更多</a>
-  </div>
-</notempty>
+	<div id="getmore" style="font-size:.24rem;text-align: center;color:#888;padding:.25rem .24rem .4rem; clear:both">
+		<a href="javascript:void(0)"> - 到底了 - </a>
+	</div>
 </section>
 </section>
 
