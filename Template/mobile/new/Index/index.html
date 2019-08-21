@@ -131,6 +131,22 @@
 		autoPlay:true //自动播放
 	});
 </script><!--即将上架/即将下架-->
+        <div class="entry-list clearfix">
+            <nav>
+                <ul>
+                    <foreach name="navs" item="nav">
+                        <li>
+                            <a href="{$nav.url}">
+                                <img alt="{$nav.name}" src="{$nav.image}" width="60px" height="60px"/>
+                                <span>{$nav.name}</span>
+                            </a>
+
+                        </li>
+                    </foreach>
+                </ul>
+            </nav>
+        </div>
+
   <div class="shelf-obtained">
       <div id="shelf" class="shelf-wrapper active-tab" onclick="getShelf()">最新抢购</div>
       <div id="obtained" class="obtained-wrapper" onclick="getObtained()">即将结束</div>

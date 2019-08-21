@@ -99,6 +99,8 @@ class IndexController extends MobileBaseController {
                 $areas = M('region')->where(['parent_id' => $now_region['id'], 'is_open' => 1])->select();
             }
         }
+        $navs = M('navigation')->where(['is_show' => 1])->order('sort asc')->select();
+        $this->assign('navs', $navs);
         $this->assign('areas', $areas);
         $this->assign('websites_provinces', $provinces);
         $this->display();

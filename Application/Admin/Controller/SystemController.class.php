@@ -84,19 +84,19 @@ class SystemController extends BaseController{
             foreach ($cat_list AS $key => $value)
             {
                     $strpad_count = $value['level']*4;
-                    $select_val = U("/Home/Goods/goodsList",array('id'=>$key));
+                    $select_val = U("/Mobile/Goods/goodsList",array('id'=>$key));
                     $select_option[$select_val] = str_pad('',$strpad_count,"-",STR_PAD_LEFT).$value['name'];
             }
-           $system_nav = array(
-               'http://www.tp-shop.cn' => 'tpshop官网',
-               'http://www.99soubao.com' => '搜豹公司',
-               '/index.php?m=Home&c=Index&a=promoteList' => '限时抢购',
-               '/index.php?m=Home&c=Activity&a=group_list' => '团购',
-               '/index.php?m=Home&c=Index&a=street' => '店铺街',
-               '/index.php?m=Home&c=Goods&a=integralMall' => '积分商城',
-           );
-           $system_nav = array_merge($system_nav,$select_option);
-           $this->assign('system_nav',$system_nav);
+//           $system_nav = array(
+//               'http://www.tp-shop.cn' => 'tpshop官网',
+//               'http://www.99soubao.com' => '搜豹公司',
+//               '/index.php?m=Home&c=Index&a=promoteList' => '限时抢购',
+//               '/index.php?m=Home&c=Activity&a=group_list' => '团购',
+//               '/index.php?m=Home&c=Index&a=street' => '店铺街',
+//               '/index.php?m=Home&c=Goods&a=integralMall' => '积分商城',
+//           );
+//           $system_nav = array_merge($system_nav,$select_option);
+           $this->assign('system_nav',$select_option);
 
            $this->assign('navigation',$navigation);
            $this->display('_navigation');

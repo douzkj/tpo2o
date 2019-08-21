@@ -17,11 +17,11 @@
                         <li class="active"><a href="#tab_tongyong" data-toggle="tab">前台导航</a></li>
                     </ul>
                     <!--表单数据-->
-                    <form method="post" id="addEditNavForm"  onsubmit="return checkName();">                    
+                    <form method="post" id="addEditNavForm"  onsubmit="return checkName();">
                         <!--通用信息-->
-                    <div class="tab-content">                 	  
+                    <div class="tab-content">
                         <div class="tab-pane active" id="tab_tongyong">
-                           
+
                             <table class="table table-bordered">
                                 <tbody>
                                 <tr>
@@ -31,35 +31,53 @@
                                                 <option value="">自定义导航</option>
                                                 <foreach name="system_nav"  key='k' item="v" >
                                                     <option value="{$k}"<if condition="$k eq $navigation[url]"> selected </if> >{$v}</option>
-                                                </foreach>                                                
+                                                </foreach>
                                          </select>
                                     </td>
-                                </tr>                                
+                                </tr>
                                 <tr>
                                     <td>导航名称:</td>
                                     <td>
                                         <input type="text" value="{$navigation.name}" name="name" class="form-control" style="width:250px;"/>
-                                        <span id="err_name" style="color:#F00; display:none;">导航名称不能为空!!</span>                                        
+                                        <span id="err_name" style="color:#F00; display:none;">导航名称不能为空!!</span>
                                     </td>
-                                </tr> 
-   
+                                </tr>
+                                <tr>
+                                    <td>图片：</td>
+                                    <td>
+                                        <div class="text-center">
+                                            <a href="{$navigation.image}" target="_blank">
+                                                <if condition="$navigation[image] eq ''">
+                                                    <img id="image" src="__PUBLIC__/images/not_adv.jpg" height="60">
+                                                    <else/>
+                                                    <img id="image" src="{$navigation.image}" height="60">
+
+                                                </if>
+                                            </a>
+                                        </div>
+                                        <div class="text-center">
+                                            <input type="hidden" name="image" value="{$navigation.image}" height="720">
+                                            <input type="button" class="btn btn-default" onClick="upload_img('image')"  value="上传图片 60x60"/>
+                                        </div>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td>链接:</td>
                                     <td>
                                         <input type="text" value="{$navigation.url}" name="url" class="form-control" />
                                         <span id="err_url" style="color:#F00; display:none;"></span>
                                     </td>
-                                </tr> 
+                                </tr>
                                 <tr>
                                     <td>排序:</td>
                                     <td>
-                                        <input type="text" value="{$navigation.sort}" name="sort" class="form-control" style="width:200px;" placeholder="50"/>                               
+                                        <input type="text" value="{$navigation.sort}" name="sort" class="form-control" style="width:200px;" placeholder="50"/>
                                     </td>
-                                </tr>                                                             
-                                </tbody>                                
+                                </tr>
+                                </tbody>
                                 </table>
-                        </div>                           
-                    </div>              
+                        </div>
+                    </div>
                     <div class="pull-right">
                         <input type="hidden" name="id" value="{$navigation.id}">
                         <button class="btn btn-primary" title="" data-toggle="tooltip" type="submit" data-original-title="保存">保存</button>
@@ -82,13 +100,24 @@ function checkName(){
 	return true;
 }
 // 更改系统内容
-$("#system_nav").change(function(){	
+$("#system_nav").change(function(){
 	var text = $(this).find("option:selected").text();
-	text = text.replace(/-/ig,""); 
-	var val  = $(this).find("option:selected").val();	
+	text = text.replace(/-/ig,"");
+	var val  = $(this).find("option:selected").val();
 	$("input[name='name']").val(text);
-	$("input[name='url']").val(val);	
+	$("input[name='url']").val(val);
 });
+
+var tmp_type = '';
+function upload_img(cert_type){
+    tmp_type = cert_type;
+    GetUploadify(1,'store','navigation','callback');
+}
+
+function callback(img_str){
+    $('#'+tmp_type).attr('src',img_str);
+    $('input[name='+tmp_type+']').val(img_str);
+}
 </script>
 
 </body>
