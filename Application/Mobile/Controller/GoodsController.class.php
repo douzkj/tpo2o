@@ -48,6 +48,26 @@ class GoodsController extends MobileBaseController {
      */
     public function goodsList(){
 
+        $goods_where = '';
+        if (AREA_ID || PROVINCE_ID) {
+            $district_where = [];
+            if (PROVINCE_ID) {
+                $district_where['province_id'] = PROVINCE_ID;
+            }
+            if (AREA_ID) {
+                $district_where['district_id'] = AREA_ID;
+            }
+            $shops = M('store_shops')->where($district_where)->getField('id', true);
+            if (!empty($shops)) {
+                $goods_ids = M('goods_shop')->where(['shop_id' => ['in', $shops]])->getField('goods_id', true);
+                if (!empty($goods_ids)) {
+                    $goods_where = " and goods_id in (".implode(",", $goods_ids).")";
+                }
+            }
+        }
+
+
+
     	$filter_param = array(); // 帅选数组
     	$id = I('get.id',1); // 当前分类id
     	$brand_id = I('brand_id',0);
@@ -75,7 +95,7 @@ class GoodsController extends MobileBaseController {
     	//$cat_id_arr = getCatGrandson ($id);
 
     	//$filter_goods_id = M('goods')->where("is_on_sale=1 and cat_id in(".  implode(',', $cat_id_arr).") ")->cache(true)->getField("goods_id",true);
-        $filter_goods_id = M('goods')->where(" goods_state = 1 and is_on_sale=1 and cat_id{$goodsCate['level']} = $id")->cache(true)->getField("goods_id",true);
+        $filter_goods_id = M('goods')->where(" goods_state = 1 and is_on_sale=1 and cat_id{$goodsCate['level']} = $id {$goods_where}")->cache(true)->getField("goods_id",true);
 
     	// 过滤帅选的结果集里面找商品
     	if($brand_id || $price)// 品牌或者价格
@@ -95,10 +115,10 @@ class GoodsController extends MobileBaseController {
     	}
 
     	$filter_menu  = $goodsLogic->get_filter_menu($filter_param,'goodsList'); // 获取显示的帅选菜单
-    	$filter_price = $goodsLogic->get_filter_price($filter_goods_id,$filter_param,'goodsList'); // 帅选的价格期间
-    	$filter_brand = $goodsLogic->get_filter_brand($filter_goods_id,$filter_param,'goodsList',1); // 获取指定分类下的帅选品牌
+//    	$filter_price = $goodsLogic->get_filter_price($filter_goods_id,$filter_param,'goodsList'); // 帅选的价格期间
+//    	$filter_brand = $goodsLogic->get_filter_brand($filter_goods_id,$filter_param,'goodsList',1); // 获取指定分类下的帅选品牌
     	//$filter_spec  = $goodsLogic->get_filter_spec($filter_goods_id,$filter_param,'goodsList',1); // 获取指定分类下的帅选规格
-    	$filter_attr  = $goodsLogic->get_filter_attr($filter_goods_id,$filter_param,'goodsList',1); // 获取指定分类下的帅选属性
+//    	$filter_attr  = $goodsLogic->get_filter_attr($filter_goods_id,$filter_param,'goodsList',1); // 获取指定分类下的帅选属性
 
     	$count = count($filter_goods_id);
     	$page = new Page($count,4);
@@ -115,9 +135,9 @@ class GoodsController extends MobileBaseController {
     	$this->assign('goods_images',$goods_images);  // 相册图片
     	$this->assign('filter_menu',$filter_menu);  // 帅选菜单
     	//$this->assign('filter_spec',$filter_spec);  // 帅选规格
-    	$this->assign('filter_attr',$filter_attr);  // 帅选属性
-    	$this->assign('filter_brand',$filter_brand);// 列表页帅选属性 - 商品品牌
-    	$this->assign('filter_price',$filter_price);// 帅选的价格期间
+//    	$this->assign('filter_attr',$filter_attr);  // 帅选属性
+//    	$this->assign('filter_brand',$filter_brand);// 列表页帅选属性 - 商品品牌
+//    	$this->assign('filter_price',$filter_price);// 帅选的价格期间
     	$this->assign('goodsCate',$goodsCate);
     	$this->assign('cateArr',$cateArr);
     	$this->assign('filter_param',$filter_param); // 帅选条件
@@ -308,6 +328,24 @@ class GoodsController extends MobileBaseController {
      */
     public function search(){
 
+        $goods_where = '';
+        if (AREA_ID || PROVINCE_ID) {
+            $district_where = [];
+            if (PROVINCE_ID) {
+                $district_where['province_id'] = PROVINCE_ID;
+            }
+            if (AREA_ID) {
+                $district_where['district_id'] = AREA_ID;
+            }
+            $shops = M('store_shops')->where($district_where)->getField('id', true);
+            if (!empty($shops)) {
+                $goods_ids = M('goods_shop')->where(['shop_id' => ['in', $shops]])->getField('goods_id', true);
+                if (!empty($goods_ids)) {
+                    $goods_where = " and goods_id in (".implode(",", $goods_ids).")";
+                }
+            }
+        }
+
     	$filter_param = array(); // 帅选数组
     	$id = I('get.id',0); // 当前分类id
     	$brand_id = I('brand_id',0);
@@ -326,18 +364,18 @@ class GoodsController extends MobileBaseController {
         //    $this->error ('请输入搜索关键词');
 
     	$goodsLogic = new \Home\Logic\GoodsLogic(); // 前台商品操作逻辑类
-    	$filter_goods_id = M('goods')->where(" goods_state = 1 and is_on_sale=1 and goods_name like '%{$q}%'  ")->cache(true)->getField("goods_id",true);
+    	$filter_goods_id = M('goods')->where(" goods_state = 1 and is_on_sale=1 and goods_name like '%{$q}%' {$goods_where}")->cache(true)->getField("goods_id",true);
 
     	// 过滤帅选的结果集里面找商品
-    	if($brand_id || $price)// 品牌或者价格
-    	{
-    		$goods_id_1 = $goodsLogic->getGoodsIdByBrandPrice($brand_id,$price); // 根据 品牌 或者 价格范围 查找所有商品id
-    		$filter_goods_id = array_intersect($filter_goods_id,$goods_id_1); // 获取多个帅选条件的结果 的交集
-    	}
+//    	if($brand_id || $price)// 品牌或者价格
+//    	{
+//    		$goods_id_1 = $goodsLogic->getGoodsIdByBrandPrice($brand_id,$price); // 根据 品牌 或者 价格范围 查找所有商品id
+//    		$filter_goods_id = array_intersect($filter_goods_id,$goods_id_1); // 获取多个帅选条件的结果 的交集
+//    	}
 
-    	$filter_menu  = $goodsLogic->get_filter_menu($filter_param,'search'); // 获取显示的帅选菜单
-    	$filter_price = $goodsLogic->get_filter_price($filter_goods_id,$filter_param,'search'); // 帅选的价格期间
-    	$filter_brand = $goodsLogic->get_filter_brand($filter_goods_id,$filter_param,'search',1); // 获取指定分类下的帅选品牌
+//    	$filter_menu  = $goodsLogic->get_filter_menu($filter_param,'search'); // 获取显示的帅选菜单
+//    	$filter_price = $goodsLogic->get_filter_price($filter_goods_id,$filter_param,'search'); // 帅选的价格期间
+//    	$filter_brand = $goodsLogic->get_filter_brand($filter_goods_id,$filter_param,'search',1); // 获取指定分类下的帅选品牌
 
     	$count = count($filter_goods_id);
     	$page = new Page($count,4);
@@ -352,9 +390,9 @@ class GoodsController extends MobileBaseController {
     	$this->assign('goods_list',$goods_list);
     	$this->assign('goods_category',$goods_category);
     	$this->assign('goods_images',$goods_images);  // 相册图片
-    	$this->assign('filter_menu',$filter_menu);  // 帅选菜单
-    	$this->assign('filter_brand',$filter_brand);// 列表页帅选属性 - 商品品牌
-    	$this->assign('filter_price',$filter_price);// 帅选的价格期间
+//    	$this->assign('filter_menu',$filter_menu);  // 帅选菜单
+//    	$this->assign('filter_brand',$filter_brand);// 列表页帅选属性 - 商品品牌
+//    	$this->assign('filter_price',$filter_price);// 帅选的价格期间
     	$this->assign('goodsCate',$goodsCate);
     	$this->assign('filter_param',$filter_param); // 帅选条件
     	$this->assign('page',$page);// 赋值分页输出
