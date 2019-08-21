@@ -81,13 +81,10 @@ wx.ready(function(){
 	});
 
     wx.getLocation({
-        type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+        type: 'wgs84', //默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
         success: function (res) {
             var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
             var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-            $("#longitude").text(longitude);
-            $("#latitude").text(latitude);
-            getCurrentCity(longitude, latitude);
             $.ajax({
                 url: "{:U('Api/setLngLat')}",
                 method: 'post',
@@ -97,9 +94,11 @@ wx.ready(function(){
                 },
                 dataType: 'json',
                 success: function (data) {
-
+                    getCurrentCity(longitude, latitude);
                 }
             })
+        }, error: function () {
+            alert("获取位置错误");
         }
     });
 
