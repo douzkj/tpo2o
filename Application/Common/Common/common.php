@@ -1497,10 +1497,12 @@ function sendSmsToUser($order_ids)
         foreach ($order_ids as $order_id) {
             $mobile = M('order')->where(['order_id' => $order_id])->getField('mobile');
             if ($mobile) {
-                $goods = M('order_goods')->where(['order_id' => $order_id])->find();
-                $code = M('order_codes')->where(['order_id' => $order_id])->getField('code', true);
+                $goods_name = M('order_goods')->where(['order_id' => $order_id])->limit(1)->getField('goods_name');
+                $code = M('order_codes')->where(['order_id' => $order_id])->select();
                 if (!empty($code)) {
-                    sendSMS($mobile, '', "您购买的【".mb_substr($goods, 0, 30)."】核销码为：" . implode("," , $code));
+                    $token = $code[0]['token'];
+                    $url = U("User/consumeCode", ['token' => $token], true, true);
+                    sendSMS($mobile, '', "您购买的【".$goods_name."】({$url})请尽快使用，逾期作废。注册会员购买更便宜");
                 }
             }
         }
