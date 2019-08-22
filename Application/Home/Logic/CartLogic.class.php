@@ -311,13 +311,13 @@ sql;
 //            }
             // 如果有微信公众号 则推送一条消息到微信
             $user = M('users')->where("user_id = $user_id")->find();
-            if($user['oauth']== 'weixin')
-            {
-                $wx_user = M('wx_user')->find();
-                $jssdk = new \Mobile\Logic\Jssdk($wx_user['appid'],$wx_user['appsecret']);
-                $wx_content = "你刚刚下了一笔订单:{$order['order_sn']} 尽快支付,过期失效!";
-                $jssdk->push_msg($user['openid'],$wx_content);
-            }
+//            if($user['oauth']== 'weixin')
+//            {
+//                $wx_user = M('wx_user')->find();
+//                $jssdk = new \Mobile\Logic\Jssdk($wx_user['appid'],$wx_user['appsecret']);
+//                $wx_content = "你刚刚下了一笔订单:{$order['order_sn']} 尽快支付,过期失效!";
+//                $jssdk->push_msg($user['openid'],$wx_content);
+//            }
         }
         return array('status'=>1,'msg'=>'提交订单成功','result'=>$master_order_sn); // 返回新增的订单id
     }

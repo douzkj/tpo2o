@@ -1563,8 +1563,8 @@ function transferAliaop($out_trade_no, $payee_account, $money, $payee_name, $rem
     vendor('AliAop.AopSdk');
     $aop_conf  = F('aliaop','',TEMP_PATH);
     if (empty($aop_conf) || !$aop_conf['aliaop_appid']) {
-        $this->error("系统未配置支付宝接口信息，不能进行支付宝提现");
-        exit;
+        $res['msg'] = "系统未配置支付宝接口信息，不能进行支付宝提现";
+        return $res;
     }
     $aop = new AopClient ();
     $aop->gatewayUrl = 'https://openapi.alipay.com/gateway.do';
