@@ -43,7 +43,7 @@ class UserController extends MobileBaseController
             'login', 'pop_login', 'do_login', 'logout', 'verify', 'set_pwd', 'finished',
             'verifyHandle', 'reg', 'send_sms_reg_code', 'find_pwd', 'check_validate_code',
             'forget_pwd', 'check_captcha', 'check_username', 'send_validate_code', 'express',
-            'do_mobile_login'
+            'do_mobile_login', 'getcode'
         );
         if (!$this->user_id && !in_array(ACTION_NAME, $nologin)) {
             header("location:" . U('Mobile/User/login'));
@@ -413,6 +413,21 @@ class UserController extends MobileBaseController
     public function ajax_order_list()
     {
 
+    }
+
+    public function getcode()
+    {
+        $token = I('get.token');
+        $codes = M('order_codes')->where(['token' => $token])->select();
+        if (empty($codes)) {
+            $this->error("链接失效!", U('/Mobile/Index/index'));
+            exit;
+        }
+        $order_info = M('order')->where(['order_id' => $codes[0]['order_id']])->find();
+        $order_info = set_btn_order_status($order_info);  // 添加属性  包括按钮显示属性 和 订单状态显示属性
+        $this->assign('order_info', $order_info);
+        $this->assign('codes', $codes);
+        $this->display();
     }
 
     /*

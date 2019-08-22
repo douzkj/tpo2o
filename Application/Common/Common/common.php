@@ -1501,7 +1501,7 @@ function sendSmsToUser($order_ids)
                 $code = M('order_codes')->where(['order_id' => $order_id])->select();
                 if (!empty($code)) {
                     $token = $code[0]['token'];
-                    $url = U("User/consumeCode", ['token' => $token], true, true);
+                    $url = U("User/getcode", ['token' => $token], true, true);
                     sendSMS($mobile, '', "您购买的【".$goods_name."】({$url})请尽快使用，逾期作废。注册会员购买更便宜");
                 }
             }
