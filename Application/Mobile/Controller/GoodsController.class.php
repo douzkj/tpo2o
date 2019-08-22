@@ -329,6 +329,8 @@ class GoodsController extends MobileBaseController {
     public function search(){
 
         $goods_where = '';
+        $goods_ids = [];
+        $strict_goods_id = '';
         if (AREA_ID || PROVINCE_ID) {
             $district_where = [];
             if (PROVINCE_ID) {
@@ -341,7 +343,7 @@ class GoodsController extends MobileBaseController {
             if (!empty($shops)) {
                 $goods_ids = M('goods_shop')->where(['shop_id' => ['in', $shops]])->getField('goods_id', true);
                 if (!empty($goods_ids)) {
-                    $goods_where = " and goods_id in (".implode(",", $goods_ids).")";
+                    $strict_goods_id = " and goods_id in (".implode(",", $goods_ids).")";
                 }
             }
         }
@@ -362,9 +364,34 @@ class GoodsController extends MobileBaseController {
         $q  && ($_GET['q'] = $filter_param['q'] = $q); //加入帅选条件中
         //if(empty($q))
         //    $this->error ('请输入搜索关键词');
+        if (!empty($q)) {
+            //查看区域或门店名字
+            $sql = <<<SQL
+select a.id from __PREFIX__store_shops a inner join __PREFIX__region b on a.district_id = b.id
+where (b.level = 3 and b.name like '%{$q}%') or (a.title like '%{$q}%' or a.position like '%{$q}%')
+SQL;
+            $shop_ids = M()->query($sql);
+            if (!empty($shop_ids)) {
+                $shop_ids = array_map(function ($item) {
+                    return (int)$item['id'];
+                }, $shop_ids);
+                $where = [
+                    'shop_id' => ['in', $shop_ids]
+                ];
+                if (!empty($goods_ids)) {
+                    $where['goods_id'] = [
+                        'in', $goods_ids
+                    ];
+                }
+                $goods_ids = M('goods_shop')->where($where)->getField('goods_id', true);
+            }
+        }
+        if (!empty($goods_ids)) {
+            $goods_where = " and goods_id in (".implode(",", $goods_ids).")";
+        }
 
     	$goodsLogic = new \Home\Logic\GoodsLogic(); // 前台商品操作逻辑类
-    	$filter_goods_id = M('goods')->where(" goods_state = 1 and is_on_sale=1 and goods_name like '%{$q}%' {$goods_where}")->cache(true)->getField("goods_id",true);
+    	$filter_goods_id = M('goods')->where(" goods_state = 1 and is_on_sale=1 {$strict_goods_id} and (goods_name like '%{$q}%' {$goods_where})")->cache(true)->getField("goods_id",true);
 
     	// 过滤帅选的结果集里面找商品
 //    	if($brand_id || $price)// 品牌或者价格
