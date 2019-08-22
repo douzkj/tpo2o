@@ -515,7 +515,7 @@ input, select, textarea {
   font-weight: 400;
   margin-bottom: 6px;
   line-height: 16px; margin-left:50px;
-  overflow:hidden; 
+  overflow:hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -533,7 +533,7 @@ input, select, textarea {
   font-weight: 400;
   margin-bottom: 6px;
   line-height: 16px; margin-left:0px;
-  overflow:hidden; 
+  overflow:hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -710,7 +710,7 @@ a.revise{ color:#FF4650; font-size:14px; margin-left:5px;}
     display: inline-block;
      margin: 0 4px;
      font-size: 20px;
-     max-width: 73px;
+     /*max-width: 73px;*/
      text-overflow: ellipsis;
      overflow: hidden;
      white-space: nowrap;
