@@ -1329,7 +1329,8 @@ class UserController extends MobileBaseController
     public function withdrawals(){
 
         C('TOKEN_ON',true);
-        $account = M('user_accounts')->where(['user_id' => $this->user_id])->find();
+        $ali_account = M('user_accounts')->where(['user_id' => $this->user_id, 'type' => 1])->find();
+        $wx_account = M('user_accounts')->where(['user_id' => $this->user_id, 'type' => 2])->find();
         if(IS_POST)
         {
             $data = I('post.');
@@ -1361,14 +1362,15 @@ class UserController extends MobileBaseController
                 $accountData = [
                     'user_id' => $this->user_id,
                     'account_name' =>  $data['account_name'],
-                    'account_no' => $data['account_bank'],
-                    'update_time' => time()
+                    'account_no' => $data['type'] == 1 ? $data['account_bank'] : $this->user['openid'],
+                    'update_time' => time(),
+                    'type' => $data['type']
                 ];
-                if ( ! $account) {
+                if ( ! M('user_accounts')->where(['user_id'=>$accountData['user_id'], 'type' => $accountData['type']])->count()) {
                     $accountData['add_time'] = time();
                     M('user_accounts')->add($accountData);
                 } else {
-                    M('user_accounts')->where(['id' => $account['id']])->save($accountData);
+                    M('user_accounts')->where(['user_id'=>$accountData['user_id'], 'type' => $accountData['type']])->save($accountData);
                 }
                 M()->startTrans();
                 $out_trade_no = get_ali_trans_sn("withdrawals");
@@ -1430,7 +1432,8 @@ class UserController extends MobileBaseController
 
         $this->assign('page', $page->show());// 赋值分页输出
         $this->assign('list',$list); // 下线
-        $this->assign('account', $account);
+        $this->assign('ali_account', $ali_account);
+        $this->assign('wx_account', $wx_account);
         if($_GET['is_ajax'])
         {
             $this->display('ajaxx_withdrawals_list');

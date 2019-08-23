@@ -483,11 +483,24 @@ function changeAtt1(t) {
 			<dd class="css-nobuy" style="width: 100%;">商品已售罄</dd>
 			<else />
 			<dd class="goumai ping-btn-wrapper" style=" width: 100%; display: flex; align-items: center;">
+				<if condition="$group_order eq null">
 					<div class="ping-btn" onclick="javascript:window.location.href='{:U('Cart/confirmOrder', ['goods_id' => $goods[goods_id]])}'">
 						<span>单独购买</span>
 						<span>¥{$group_buy_info['goods_price']}</span>
 					</div>
-				<if condition="$group_order">
+					<div class="ping-btn" onclick="javascript:window.location.href='{:U('Cart/confirmOrder', ['goods_id' => $goods[goods_id], 'is_group' => 1])}'">
+                    <span>
+                        拼团购买
+                    </span>
+						<span>¥{$group_buy_info['price']}</span>
+					</div>
+				 <else />
+					<div class="ping-btn" onclick="javascript:window.location.href='{:U('Cart/confirmOrder', ['goods_id' => $goods[goods_id], 'is_group' => 1])}'">
+                    <span>
+                        拼团购买
+                    </span>
+						<span>¥{$group_buy_info['price']}</span>
+					</div>
                     <switch name="group_order.group_status">
                         <case value="2">
                             <div class="ping-btn"  style="background: grey">
@@ -511,14 +524,6 @@ function changeAtt1(t) {
                                 <span>¥{$group_buy_info['price']}</span>
 					   </div>
                 </switch>
-
-                <else />
-                <div class="ping-btn" onclick="javascript:window.location.href='{:U('Cart/confirmOrder', ['goods_id' => $goods[goods_id], 'is_group' => 1])}'">
-                    <span>
-                        拼团购买
-                    </span>
-                    <span>¥{$group_buy_info['price']}</span>
-                </div>
             </if>
 			</dd>
 		</if>
