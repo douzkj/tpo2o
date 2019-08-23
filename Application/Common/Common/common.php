@@ -1608,4 +1608,42 @@ function transferAliaop($out_trade_no, $payee_account, $money, $payee_name, $rem
     return $res;
 }
 
+function transferWxlq($openid, $out_trade_no, $money, $payee_name, $remark = '提现')
+{
+
+    $res = [
+        'status' => 0,
+        'msg' => '网络错误',
+        'result' => null
+    ];
+
+    try {
+        include_once  "plugins/payment/weixin/weixin.class.php"; // D:\wamp\www\svn_tpshop\www\plugins\payment\alipay\alipayPayment.class.php
+        $payment = new weixin();
+        $xml = $payment->cashWithdrawal($openid, $out_trade_no, $payee_name, $money, $remark);
+        $rdata = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
+        if (!$rdata) {
+            $res['msg'] = '微信提现失败:' . $xml;
+            \Think\Log::write("微信提现失败：" . $xml);
+            return $res;
+        }
+        $return_code = (string)$rdata->return_code;
+        $result_code = (string)$rdata->result_code;
+        $return_code = trim(strtoupper($return_code));
+        $result_code = trim(strtoupper($result_code));
+        $msg = (string)$rdata->err_code_des;
+        if ($return_code == 'SUCCESS' && $result_code == 'SUCCESS') {
+            $res['status'] = 1;
+            $res['result'] = $rdata;
+        } else {
+            \Think\Log::write("微信提现失败:" . $xml);
+            $res['msg'] = '微信提现失败:' . $msg;
+        }
+    } catch (\Think\Exception $e) {
+        \Think\Log::write("微信提现失败：" . $e->getMessage());
+        $res['msg'] =  "微信提现失败：" . $e->getMessage();
+    }
+    return $res;
+}
+
 

@@ -15,39 +15,39 @@
 use Think\Model\RelationModel;
 /**
  * 支付 逻辑定义
- * Class 
+ * Class
  * @package Home\Payment
  */
 
 class weixin extends RelationModel
-{    
-    public $tableName = 'plugin'; // 插件表        
+{
+    public $tableName = 'plugin'; // 插件表
     public $alipay_config = array();// 支付宝支付配置参数
-    
+
     /**
      * 析构流函数
      */
-    public function  __construct() {   
+    public function  __construct() {
         parent::__construct();
-                
-        require_once("lib/WxPay.Api.php"); // 微信扫码支付demo 中的文件         
+
+        require_once("lib/WxPay.Api.php"); // 微信扫码支付demo 中的文件
         require_once("example/WxPay.NativePay.php");
         require_once("example/WxPay.JsApiPay.php");
 
         $paymentPlugin = M('Plugin')->where("code='weixin' and  type = 'payment' ")->find(); // 找到微信支付插件的配置
-        $config_value = unserialize($paymentPlugin['config_value']); // 配置反序列化        
+        $config_value = unserialize($paymentPlugin['config_value']); // 配置反序列化
         WxPayConfig::$appid = $config_value['appid']; // * APPID：绑定支付的APPID（必须配置，开户邮件中可查看）
         WxPayConfig::$mchid = $config_value['mchid']; // * MCHID：商户号（必须配置，开户邮件中可查看）
         WxPayConfig::$key = $config_value['key']; // KEY：商户支付密钥，参考开户邮件设置（必须配置，登录商户平台自行设置）
-        WxPayConfig::$appsecret = $config_value['appsecret']; // 公众帐号secert（仅JSAPI支付的时候需要配置)，                                      
-    }    
+        WxPayConfig::$appsecret = $config_value['appsecret']; // 公众帐号secert（仅JSAPI支付的时候需要配置)，
+    }
     /**
      * 生成支付代码
      * @param   array   $order      订单信息
      * @param   array   $config_value    支付方式信息
      */
     function get_code($order, $config_value)
-    {       
+    {
             $notify_url = SITE_URL.'/index.php/Home/Payment/notifyUrl/pay_code/weixin'; // 接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数。
             //$notify_url = C('site_url').U('Home/Payment/notifyUrl',array('pay_code'=>'weixin')); // 接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数。
             //$notify_url = C('site_url')."/index.php?m=Home&c=Payment&a=notifyUrl&pay_code=weixin";
@@ -62,25 +62,90 @@ class weixin extends RelationModel
             $notify = new NativePay();
             $result = $notify->GetPayUrl($input); // 获取生成二维码的地址
             $url2 = $result["code_url"];
-            return '<img alt="模式二扫码支付" src="/index.php?m=Home&c=Index&a=qr_code&data='.urlencode($url2).'" style="width:110px;height:110px;"/>';        
-    }    
+            return '<img alt="模式二扫码支付" src="/index.php?m=Home&c=Index&a=qr_code&data='.urlencode($url2).'" style="width:110px;height:110px;"/>';
+    }
     /**
      * 服务器点对点响应操作给支付接口方调用
-     * 
+     *
      */
     function response()
-    {                        
-        require_once("example/notify.php");  
+    {
+        require_once("example/notify.php");
         $notify = new PayNotifyCallBack();
-        $notify->Handle(false);       
+        $notify->Handle(false);
     }
-    
+
     /**
      * 页面跳转响应操作给支付接口方调用
      */
     function respond2()
     {
         // 微信扫码支付这里没有页面返回
+    }
+
+    function cashWithdrawal($openid, $out_trade_no, $account_name, $amount, $desc = '零钱提现')
+    {
+        $postUrl = 'https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers';
+        $params = [];
+        $params['mch_appid'] = WxPayConfig::$appid;
+        $params['mchid'] = WxPayConfig::$mchid;
+        $params['nonce_str'] = $this->createNoncestr();
+        $params['partner_trade_no'] = $out_trade_no;
+        $params['openid'] = $openid;
+        $params['check_name'] = 'FORCE_CHECK';
+        $params['re_user_name'] = $account_name;
+        $params['amount'] = $amount * 100;
+        $params['desc'] = $desc;
+        $params['spbill_create_ip'] = getIP();
+
+        ksort($params);
+        $buff = "";
+        foreach ($params as $k => $v)
+        {
+            if($k != "sign" && $v != "" && !is_array($v)){
+                $buff .= $k . "=" . $v . "&";
+            }
+        }
+        $buff .= "key=" . WxPayConfig::$key;
+        $params['sign'] = strtoupper(md5($buff));
+        $ch = curl_init();//初始化curl
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);//设置执行最长秒数
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);//要求结果为字符串且输出到屏幕上
+        curl_setopt($ch, CURLOPT_URL, $postUrl);//抓取指定网页
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// 终止从服务端进行验证
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);//
+        curl_setopt($ch, CURLOPT_SSLCERT, dirname(__FILE__).'/cert/apiclient_cert.pem');//证书位置
+        curl_setopt($ch, CURLOPT_SSLKEY, dirname(__FILE__).'/cert/apiclient_key.pem');//证书位置
+        curl_setopt($ch, CURLOPT_POST, 1);//post提交方式
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->arraytoxml($params));//全部数据使用HTTP协议中的"POST"操作来发送
+        $data = curl_exec($ch);
+        if ($data) {
+            curl_close($ch);
+            return $data;
+        } else {
+            $error = curl_error($ch);
+            curl_close($ch);
+            return "call faild, {$error}\n";
+        }
+    }
+
+     public function arraytoxml($data)
+    {
+        $str = '<xml>';
+        foreach ($data as $k => $v) {
+            $str .= '<' . $k . '>' . $v . '</' . $k . '>';
+        }
+        $str .= '</xml>';
+        return $str;
+    }
+
+        public function createNoncestr( $length = 32 ){
+        $chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+        $str ="";
+        for ( $i = 0; $i < $length; $i++ )  {
+            $str.= substr($chars, mt_rand(0, strlen($chars)-1), 1);
+        }
+        return $str;
     }
 
     function getJSAPI($order){
@@ -109,7 +174,7 @@ class weixin extends RelationModel
         $input->SetOpenid($openId);
         $order2 = WxPayApi::unifiedOrder($input);
         //echo '<font color="#f00"><b>统一下单支付单信息</b></font><br/>';
-        //printf_info($order);exit;  
+        //printf_info($order);exit;
         $jsApiParameters = $tools->GetJsApiParameters($order2);
         $html = <<<EOF
 	<script type="text/javascript">
@@ -146,7 +211,7 @@ class weixin extends RelationModel
 	callpay();
 	</script>
 EOF;
-        
+
     return $html;
 
     }

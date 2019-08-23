@@ -14,7 +14,9 @@
             <p class="tx_cash"><span>提现方式：</span>
                 <!--<label><input type="radio" name="type" value="0" checked> 银行卡</label>-->
                 <label><input type="radio" name="type" value="1" checked> 支付宝</label>
-                <label><input type="radio" name="type" value="2"> 微信公众号</label>
+                <if condition="$signPackage neq null">
+                    <label><input type="radio" name="type" value="2"> 微信公众号</label>
+                </if>
             </p>
             <p class="tx_cash"><span>提现金额：</span><input type="text" id="money" name="money" placeholder="最少提现额度{$tpshop_config['distribut_min']}" onpaste="this.value=this.value.replace(/[^\d.]/g,'')" onKeyUp="this.value=this.value.replace(/[^\d.]/g,'')"/></p>
             <p class="tx_cash" style="display: none"><span>银行名称：</span><input type="text" id="bank_name" value="支付宝" readonly name="bank_name" placeholder="如:支付宝,农业银行,工商银行等..."/></p>

@@ -1336,12 +1336,12 @@ class UserController extends MobileBaseController
             if (empty($data['mobile_code'])) {
                 $this->error("验证码不能为空"); exit;
             }
-            $userLogic = new UsersLogic();
-            $check_code = $userLogic->check_validate_code($data['mobile_code'], $this->user['mobile']);
-            if ($check_code['status'] != 1) {
-                $this->error($check_code['msg']);
-                exit;
-            }
+//            $userLogic = new UsersLogic();
+//            $check_code = $userLogic->check_validate_code($data['mobile_code'], $this->user['mobile']);
+//            if ($check_code['status'] != 1) {
+//                $this->error($check_code['msg']);
+//                exit;
+//            }
             unset($data['mobile_code']);
             $data['user_id'] = $this->user_id;
             $data['create_time'] = time();
@@ -1357,7 +1357,7 @@ class UserController extends MobileBaseController
                 exit;
             }
 
-            if ($data['type'] == 1) {
+            if ($data['type'] != 0) {
                 $accountData = [
                     'user_id' => $this->user_id,
                     'account_name' =>  $data['account_name'],
@@ -1372,8 +1372,7 @@ class UserController extends MobileBaseController
                 }
                 M()->startTrans();
                 $out_trade_no = get_ali_trans_sn("withdrawals");
-
-                accountLog($this->user_id, ($data['money'] * -1), 0,"平台提现");
+                accountLog($this->user_id, ($data['money'] * -1), 0,$data['type'] == 1? "支付宝提现":'微信零钱提现');
                 $data['out_trade_no'] = $out_trade_no;
                 $data['status'] = 1;
                 $withdrawals_id = M('withdrawals')->add($data);
@@ -1381,12 +1380,11 @@ class UserController extends MobileBaseController
                     M()->rollback();
                     $this->error('提交失败,联系客服!');
                     exit;
-
                 }
                 $remittance = array(
                     'user_id' => $this->user_id,
-                    'bank_name' => "支付宝",
-                    'account_bank' => $data['account_bank'],
+                    'bank_name' => $data['type'] == 1 ? "支付宝" : '微信零钱',
+                    'account_bank' => $data['type'] == 1 ? $data['account_bank'] : $this->user['openid'],
                     'account_name' => $data['account_name'],
                     'money' => $data['money'],
                     'status' => 1,
@@ -1396,7 +1394,12 @@ class UserController extends MobileBaseController
                     'remark'=> "代理提现",
                 );
                 M('remittance')->add($remittance);
-                $res = transferAliaop($out_trade_no, $data['account_bank'], $data['money'], $data['account_name'], "提现到账");
+                if ($data['type'] == 1) {
+                    $res = transferAliaop($out_trade_no, $data['account_bank'], $data['money'], $data['account_name'], "提现到账");
+                } else {
+                    $openid = $this->user['openid'];
+                    $res = transferWxlq($openid, $out_trade_no, $data['money'], $data['account_name'], "零钱提现");
+                }
                 if ($res['status'] == 1) {
                     M('withdrawals')->where(['id' => $withdrawals_id])->save([
                         'order_id' => h_property_get($res['result'], "order_id", "")
