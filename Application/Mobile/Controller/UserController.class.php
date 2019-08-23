@@ -1337,12 +1337,12 @@ class UserController extends MobileBaseController
             if (empty($data['mobile_code'])) {
                 $this->error("验证码不能为空"); exit;
             }
-//            $userLogic = new UsersLogic();
-//            $check_code = $userLogic->check_validate_code($data['mobile_code'], $this->user['mobile']);
-//            if ($check_code['status'] != 1) {
-//                $this->error($check_code['msg']);
-//                exit;
-//            }
+            $userLogic = new UsersLogic();
+            $check_code = $userLogic->check_validate_code($data['mobile_code'], $this->user['mobile']);
+            if ($check_code['status'] != 1) {
+                $this->error($check_code['msg']);
+                exit;
+            }
             unset($data['mobile_code']);
             $data['user_id'] = $this->user_id;
             $data['create_time'] = time();

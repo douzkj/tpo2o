@@ -8,7 +8,7 @@
  * 这不是一个自由软件！您只能在不用于商业目的的前提下对程序代码进行修改和使用 .
  * 不允许对程序代码以任何形式任何目的的再发布。
  * ============================================================================
- * Author: 当燃      
+ * Author: 当燃
  * Date: 2015-09-09
  */
 
@@ -32,8 +32,9 @@ class UserController extends BaseController {
         $condition = array();
         I('mobile') ? $condition['mobile'] = I('mobile') : false;
         I('email') ? $condition['email'] = I('email') : false;
+        I('is_distribut') !== '' ? $condition['is_distribut'] = I('is_distribut') : false;
         $sort_order = I('order_by').' '.I('sort');
-               
+
         $model = M('users');
         $count = $model->where($condition)->count();
         $Page  = new AjaxPage($count,10);
@@ -41,25 +42,17 @@ class UserController extends BaseController {
         foreach($condition as $key=>$val) {
             $Page->parameter[$key]   =   urlencode($val);
         }
-        
+
         $userList = $model->where($condition)->order($sort_order)->limit($Page->firstRow.','.$Page->listRows)->select();
-                
+
         $user_id_arr = get_arr_column($userList, 'user_id');
         if(!empty($user_id_arr))
         {
             $first_leader = M('users')->query("select first_leader,count(1) as count  from __PREFIX__users where first_leader in(".  implode(',', $user_id_arr).")  group by first_leader");
             $first_leader = convert_arr_key($first_leader,'first_leader');
-            
-            $second_leader = M('users')->query("select second_leader,count(1) as count  from __PREFIX__users where second_leader in(".  implode(',', $user_id_arr).")  group by second_leader");
-            $second_leader = convert_arr_key($second_leader,'second_leader');            
-            
-            $third_leader = M('users')->query("select third_leader,count(1) as count  from __PREFIX__users where third_leader in(".  implode(',', $user_id_arr).")  group by third_leader");
-            $third_leader = convert_arr_key($third_leader,'third_leader');            
         }
         $this->assign('first_leader',$first_leader);
-        $this->assign('second_leader',$second_leader);
-        $this->assign('third_leader',$third_leader);
-                                
+
         $show = $Page->show();
         $this->assign('userList',$userList);
         $this->assign('page',$show);// 赋值分页输出
@@ -93,16 +86,16 @@ class UserController extends BaseController {
                 exit($this->success('修改成功'));
             exit($this->error('未作内容修改或修改失败'));
         }
-        
+
         $user['first_lower'] = M('users')->where("first_leader = {$user['user_id']}")->count();
         $user['second_lower'] = M('users')->where("second_leader = {$user['user_id']}")->count();
         $user['third_lower'] = M('users')->where("third_leader = {$user['user_id']}")->count();
- 
+
         $this->assign('user',$user);
         $this->display();
     }
-    
-    
+
+
     public function add_user(){
     	if(IS_POST){
     		$data = I('post.');
@@ -194,7 +187,7 @@ class UserController extends BaseController {
         $this->assign('user_id',$user_id);
         $this->display();
     }
-    
+
     public function recharge(){
         $timegap = I('timegap');
     	$nickname = I('nickname');
@@ -207,7 +200,7 @@ class UserController extends BaseController {
     	}
     	if($nickname){
     		$map['nickname'] = array('like',"%$nickname%");
-    	}  
+    	}
     	$count = M('recharge')->where()->count();
     	$page = new Page($count);
     	$lists  = M('recharge')->where()->order('ctime desc')->limit($page->firstRow.','.$page->listRows)->select();
@@ -215,7 +208,7 @@ class UserController extends BaseController {
     	$this->assign('lists',$lists);
     	$this->display();
     }
-    
+
     public function level(){
     	$act = I('GET.act','add');
     	$this->assign('act',$act);
@@ -227,7 +220,7 @@ class UserController extends BaseController {
     	}
     	$this->display();
     }
-    
+
     public function levelList(){
     	$Ad =  M('user_level');
     	$res = $Ad->where('1=1')->order('level_id')->page($_GET['p'].',10')->select();
@@ -243,7 +236,7 @@ class UserController extends BaseController {
     	$this->assign('page',$show);
     	$this->display();
     }
-    
+
     public function levelHandle(){
     	$data = I('post.');
     	if($data['act'] == 'add'){
@@ -252,12 +245,12 @@ class UserController extends BaseController {
     	if($data['act'] == 'edit'){
     		$r = D('user_level')->where('level_id='.$data['level_id'])->save($data);
     	}
-    	 
+
     	if($data['act'] == 'del'){
     		$r = D('user_level')->where('level_id='.$data['level_id'])->delete();
     		if($r) exit(json_encode(1));
     	}
-    	 
+
     	if($r){
     		$this->success("操作成功",U('Admin/User/levelList'));
     	}else{
@@ -270,26 +263,26 @@ class UserController extends BaseController {
      */
     public function search_user()
     {
-        $search_key = trim(I('search_key'));        
-        if(strstr($search_key,'@'))    
+        $search_key = trim(I('search_key'));
+        if(strstr($search_key,'@'))
         {
-            $list = M('users')->where(" email like '%$search_key%' ")->select();        
+            $list = M('users')->where(" email like '%$search_key%' ")->select();
             foreach($list as $key => $val)
             {
                 echo "<option value='{$val['user_id']}'>{$val['email']}</option>";
-            }                        
+            }
         }
         else
         {
-            $list = M('users')->where(" mobile like '%$search_key%' ")->select();        
+            $list = M('users')->where(" mobile like '%$search_key%' ")->select();
             foreach($list as $key => $val)
             {
                 echo "<option value='{$val['user_id']}'>{$val['mobile']}</option>";
-            }            
-        } 
+            }
+        }
         exit;
     }
-    
+
     /**
      * 分销树状关系
      */

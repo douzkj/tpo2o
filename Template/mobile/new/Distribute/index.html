@@ -81,12 +81,14 @@
                 <span class="mynav_link_item-tip">邀请新用户</span>
             </a>
         </div>
-        <div class="mynav_link_item">
-            <a href="{:U('Distribute/store_invite')}">
-                <div class="mynav_link_item-img"><i class="iconfont icon-icon_addperson _font"></i></div>
-                <span class="mynav_link_item-tip">邀请商家入驻</span>
-            </a>
-        </div>
+        <if condition="$user[menter_control]">
+            <div class="mynav_link_item">
+                <a href="{:U('Distribute/store_invite')}">
+                    <div class="mynav_link_item-img"><i class="iconfont icon-icon_addperson _font"></i></div>
+                    <span class="mynav_link_item-tip">邀请商家入驻</span>
+                </a>
+            </div>
+        </if>
     </div>
 </body>
 </html>

@@ -109,6 +109,10 @@ sql;
 
     public function store_invite()
     {
+        if ( ! $this->user['menter_control']) {
+            $this->error('未开通此权限');
+            exit;
+        }
         //获取代理的推广注册二维码
         $url = U('/Mobile/User/menter', ["first_leader" =>  $this->user_id], true, true);
         $invite_token = md5($url);
