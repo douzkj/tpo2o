@@ -1502,7 +1502,8 @@ function sendSmsToUser($order_ids)
                 if (!empty($code)) {
                     $token = $code[0]['token'];
                     $url = U("/Mobile/User/getcode", ['token' => $token], true, true);
-                    sendSMS($mobile, '', "您购买的【".$goods_name."】({$url})请尽快使用，逾期作废。注册会员购买更便宜");
+                    $short_url = getShortUrl($url);
+                    sendSMS($mobile, '', "您购买的【".$goods_name."】({$short_url})请尽快使用，逾期作废。注册会员购买更便宜");
                 }
             }
         }
@@ -1644,6 +1645,42 @@ function transferWxlq($openid, $out_trade_no, $money, $payee_name, $remark = '�
         $res['msg'] =  "微信提现失败：" . $e->getMessage();
     }
     return $res;
+}
+
+function getShortUrl($long_url)
+{
+    $url = 'https://api.weibo.com/2/short_url/shorten.json?source=2849184197&url_long=' . urlencode($long_url);
+
+
+    // 配置headers
+    $headers = array('Content-Type:application/json');
+
+    // 创建连接
+    $curl = curl_init($url);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($curl, CURLOPT_FAILONERROR, false);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HEADER, false);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+
+    // 发送请求
+    $response = curl_exec($curl);
+    curl_close($curl);
+
+    if ($response) {
+        $res = json_decode($response, true);
+        if (!empty($res['urls']) && $res['urls'][0]['url_short']) {
+            return $res['urls'][0]['url_short'];
+        } else {
+            \Think\Log::write('生成短链接地址失败:' . $response);
+            return $long_url;
+        }
+    } else {
+        \Think\Log::write('生成短链接地址失败:' . curl_error($curl));
+        return $long_url;
+    }
+
 }
 
 
