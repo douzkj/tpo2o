@@ -137,7 +137,7 @@
                 <if condition="$list.comment_btn eq 1"><a href="{:U('/Mobile/User/order_detail',array('id'=>$list['order_id']))}">评价</a></if>
                 <!--<if condition="$list.shipping_btn eq 1"><a href="http://www.kuaidi100.com/" target="_blank">查看物流</a></if>-->
                 <!--<if condition="$list.return_btn eq 1"><a href="mqqwpa://im/chat?chat_type=wpa&uin={$storeList[$list['store_id']]['store_qq']}&version=1&src_type=web&web_src=oicqzone.com" target="_blank">联系客服</a></if>-->
-              <if condition="$list.group_btn eq 1"><a data-clipboard-text="{:U('/Mobile/Activity/group',['id' => $list['group_order']['goods_id'], 'group_order_sn' => $list[group_order][group_order_sn]], true, true)}" href="javascript:void(0)" onclick="copyUrl()" target="_blank" class="on_comment invite-buy">邀请好友拼团</a></if>
+              <if condition="$list.group_btn eq 1"><a data-clipboard-text="{:getShortUrl(U('/Mobile/Activity/group',['id' => $list['group_order']['goods_id'], 'group_order_sn' => $list[group_order][group_order_sn]], true, true))}" href="javascript:void(0)" onclick="copyUrl()" target="_blank" class="on_comment invite-buy">邀请好友拼团</a></if>
           </div>
        </div>
        </volist>
