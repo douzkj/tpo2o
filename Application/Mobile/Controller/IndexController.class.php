@@ -70,13 +70,13 @@ class IndexController extends MobileBaseController {
         $thread =48 * 60 * 60;
         $new_flash_goods = M('flash_sale flash')
             ->join('__GOODS__ goods on goods.prom_id = flash.id')
-            ->where("goods.is_on_sale=1 and goods.prom_type =2 {$goods_flash_where} and " . time()." >= flash.start_time and ".time()." <= flash.start_time + {$thread} ")
+            ->where("goods.is_on_sale=1 and goods.prom_type =1 {$goods_flash_where} and " . time()." >= flash.start_time and ".time()." <= flash.start_time + {$thread} ")
             ->limit(15)
             ->select();
         $this->assign('new_flash_goods', $new_flash_goods);
         $last_flash_goods = M('flash_sale flash')
             ->join('__GOODS__ goods on goods.prom_id = flash.id')
-            ->where("goods.is_on_sale=1 and goods.prom_type =2 {$goods_flash_where} and " . time()." <= flash.end_time and ".time()." >= flash.end_time - {$thread} ")
+            ->where("goods.is_on_sale=1 and goods.prom_type =1 {$goods_flash_where} and " . time()." <= flash.end_time and ".time()." >= flash.end_time - {$thread} ")
             ->limit(15)
             ->select();
         $this->assign('last_flash_goods', $last_flash_goods);

@@ -62,7 +62,7 @@ var process_request = "正在处理您的请求...";
       <div class="timerBox">
           <div class="clearfix">
               <dfn class="f14">¥</dfn>
-              <span class="f24" style="margin-right:8px;">{$goods['flash_sale'] ? $goods['flash_sale']['price'] : $goods['shop_price']}</span>
+              <span class="f24" style="margin-right:8px;" id="goods_price">{$goods['flash_sale'] ? $goods['flash_sale']['price'] : $goods['shop_price']}</span>
               <del class="op8">¥</del>
               <del class="op8">{$goods['flash_sale'] ? $goods['shop_price'] : $goods['market_price']}
               </del>
@@ -147,10 +147,34 @@ var t2=new TouchSlider({id:'sliderlist', speed:600, timeout:6000, before:functio
           <ul class="price_dottm">
               <li style=" text-align:left">折扣：{$goods.discount}折</li>
               <li>{$commentStatistics.c0}人评价</li>
-              <li style=" text-align:right">{$goods.sale_num}人已付款</li>
+              <!--<li style=" text-align:right">{$goods.sale_num}人已付款</li>-->
           </ul>
       </div>
 
+          <!-------商品属性-------->
+          <div style="height: 8px;background: #eeeeee;"></div>
+          <if condition="$filter_spec neq ''">
+
+                      <div class="subNavBox">
+                          <div class="subNav"><strong>选择商品属性</strong></div>
+                          <ul class="navContent" style="display: block;">
+                              <foreach item="spec" key="key" name="filter_spec">
+                                  <li>
+                                      <div class="title">{$key}</div>
+                                      <div class="item">
+                                          <foreach name="spec" item="v2" key="k2">
+                                              <a href="javascript:;" onclick="switch_spec(this);" title="{$v2[item]}" <if condition="$k2 eq 0">class="hover"</if>>
+                                              <input type="radio" style="display:none;" name="goods_spec[{$key}]" value="{$v2[item_id]}" <if condition="$k2 eq 0 ">checked="checked"</if>/>
+                                              {$v2[item]}
+                                              </a>
+                                          </foreach>
+                                      </div>
+                                  </li>
+                              </foreach>
+                          </ul>
+                      </div>
+
+          </if>
           <div style="height: 8px;background: #eeeeee;"></div>
           <div class="subNavBox">
               <div class="subNav on"><strong>适用门店</strong></div>
@@ -457,7 +481,7 @@ function get_goods_price()
 	}
     var flash_sale_price = parseFloat("{$goods['flash_sale']['price']}");
     (flash_sale_price > 0) && (goods_price = flash_sale_price);
-	$("#goods_price").html('￥'+goods_price+'元'); // 变动价格显示
+	$("#goods_price").html(goods_price); // 变动价格显示
 
 }
 

@@ -11,6 +11,8 @@
  * $Author: IT宇宙人 2015-08-10 $
  */
 namespace Mobile\Controller;
+use Home\Logic\GoodsLogic;
+
 class CartController extends MobileBaseController {
 
     public $cartLogic; // 购物车逻辑操作类
@@ -52,6 +54,7 @@ class CartController extends MobileBaseController {
         if(empty($goods)){
             $this->tp404('此商品不存在或者已下架');
         }
+        $filter_spec = (new GoodsLogic())->get_spec($goods_id);
         //是否是发起拼团
         $is_group = I('is_group', 0);
         if (IS_POST) {
@@ -102,6 +105,7 @@ class CartController extends MobileBaseController {
             $goods['prom'] = get_goods_promotion($goods['goods_id'], $this->user_id, $is_group);
         }
         $this->assign('goods', $goods);
+        $this->assign('filter_spec', $filter_spec);
         $this->assign('is_group', $is_group);
         $this->assign('group_order_sn', $group_order_sn);
         $this->display();

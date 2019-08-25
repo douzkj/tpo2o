@@ -26,18 +26,18 @@
                     </div>
                     <div class="name1"><span>性　 别</span>
                         <ul>
-                            <li class="on">
-                                <label for="sex0">
-                                    <input type="radio" name="sex" value="0" tabindex="2" class="radio" id="sex0"
-                                           checked=true/>
-                                    保密</label>
-                            </li>
-                            <li>
+                            <!--<li class="on">-->
+                                <!--<label for="sex0">-->
+                                    <!--<input type="radio" name="sex" value="0" tabindex="2" class="radio" id="sex0"-->
+                                           <!--checked=true/>-->
+                                    <!--保密</label>-->
+                            <!--</li>-->
+                            <li class="<if condition='$user.sex eq 1'>on</if>">
                                 <label for="sex1">
                                     <input type="radio" name="sex" value="1" tabindex="3" class="radio" id="sex1"/>
                                     男</label>
                             </li>
-                            <li>
+                            <li class="<if condition='$user.sex eq 2'>on</if>">
                                 <label for="sex2">
                                     <input type="radio" name="sex" value="2" tabindex="4" class="radio" id="sex2"/>
                                     女</label>
@@ -46,8 +46,8 @@
                     </div>
 
                     <div class="name">
-                        <label for="email_ep"> <span>邮箱</span>
-                            <input name="email" value="{$user.email}" id="email_ep" placeholder="*电子邮件地址" type="text"/>
+                        <label for="email_ep"> <span>微信号</span>
+                            <input name="email" value="{$user.wx_account}" id="email_ep" placeholder="微信号" type="text"/>
                         </label>
                     </div>
                     <div class="field submit-btn">
@@ -76,33 +76,6 @@
                 </form>
             </div>
 
-            <div class="innercontent11">
-                <form name="formPassword" action="{:U('User/password')}" method="post" onSubmit="return editPassword()">
-                    <h4 class="title">密码修改</h4>
-
-                    <div class="field_pwd">
-                        <label for="password">
-                            <input type="password" name="old_password" id="password" class="c-f-text"
-                                   placeholder="原密码"/>
-                        </label>
-                    </div>
-                    <div class="field_pwd">
-                        <label for="new_password">
-                            <input type="password" name="new_password" id="new_password" class="c-f-text"
-                                   placeholder="新密码"/>
-                        </label>
-                    </div>
-                    <div class="field_pwd">
-                        <label for="comfirm_password">
-                            <input type="password" name="comfirm_password" id="comfirm_password" class="c-f-text"
-                                   placeholder="确认密码"/>
-                        </label>
-                    </div>
-                    <div class="field submit-btn">
-                        <input type="submit" value="确认修改" class="btn_big1"/>
-                    </div>
-                </form>
-            </div>
         </div>
     </div>
 

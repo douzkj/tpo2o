@@ -18,6 +18,13 @@ use Think\Page;
 
 class GoodsController extends BaseController {
 
+
+    public function setCode()
+    {
+        $id = I('id');
+
+    }
+
     /**
      *  商品分类列表
      */
